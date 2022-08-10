@@ -1,0 +1,6 @@
+version: 2
+
+secret:
+  ignored-matches:
+    -match: Bearer d57b2ff1-211f-4f6d-a078-bc01447d0235
+    name: Example Wanikani Token
