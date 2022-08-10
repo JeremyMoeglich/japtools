@@ -1,0 +1,79 @@
+import { get_request_body } from '$lib/scripts/backend/endpoint_utils';
+import { prisma_client } from '$lib/scripts/backend/db/prisma_client';
+import type { RequestHandler } from '@sveltejs/kit';
+import { hash } from 'bcrypt';
+import cuid from 'cuid';
+import { z } from 'zod';
+
+export const POST: RequestHandler<
+	Record<string, never>,
+	{ token?: string; error?: string }
+> = async ({ request }) => {
+	const body = await get_request_body(
+		request,
+		z.object({
+			email: z.string().email(),
+			password: z.string().min(8),
+			name: z.string().min(4)
+		})
+	);
+	if (body instanceof Error) {
+		return {
+			status: 400,
+			body: {
+				error: body.message
+			}
+		};
+	}
+	const { email, password, name } = body;
+	if (!email || !password || !name) {
+		return {
+			body: {
+				error: 'Missing email, password, or name'
+			},
+			status: 400
+		};
+	}
+	if (typeof email !== 'string' || typeof password !== 'string' || typeof name !== 'string') {
+		return {
+			body: {
+				error: 'Invalid email, password, or name'
+			},
+			status: 400
+		};
+	}
+	const user_exists = await prisma_client.user.findUnique({
+		where: { email: email },
+		select: { id: true }
+	});
+	if (user_exists) {
+		return {
+			body: {
+				error: 'Email already registered'
+			},
+			status: 409
+		};
+	}
+	const password_hash = await hash(password, 10);
+	const user = await prisma_client.user.create({
+		data: {
+			email: email,
+			password_hash: password_hash,
+			name: name,
+			progress: {
+				create: {}
+			}
+		}
+	});
+	const token = await prisma_client.loginToken.create({
+		data: {
+			userId: user.id,
+			value: cuid()
+		}
+	});
+	return {
+		body: {
+			token: token.value
+		}
+	};
+};

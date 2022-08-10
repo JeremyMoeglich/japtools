@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:14
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_KEY}
+    volumes:
+      - ./docker_volume/postgre/:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
