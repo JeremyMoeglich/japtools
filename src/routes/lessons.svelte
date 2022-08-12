@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { get_lesson_subjects } from '$lib/scripts/frontend/user/get_lesson_subjects';
 	import { update_subject_progress } from '$lib/scripts/frontend/user/update_subject_progress';
+	import type { lesson_subject_data_type } from '$lib/scripts/universal/datatypes';
+	import type { SubjectDataOuter } from '$lib/scripts/universal/wanikani_data';
 
 	let subjects: Awaited<ReturnType<typeof get_lesson_subjects>> = [];
 
@@ -26,9 +28,19 @@
 		subject_level_decrease[subjectId]++;
 	}
 
-	type lesson_type = {
-		subjectId: number;
-	} & {};
+	type lesson_types: ()[] = [
+		{
+			subject_type: SubjectDataOuter['object'];
+		}
+	]
 
 	const lesson_queue: lesson_type[] = [];
+
+	let subject_queue: lesson_subject_data_type[] = [];
+
+	$: (async () => {
+		if (subject_queue.length === 0) {
+			subject_queue = await get_lesson_subjects();
+		}
+	})();
 </script>

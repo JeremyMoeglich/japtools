@@ -1,12 +1,13 @@
-import { exec } from 'child_process';
+import { spawnSync } from 'child_process';
 
-export async function exec_async(cmd: string): Promise<string> {
-	return new Promise((resolve, reject) => {
-		exec(cmd, (err, stdout) => {
-			if (err) {
-				reject(err);
-			}
-			resolve(stdout);
-		});
-	});
+export function cmd(cmd: string, allow_error = false, silent = false) {
+	const ret = spawnSync(cmd, { shell: true, stdio: silent ? 'pipe' : 'inherit' });
+	if (ret.status !== 0 && !allow_error) {
+		throw new Error(`${cmd} failed`);
+	}
+	return ret;
+}
+
+export async function sleep(ms: number) {
+	await new Promise((resolve) => setTimeout(resolve, ms));
 }

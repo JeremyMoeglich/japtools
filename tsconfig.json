@@ -11,5 +11,11 @@
 		"strict": true,
 		"target": "es2020"
 	},
-	"include": ["scripts/**/*.js", "scripts/**/*.ts"]
+	"include": [
+		"scripts/**/*.js",
+		"scripts/**/*.ts",
+		"../src/**/*.js",
+		"../src/**/*.ts",
+		"../src/**/*.svelte"
+	]
 }

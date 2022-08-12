@@ -4,7 +4,7 @@ use itertools::Itertools;
 use project_root::get_project_root;
 use serde::{Deserialize, Serialize};
 use serde_json::to_string;
-use std::{collections::HashMap, env, error::Error, fs::File, io::prelude::*};
+use std::{collections::HashMap, env, error::Error, fs::{File, create_dir_all}, io::prelude::*};
 
 #[derive(Deserialize, Debug, Serialize, Clone)]
 pub struct CharacterImageMetadataSvg {
@@ -200,6 +200,9 @@ pub async fn get_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box<d
             WANIKANI_TOKEN must be set, example for .env (not valid): 
             WANIKANI_TOKEN = "Bearer d57b2ff1-211f-4f6d-a078-bc01447d0235"
         "#);
+    if !wanikani_token.starts_with("Bearer ") {
+        panic!("WANIKANI_TOKEN must start with 'Bearer '");
+    }
     for i in progress_bar.wrap_iter(1..=60) {
         let resp = client
             .get(format!("https://api.wanikani.com/v2/subjects?levels={}", i))
@@ -233,6 +236,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let data = to_string(&get_wanikani_data().await?)?;
     let root_path = get_project_root()?;
     let file_path = root_path.join("../src/lib/data/wanikani_data.json");
+    create_dir_all(file_path.parent().unwrap())?;
+    println!("Writing to {}", file_path.display());
     let mut file = File::create(file_path)?;
     file.write_all(data.as_bytes())?;
     Ok(())

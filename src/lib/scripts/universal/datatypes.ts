@@ -18,4 +18,4 @@ export const lesson_data_type_schema = z.object({
 	subject: subjectDataOuterSchema
 });
 
-export type lesson_data_type = z.infer<typeof lesson_data_type_schema>;
+export type lesson_subject_data_type = z.infer<typeof lesson_data_type_schema>;
