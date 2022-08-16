@@ -1,3 +1,4 @@
+import { json } from '@sveltejs/kit';
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils';
 import { prisma_client } from '$lib/scripts/backend/db/prisma_client';
 import type { RequestHandler } from '@sveltejs/kit';
@@ -18,41 +19,37 @@ export const POST: RequestHandler<
 		})
 	);
 	if (body instanceof Error) {
-		return {
-			status: 400,
-			body: {
-				error: body.message
-			}
-		};
+		return json({
+			error: body.message
+		}, {
+			status: 400
+		});
 	}
 	const { email, password, name } = body;
 	if (!email || !password || !name) {
-		return {
-			body: {
-				error: 'Missing email, password, or name'
-			},
+		return json({
+			error: 'Missing email, password, or name'
+		}, {
 			status: 400
-		};
+		});
 	}
 	if (typeof email !== 'string' || typeof password !== 'string' || typeof name !== 'string') {
-		return {
-			body: {
-				error: 'Invalid email, password, or name'
-			},
+		return json({
+			error: 'Invalid email, password, or name'
+		}, {
 			status: 400
-		};
+		});
 	}
 	const user_exists = await prisma_client.user.findUnique({
 		where: { email: email },
 		select: { id: true }
 	});
 	if (user_exists) {
-		return {
-			body: {
-				error: 'Email already registered'
-			},
+		return json({
+			error: 'Email already registered'
+		}, {
 			status: 409
-		};
+		});
 	}
 	const password_hash = await hash(password, 10);
 	const user = await prisma_client.user.create({
@@ -71,9 +68,7 @@ export const POST: RequestHandler<
 			value: cuid()
 		}
 	});
-	return {
-		body: {
-			token: token.value
-		}
-	};
+	return json({
+		token: token.value
+	});
 };

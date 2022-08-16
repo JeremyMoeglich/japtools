@@ -11,6 +11,7 @@ specifiers:
   '@types/js-cookie': ^3.0.2
   '@typescript-eslint/eslint-plugin': ^5.31.0
   '@typescript-eslint/parser': ^5.31.0
+  array-shuffle: ^3.0.0
   bcrypt: ^5.0.1
   cookie: ^0.5.0
   cuid: ^2.1.8
@@ -40,6 +41,7 @@ dependencies:
   '@digitak/esrun': 3.2.9
   '@macfja/svelte-persistent-store': 1.2.0_svelte@3.49.0
   '@types/js-cookie': 3.0.2
+  array-shuffle: 3.0.0
   generate-password: 1.7.0
   js-cookie: 3.0.1
   pkg-up: 4.0.0
@@ -755,6 +757,11 @@ packages:
   /argparse/2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
     dev: true
+
+  /array-shuffle/3.0.0:
+    resolution: {integrity: sha512-rogEGxHOQPhslOhpg12LJkB+bbAl484/s2AJq0BxtzQDQfKl76fS2u9zWgg3p3b9ENcuvE7K8A7l5ddiPjCRnw==}
+    engines: {node: '>=12.20'}
+    dev: false
 
   /array-union/2.1.0:
     resolution: {integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==}
@@ -3433,7 +3440,6 @@ packages:
   /svelte/3.49.0:
     resolution: {integrity: sha512-+lmjic1pApJWDfPCpUUTc1m8azDqYCG1JN9YEngrx/hUyIcFJo6VZhj0A1Ai0wqoHcEIuQy+e9tk+4uDgdtsFA==}
     engines: {node: '>= 8'}
-    dev: true
 
   /tar/6.1.11:
     resolution: {integrity: sha512-an/KZQzQUkZCkuoAA64hM92X0Urb6VpRhAFllDzz44U2mcD5scmT3zBc4VgVpkugF580+DQn8eAFSyoQt0tznA==}

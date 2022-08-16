@@ -1,6 +1,6 @@
 import { prisma_client } from '$lib/scripts/backend/db/prisma_client';
 import { get_auth_user_data, get_request_body } from '$lib/scripts/backend/endpoint_utils';
-import type { lesson_data_type } from '$lib/scripts/universal/datatypes';
+import type { lesson_subject_data_type } from '$lib/scripts/universal/datatypes';
 import { get_subjects_by_level, get_subject_by_id } from '$lib/scripts/universal/wanikani_data';
 import type { RequestHandler } from '@sveltejs/kit';
 import type { Jsonify } from 'type-fest';
@@ -11,7 +11,7 @@ const daily_lesson_limit = 20;
 export const POST: RequestHandler<
 	Record<string, never>,
 	{
-		lessons?: Jsonify<lesson_data_type[]>;
+		lessons?: Jsonify<lesson_subject_data_type[]>;
 		error?: string;
 	}
 > = async ({ request }) => {

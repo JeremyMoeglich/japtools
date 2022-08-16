@@ -11,11 +11,6 @@
 		"strict": true,
 		"target": "es2020"
 	},
-	"include": [
-		"scripts/**/*.js",
-		"scripts/**/*.ts",
-		"../src/**/*.js",
-		"../src/**/*.ts",
-		"../src/**/*.svelte"
-	]
+	"include": ["./src/**/*.js", "./src/**/*.ts", "./src/**/*.svelte", "./scripts/**/*.ts"],
+	"exclude": ["./node_modules/**", "./svelte-kit/**"]
 }

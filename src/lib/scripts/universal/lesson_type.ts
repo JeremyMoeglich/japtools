@@ -1,47 +1,62 @@
-import { SubjectDataOuter } from './wanikani_data';
-import { JsonObject } from 'type-fest';
+import type { SubjectDataOuter } from './wanikani_data';
+import type { JsonObject } from 'type-fest';
 
-interface LessonInterface {
+interface LessonInterface<ID extends number> {
 	subject_type: SubjectDataOuter['object'];
-	subject_id: number;
+	subject_id: ID;
 	required_data: JsonObject;
+	skill_level: number;
+    lesson_type: string;
 }
 
-interface ReadingAndMeaning extends LessonInterface {
-    subject_type: 'vocabulary' | 'kanji';
-    required_data: {
-        reading: string;
-        meaning: string;
-        excluded_subject_ids: number[];
-    };
+export interface ReadingAndMeaning<ID extends number> extends LessonInterface<ID> {
+	subject_type: 'vocabulary' | 'kanji';
+	required_data: {
+		reading: string;
+		meaning: string;
+		excluded_subject_ids: number[];
+        to: 'reading' | 'meaning';
+	};
+    lesson_type: 'reading_and_meaning';
 }
 
-interface SymbolAndMeaning extends LessonInterface {
-    required_data: {
-        symbol: string;
-        meaning: string;
-    };
+export interface SymbolAndMeaning<ID extends number> extends LessonInterface<ID> {
+	required_data: {
+		symbol: string;
+		meaning: string;
+        to: 'symbol' | 'meaning';
+	};
+    lesson_type: 'symbol_and_meaning';
 }
 
-interface KanjiKunOnYomi extends LessonInterface {
-    subject_type: 'kanji';
-    required_data: {
-        kanji: string;
-        kunyomi: string;
-        onyomi: string;
-    };
+export interface KanjiKunOnYomi<ID extends number> extends LessonInterface<ID> {
+	subject_type: 'kanji';
+	required_data: {
+		kanji: string;
+		kunyomi: string[];
+		onyomi: string[];
+	};
+    lesson_type: 'kanji_kun_on_yomi';
 }
 
-interface VocabularyKunOnYomi extends LessonInterface {
-    subject_type: 'vocabulary';
-    required_data: {
-        vocabulary: string;
-        kanji_map: Record<string, {
-            kanji: string;
-            form: 'kunyomi' | 'onyomi';
-            reading: string;
-        }>;
-    }
+export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<ID> {
+	subject_type: 'vocabulary';
+	required_data: {
+		vocabulary: string;
+		kanji_map: Record<
+			string,
+			{
+				kanji: string;
+				form: 'kunyomi' | 'onyomi';
+				reading: string[];
+			}
+		>;
+	};
+    lesson_type: 'vocabulary_kun_on_yomi';
 }
 
-export type Lesson = ReadingAndMeaning | SymbolAndMeaning | KanjiKunOnYomi | VocabularyKunOnYomi;
+export type Lesson<ID extends number = number> =
+	| ReadingAndMeaning<ID>
+	| SymbolAndMeaning<ID>
+	| KanjiKunOnYomi<ID>
+	| VocabularyKunOnYomi<ID>;
