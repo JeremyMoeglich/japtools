@@ -14,8 +14,11 @@ export const GET: RequestHandler = async ({ request }) => {
 		})
 	);
 
-	const kanji_map = Object.fromEntries(
-		text.split('').map((char) => [char, get_subject_by_kanji(char)])
-	);
+	const kanji_map = {
+		map: text.split('').map((char) => ({
+			symbol: char,
+			data: get_subject_by_kanji(char)
+		})).filter((char) => char.data !== undefined)
+	}
 	return json(kanji_map);
 };

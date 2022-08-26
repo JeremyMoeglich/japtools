@@ -47,10 +47,14 @@
 		"@digitak/esrun": "^3.2.10",
 		"@macfja/svelte-persistent-store": "2.0.0",
 		"@types/js-cookie": "^3.0.2",
+		"@types/lodash-es": "^4.17.6",
+		"@types/wanakana": "^4.0.3",
 		"array-shuffle": "^3.0.0",
 		"generate-password": "^1.7.0",
 		"js-cookie": "^3.0.1",
+		"lodash-es": "^4.17.21",
 		"pkg-up": "^4.0.0",
+		"wanakana": "^5.0.2",
 		"zod": "^3.18.0"
 	}
 }

@@ -2,8 +2,10 @@
 	import { get_lesson_subjects } from '$lib/scripts/frontend/user/get_lesson_subjects';
 	import { update_subject_progress } from '$lib/scripts/frontend/user/update_subject_progress';
 	import type { Lesson, VocabularyKunOnYomi } from '$lib/scripts/universal/lesson_type';
-import { kanjiDataSchema } from '$lib/scripts/universal/wanikani_data_zod';
-import { string, z } from 'zod';
+	import { kanjiDataSchema } from '$lib/scripts/universal/wanikani_data_zod';
+	import { map_entries } from 'functional-utilities';
+	import { string, z } from 'zod';
+	import { isKanji } from 'wanakana';
 
 	let subjects: Awaited<ReturnType<typeof get_lesson_subjects>> = [];
 
@@ -45,9 +47,9 @@ import { string, z } from 'zod';
 	$: (async () => {
 		if (lesson_queue.length === 0) {
 			const subjects = await get_lesson_subjects();
-			lesson_queue = single_sort(
-				lesson_queue.concat(
-					subjects.flatMap(({ next_review, skill_level, subject, subjectId }) => {
+			const new_lessons = (
+				await Promise.all(
+					subjects.map(async ({ next_review, skill_level, subject, subjectId }) => {
 						const subject_type = subject.object;
 						const new_lessons: Lesson[] = [];
 						if (subject_type === 'kanji') {
@@ -128,7 +130,7 @@ import { string, z } from 'zod';
 								const partial_required_data = {
 									readings: subject.data.readings.map((r) => r.reading),
 									meanings: subject.data.meanings.map((m) => m.meaning)
-								}
+								};
 								new_lessons.push({
 									lesson_type: 'reading_and_meaning',
 									required_data: {
@@ -150,25 +152,80 @@ import { string, z } from 'zod';
 									skill_level: skill_level
 								});
 							}
+
+							const kanji_types = await (async () => {
+								const kanji_data = z.record(z.string(), kanjiDataSchema).parse(
+									await (
+										await fetch('/api/create_kanji_map', {
+											method: 'POST',
+											body: JSON.stringify({
+												text: txt
+											})
+										})
+									).json()
+								);
+
+								return Object.fromEntries(
+									subject.data.readings.map((r_ref) => {
+										const kanji_types: typeof kanji_data[string]['readings'][number]['type'][] = []
+										let r = r_ref.reading;
+										let character_string = subject.data.characters;
+										while (character_string.length > 0) {
+											if (character_string[0] === r[0]) {
+												character_string = character_string.slice(1);
+												r = r.slice(1);
+											} else if (isKanji(character_string[0])) {
+												const kanji = character_string[0];
+												character_string = character_string.slice(1);
+												const viable_readings = kanji_data[kanji].readings.filter((kanji_reading) =>
+													r.startsWith(kanji_reading.reading)
+												);
+												if (
+													viable_readings.every((v) => v.reading === viable_readings[0].reading)
+												) {
+													kanji_types.push(viable_readings[0].type)
+													r = r.slice(viable_readings[0].reading.length);
+												} else {
+													throw new Error(
+														`Multiple viable ${kanji} readings ${new Array(
+															new Set(viable_readings.map((v) => v.reading)).keys()
+														).join(', ')}`
+													);
+												}
+											} else {
+												throw new Error('Invalid character');
+											}
+										}
+										return [r, kanji_types];
+									})
+								);
+							})();
+							if (Object.entries(kanji_types).length > 1) {
+								throw new Error("Multiple Vocabulary reading are not supported yet")
+							}
 							new_lessons.push({
 								lesson_type: 'vocabulary_kun_on_yomi',
 								required_data: {
-									kanji_map: z.record(z.string(), z.object({
-										data: kanjiDataSchema,
-										object: z.literal('kanji'),
-										id: z.number(),
-										url: z.string().url(),
-										data_updated_at: z.string()
-									}))
-								}
-							})
-						}
+									vocabulary: txt,
+									kanji_map: Object.fromEntries(kanji_readings.map(v => {
 
+									}))
+								},
+								subject_id: subjectId,
+								skill_level: skill_level,
+								subject_type: subject_type
+							});
+						}
 						return new_lessons;
 					})
-				),
+				)
+			).flat();
+			lesson_queue = single_sort(
+				lesson_queue.concat(new_lessons),
 				(lesson) => lesson.skill_level + Math.random() * 0.5
 			).filter((lesson) => required_level_table[lesson.lesson_type] <= lesson.skill_level);
 		}
 	})();
 </script>
+
+Test

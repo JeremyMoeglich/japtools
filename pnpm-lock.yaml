@@ -9,6 +9,8 @@ specifiers:
   '@types/bcrypt': ^5.0.0
   '@types/cookie': ^0.5.1
   '@types/js-cookie': ^3.0.2
+  '@types/lodash-es': ^4.17.6
+  '@types/wanakana': ^4.0.3
   '@typescript-eslint/eslint-plugin': ^5.34.0
   '@typescript-eslint/parser': ^5.34.0
   array-shuffle: ^3.0.0
@@ -22,6 +24,7 @@ specifiers:
   functional-utilities: ^1.16.0
   generate-password: ^1.7.0
   js-cookie: ^3.0.1
+  lodash-es: ^4.17.21
   node-sass: ^7.0.1
   pkg-up: ^4.0.0
   prettier: ^2.7.1
@@ -35,16 +38,21 @@ specifiers:
   type-fest: ^2.19.0
   typescript: ^4.7.4
   vite: ^3.0.9
+  wanakana: ^5.0.2
   zod: ^3.18.0
 
 dependencies:
   '@digitak/esrun': 3.2.10
   '@macfja/svelte-persistent-store': 2.0.0_svelte@3.49.0
   '@types/js-cookie': 3.0.2
+  '@types/lodash-es': 4.17.6
+  '@types/wanakana': 4.0.3
   array-shuffle: 3.0.0
   generate-password: 1.7.0
   js-cookie: 3.0.1
+  lodash-es: 4.17.21
   pkg-up: 4.0.0
+  wanakana: 5.0.2
   zod: 3.18.0
 
 devDependencies:
@@ -499,6 +507,16 @@ packages:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
     dev: true
 
+  /@types/lodash-es/4.17.6:
+    resolution: {integrity: sha512-R+zTeVUKDdfoRxpAryaQNRKk3105Rrgx2CFRClIgRGaqDTdjsm8h6IYA8ir584W3ePzkZfst5xIgDwYrlh9HLg==}
+    dependencies:
+      '@types/lodash': 4.14.184
+    dev: false
+
+  /@types/lodash/4.14.184:
+    resolution: {integrity: sha512-RoZphVtHbxPZizt4IcILciSWiC6dcn+eZ8oX9IWEYfDMcocdd42f7NPI6fQj+6zI8y4E0L7gu2pcZKLGTRaV9Q==}
+    dev: false
+
   /@types/minimist/1.2.2:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
     dev: true
@@ -520,6 +538,10 @@ packages:
     dependencies:
       '@types/node': 18.7.11
     dev: true
+
+  /@types/wanakana/4.0.3:
+    resolution: {integrity: sha512-AibaWzahBKizxmsAy8rEWSIqqcT0v9KZTS8S6zPLmStGBFdccYfXydhgwYOV+6lGqQ890MpA4h2MPET3uPk9Zg==}
+    dev: false
 
   /@typescript-eslint/eslint-plugin/5.34.0_euudt5oqhhodkyae5tf6wjmsda:
     resolution: {integrity: sha512-eRfPPcasO39iwjlUAMtjeueRGuIrW3TQ9WseIDl7i5UWuFbf83yYaU7YPs4j8+4CxUMIsj1k+4kV+E+G+6ypDQ==}
@@ -2321,7 +2343,6 @@ packages:
 
   /lodash-es/4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
-    dev: true
 
   /lodash.merge/4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -3531,6 +3552,7 @@ packages:
   /svelte/3.49.0:
     resolution: {integrity: sha512-+lmjic1pApJWDfPCpUUTc1m8azDqYCG1JN9YEngrx/hUyIcFJo6VZhj0A1Ai0wqoHcEIuQy+e9tk+4uDgdtsFA==}
     engines: {node: '>= 8'}
+    dev: true
 
   /tar/6.1.11:
     resolution: {integrity: sha512-an/KZQzQUkZCkuoAA64hM92X0Urb6VpRhAFllDzz44U2mcD5scmT3zBc4VgVpkugF580+DQn8eAFSyoQt0tznA==}
@@ -3810,6 +3832,11 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
+
+  /wanakana/5.0.2:
+    resolution: {integrity: sha512-eYTezpLYXCr+gmVmgBBYQP7A7WJphvhyx1PkrHaMrnExTiMPrgTgFLSJgo75DnZf1Wy0lA2nukNVJg7Ptvx9zA==}
+    engines: {node: '>=12'}
+    dev: false
 
   /wcwidth/1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}

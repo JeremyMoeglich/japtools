@@ -211,7 +211,7 @@ export function get_subjects_by_reading(reading: string): SubjectDataOuter[] {
 export function get_subject_by_kanji(symbol: string) {
 	const id = wanikani_data_kanji_index.get(symbol);
 	if (id === undefined) {
-		throw new Error(`No subject found for symbol ${symbol}`);
+		return undefined;
 	}
 	const subject = get_subject_by_id(parseInt(id));
 	if (subject.object !== 'kanji') {
