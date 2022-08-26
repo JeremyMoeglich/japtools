@@ -1,52 +1,20 @@
 import { prisma_client } from '$lib/scripts/backend/db/prisma_client';
 import { get_auth_user_data, get_request_body } from '$lib/scripts/backend/endpoint_utils';
-import type { lesson_subject_data_type } from '$lib/scripts/universal/datatypes';
 import { get_subjects_by_level, get_subject_by_id } from '$lib/scripts/universal/wanikani_data';
-import type { RequestHandler } from '@sveltejs/kit';
-import type { Jsonify } from 'type-fest';
+import type { RequestHandler } from './$types';
 import { z } from 'zod';
+import { error, json } from '@sveltejs/kit';
 
 const daily_lesson_limit = 20;
 
-export const POST: RequestHandler<
-	Record<string, never>,
-	{
-		lessons?: Jsonify<lesson_subject_data_type[]>;
-		error?: string;
-	}
-> = async ({ request }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	const user_data = await get_auth_user_data(request);
-	if (user_data instanceof Error) {
-		return {
-			status: 401,
-			body: {
-				error: user_data.message
-			}
-		};
-	}
-	const body = await get_request_body(
+	const { amount } = await get_request_body(
 		request,
 		z.object({
 			amount: z.number().min(1).max(100)
 		})
 	);
-	if (body instanceof Error) {
-		return {
-			status: 400,
-			body: {
-				error: body.message
-			}
-		};
-	}
-	const { amount } = body;
-	if (typeof amount !== 'number') {
-		return {
-			status: 400,
-			body: {
-				error: 'Invalid amount'
-			}
-		};
-	}
 	const current_date = new Date();
 	const lessons = await prisma_client.subjectProgress.findMany({
 		where: {
@@ -97,7 +65,7 @@ export const POST: RequestHandler<
 				})
 			)?.current_level;
 			if (!current_level) {
-				throw new Error('Could not get current level');
+				throw error(500, 'User has no current level');
 			}
 			const added_level_subject_ids = (
 				await prisma_client.subjectProgress.findMany({
@@ -122,7 +90,7 @@ export const POST: RequestHandler<
 				subjects_to_add.map((subject) => {
 					const subject_data = get_subject_by_id(subject.id);
 					if (!subject_data) {
-						throw new Error('Could not get subject data');
+						throw error(500, 'Could not get subject data');
 					}
 					const promise = prisma_client.subjectProgress.create({
 						data: {
@@ -137,15 +105,12 @@ export const POST: RequestHandler<
 			);
 		}
 	}
-	return {
-		status: 200,
-		body: {
-			lessons: lessons.map((lesson) => ({
-				subjectId: lesson.subjectId,
-				skill_level: lesson.skill_level,
-				next_review: lesson.next_review.toISOString(),
-				subject: get_subject_by_id(lesson.subjectId)
-			}))
-		}
-	};
+	return json({
+		lessons: lessons.map((lesson) => ({
+			subjectId: lesson.subjectId,
+			skill_level: lesson.skill_level,
+			next_review: lesson.next_review.toISOString(),
+			subject: get_subject_by_id(lesson.subjectId)
+		}))
+	})
 };

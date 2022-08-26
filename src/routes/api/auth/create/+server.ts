@@ -1,15 +1,12 @@
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils';
 import { prisma_client } from '$lib/scripts/backend/db/prisma_client';
-import type { RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 import { hash } from 'bcrypt';
 import cuid from 'cuid';
 import { z } from 'zod';
 
-export const POST: RequestHandler<
-	Record<string, never>,
-	{ token?: string; error?: string }
-> = async ({ request }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	const body = await get_request_body(
 		request,
 		z.object({
@@ -18,38 +15,13 @@ export const POST: RequestHandler<
 			name: z.string().min(4)
 		})
 	);
-	if (body instanceof Error) {
-		return json({
-			error: body.message
-		}, {
-			status: 400
-		});
-	}
 	const { email, password, name } = body;
-	if (!email || !password || !name) {
-		return json({
-			error: 'Missing email, password, or name'
-		}, {
-			status: 400
-		});
-	}
-	if (typeof email !== 'string' || typeof password !== 'string' || typeof name !== 'string') {
-		return json({
-			error: 'Invalid email, password, or name'
-		}, {
-			status: 400
-		});
-	}
 	const user_exists = await prisma_client.user.findUnique({
 		where: { email: email },
 		select: { id: true }
 	});
 	if (user_exists) {
-		return json({
-			error: 'Email already registered'
-		}, {
-			status: 409
-		});
+		throw error(400, 'User already exists');
 	}
 	const password_hash = await hash(password, 10);
 	const user = await prisma_client.user.create({
@@ -70,5 +42,7 @@ export const POST: RequestHandler<
 	});
 	return json({
 		token: token.value
+	}, {
+		status: 201
 	});
 };

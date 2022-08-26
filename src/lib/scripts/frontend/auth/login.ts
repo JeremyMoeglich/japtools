@@ -1,6 +1,7 @@
-import type { JSONValue } from '@sveltejs/kit/types/private';
+import type { JsonValue } from 'type-fest';
 import { hasProperty } from 'functional-utilities';
 import { token_login } from './token_login';
+import { z } from 'zod';
 
 export async function login(email: string, password: string): Promise<Error | undefined> {
 	const result = await fetch('/auth/login', {
@@ -13,23 +14,11 @@ export async function login(email: string, password: string): Promise<Error | un
 			password
 		})
 	});
-	const data: JSONValue = await result.json();
-	if (!(data && typeof data === 'object')) {
-		throw new Error('Invalid response from server (expected object)');
-	}
-	if (hasProperty(data, 'error')) {
-		if (typeof data.error !== 'string') {
-			throw new Error('Invalid response from server (expected error to be string)');
-		}
-		return new Error(data.error);
-	}
-	if (!hasProperty(data, 'token')) {
-		throw new Error('Invalid response from server (expected token)');
-	}
-	if (typeof data.token !== 'string') {
-		throw new Error('Invalid response from server (expected token to be string)');
-	}
-	const token = data.token;
+	
+	const token = z.object({
+		token: z.string().uuid()
+	}).parse(await result.json()).token;
+
 	await token_login(token, false);
 	return undefined;
 }

@@ -1,8 +1,8 @@
-import { json } from '@sveltejs/kit';
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils';
 import { prisma_client } from '$lib/scripts/backend/db/prisma_client';
-import type { RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 import { z } from 'zod';
+import { json } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await get_request_body(
@@ -11,16 +11,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			token: z.string()
 		})
 	);
-	if (body instanceof Error) {
-		return json({
-			error: body.message
-		}, {
-			status: 400
-		});
-	}
 	const { token } = body;
 	await prisma_client.loginToken.delete({
 		where: { value: token }
 	});
-	return new Response(undefined);
+	return json({})
 };

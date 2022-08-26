@@ -171,6 +171,22 @@ const wanikani_data_reading_index: Map<string, Array<string>> = Object.entries(
 	});
 	return current;
 }, new Map<string, Array<string>>());
+const wanikani_data_kanji_index: Map<string, string> = Object.entries(
+	wanikani_data_id_index
+).reduce((current, [id, data]) => {
+	if (data.object !== 'kanji') {
+		return current;
+	}
+	const symbol = data.data.characters;
+
+	if (current.has(symbol)) {
+		throw new Error(`Duplicate symbol: ${symbol}`);
+	} else {
+		current.set(symbol, id);
+	}
+
+	return current;
+}, new Map<string, string>());
 
 export function get_subject_by_id(id: number): SubjectDataOuter {
 	return wanikani_data_id_index[id.toString()];
@@ -190,4 +206,16 @@ export function get_subjects_by_reading(reading: string): SubjectDataOuter[] {
 		throw new Error(`No subjects found for reading ${reading}`);
 	}
 	return ids.map((id) => get_subject_by_id(parseInt(id)));
+}
+
+export function get_subject_by_kanji(symbol: string) {
+	const id = wanikani_data_kanji_index.get(symbol);
+	if (id === undefined) {
+		throw new Error(`No subject found for symbol ${symbol}`);
+	}
+	const subject = get_subject_by_id(parseInt(id));
+	if (subject.object !== 'kanji') {
+		throw new Error(`Subject ${id} is not a kanji`);
+	}
+	return subject;
 }

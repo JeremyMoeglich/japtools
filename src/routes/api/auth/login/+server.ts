@@ -1,15 +1,12 @@
 import { json } from '@sveltejs/kit';
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils';
 import { prisma_client } from '$lib/scripts/backend/db/prisma_client';
-import type { RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 import { compare } from 'bcrypt';
 import cuid from 'cuid';
 import { z } from 'zod';
 
-export const POST: RequestHandler<
-	Record<string, never>,
-	{ token?: string; error?: string }
-> = async ({ request }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	const body = await get_request_body(
 		request,
 		z.object({
