@@ -11,6 +11,7 @@ export async function get_request_body<T extends ZodObjectAny>(
 	schema: T
 ): Promise<z.infer<T>> {
 	const body = await get_body(request);
+	console.log(`Request body: ${JSON.stringify(body)}`);
 	const parsed = schema.safeParse(body);
 	if (parsed.success) {
 		return parsed.data;
@@ -27,7 +28,7 @@ export async function get_body(request: Request): Promise<JsonValue> {
 			throw error(400, 'Not an object');
 		}
 		return body;
-	} catch (e) {
+	} catch (_) {
 		throw error(400, 'Invalid JSON');
 	}
 }

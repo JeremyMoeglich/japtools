@@ -41,9 +41,7 @@ export async function token_login(token: string, validate = true) {
 		}
 	}
 
-	console.log('token_login', token);
 	login_token_store.set(token);
-	console.log('cookies', document.cookie);
 	const response = await (await fetch('/api/auth/get_own_user_data')).json();
 	const parsed = parse_to_date(
 		z

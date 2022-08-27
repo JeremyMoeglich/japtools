@@ -24,14 +24,13 @@ export const POST: RequestHandler = async ({ request }) => {
 		throw error(400, 'User already exists');
 	}
 	const password_hash = await hash(password, 10);
+	const progress_cuid = cuid();
 	const user = await prisma_client.user.create({
 		data: {
 			email: email,
 			password_hash: password_hash,
 			name: name,
-			progress: {
-				create: {}
-			}
+			progress: { create: { id: progress_cuid } }
 		}
 	});
 	const token = await prisma_client.loginToken.create({

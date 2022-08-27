@@ -8,10 +8,7 @@ export function parse_to_date<S extends ZodObjectAny, K extends string>(
 	keys: K[]
 ): z.infer<S> {
 	const raw_data = keys
-		.reduce((acc, key) => {
-			acc.extend({ [key]: z.string() });
-			return acc;
-		}, schema)
+		.reduce((acc, key) => acc.extend({ [key]: z.string() }) as S, schema)
 		.parse(obj);
 	return schema.parse(
 		Object.assign(
