@@ -42,10 +42,10 @@ export async function get_auth_user_data(request: Request): Promise<user_data_ty
 			value: cookies.login_token
 		},
 		select: {
-			userId: true
+			user_id: true
 		}
 	});
-	const user_id = data?.userId;
+	const user_id = data?.user_id;
 
 	if (!user_id) {
 		throw error(401, 'Invalid login token');
@@ -59,8 +59,8 @@ export async function get_auth_user_data(request: Request): Promise<user_data_ty
 			name: true,
 			id: true,
 			email: true,
-			createdAt: true,
-			progressId: true
+			created_at: true,
+			progress_id: true
 		}
 	});
 

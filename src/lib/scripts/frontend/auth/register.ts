@@ -8,7 +8,7 @@ export async function register(
 	password: string
 ): Promise<Error | undefined> {
 	const response = await (
-		await fetch('/auth/create', {
+		await fetch('/api/auth/create', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -17,9 +17,11 @@ export async function register(
 		})
 	).json();
 
-	const token = z.object({
-		token: z.string().uuid()
-	}).parse(response).token;
+	const token = z
+		.object({
+			token: z.string()
+		})
+		.parse(response).token;
 	await token_login(token, false);
 	return undefined;
 }

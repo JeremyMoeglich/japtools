@@ -36,13 +36,16 @@ export const POST: RequestHandler = async ({ request }) => {
 	});
 	const token = await prisma_client.loginToken.create({
 		data: {
-			userId: user.id,
+			user_id: user.id,
 			value: cuid()
 		}
 	});
-	return json({
-		token: token.value
-	}, {
-		status: 201
-	});
+	return json(
+		{
+			token: token.value
+		},
+		{
+			status: 201
+		}
+	);
 };

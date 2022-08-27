@@ -15,40 +15,52 @@ export const POST: RequestHandler = async ({ request }) => {
 		})
 	);
 	if (body instanceof Error) {
-		return json({
-			error: body.message
-		}, {
-			status: 400
-		});
+		return json(
+			{
+				error: body.message
+			},
+			{
+				status: 400
+			}
+		);
 	}
 	const { email, password } = body;
 	if (!email || !password) {
-		return json({
-			error: 'Missing email or password'
-		}, {
-			status: 400
-		});
+		return json(
+			{
+				error: 'Missing email or password'
+			},
+			{
+				status: 400
+			}
+		);
 	}
 	if (typeof email !== 'string' || typeof password !== 'string') {
-		return json({
-			error: 'Invalid identifier or password'
-		}, {
-			status: 400
-		});
+		return json(
+			{
+				error: 'Invalid identifier or password'
+			},
+			{
+				status: 400
+			}
+		);
 	}
-	const userId = (await prisma_client.user.findUnique({ where: { email }, select: { id: true } }))
+	const user_id = (await prisma_client.user.findUnique({ where: { email }, select: { id: true } }))
 		?.id;
 
-	if (!userId) {
-		return json({
-			error: 'Invalid email or password'
-		}, {
-			status: 401
-		});
+	if (!user_id) {
+		return json(
+			{
+				error: 'Invalid email or password'
+			},
+			{
+				status: 401
+			}
+		);
 	}
 	const password_hash: string | undefined = (
 		await prisma_client.user.findUnique({
-			where: { id: userId },
+			where: { id: user_id },
 			select: {
 				password_hash: true
 			}
@@ -56,22 +68,28 @@ export const POST: RequestHandler = async ({ request }) => {
 	)?.password_hash;
 
 	if (!password_hash) {
-		return json({
-			error: 'Invalid identifier'
-		}, {
-			status: 404
-		});
+		return json(
+			{
+				error: 'Invalid identifier'
+			},
+			{
+				status: 404
+			}
+		);
 	}
 	const is_valid = await compare(password, password_hash);
 	if (!is_valid) {
-		return json({
-			error: 'Invalid password'
-		}, {
-			status: 401
-		});
+		return json(
+			{
+				error: 'Invalid password'
+			},
+			{
+				status: 401
+			}
+		);
 	}
 	const current_token = await prisma_client.loginToken.findUnique({
-		where: { userId: userId },
+		where: { user_id: user_id },
 		select: { value: true, time: true }
 	});
 	if (current_token) {
@@ -81,18 +99,21 @@ export const POST: RequestHandler = async ({ request }) => {
 				token: current_token.value
 			});
 		} else {
-			await prisma_client.loginToken.delete({ where: { userId: userId } });
+			await prisma_client.loginToken.delete({ where: { user_id: user_id } });
 		}
 	}
 	const new_token = await prisma_client.loginToken.create({
 		data: {
-			userId: userId,
+			user_id: user_id,
 			value: cuid()
 		}
 	});
-	return json({
-		token: new_token.value
-	}, {
-		status: 201
-	});
+	return json(
+		{
+			token: new_token.value
+		},
+		{
+			status: 201
+		}
+	);
 };

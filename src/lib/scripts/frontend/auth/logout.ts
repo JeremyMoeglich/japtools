@@ -8,7 +8,7 @@ export async function logout() {
 	if (!token) {
 		return;
 	}
-	await fetch('/auth/delete_token', {
+	await fetch('/api/auth/delete_token', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'

@@ -25,7 +25,7 @@ export async function get_lesson_subjects(): Promise<lesson_subject_data_type[]>
 	);
 	const current_subject_store = get(subject_store);
 	lessons.forEach((lesson) => {
-		current_subject_store.set(lesson.subjectId, lesson);
+		current_subject_store.set(lesson.subject_id, lesson);
 	});
 	subject_store.set(current_subject_store);
 	return lessons;

@@ -20,7 +20,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	const { token } = body;
 	const loginToken = await prisma_client.loginToken.findUnique({
 		where: { value: token },
-		select: { userId: true, time: true }
+		select: { user_id: true, time: true }
 	});
 	if (!loginToken) {
 		return json(

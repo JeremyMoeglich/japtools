@@ -15,32 +15,32 @@ model User {
   name          String
   email         String   @unique
   password_hash String
-  createdAt     DateTime @default(now())
-  progress      Progress @relation(fields: [progressId], references: [id])
-  progressId    String
+  created_at    DateTime @default(now())
+  progress      Progress @relation(fields: [progress_id], references: [id])
+  progress_id   String
 }
 
 model LoginToken {
-  id     String   @id @default(cuid())
-  userId String   @unique
-  time   DateTime @default(now())
-  value  String   @unique
+  id      String   @id @default(cuid())
+  user_id String   @unique
+  time    DateTime @default(now())
+  value   String   @unique
 }
 
 model SubjectProgress {
-  subjectId   Int
+  subject_id  Int
   level       Int
   skill_level Int      @default(0)
   next_review DateTime
-  progressId  String
-  Progress    Progress @relation(fields: [progressId], references: [id])
+  progress_id String
+  Progress    Progress @relation(fields: [progress_id], references: [id])
 
-  @@unique([subjectId, progressId])
+  @@unique([subject_id, progress_id])
 }
 
 model Progress {
-  id              String            @id @default(cuid())
-  subjectProgress SubjectProgress[]
-  User            User[]
-  current_level   Int               @default(0)
+  id               String            @id @default(cuid())
+  subject_progress SubjectProgress[]
+  User             User[]
+  current_level    Int               @default(0)
 }

@@ -6,16 +6,16 @@ import { z } from 'zod';
 import { json } from '@sveltejs/kit';
 
 function get_next_date(n: number): Date {
-	const hour_offset = range(n).reduce((acc, _) => acc + acc ** 1.1 + 1, 0);
+	const hour_offset = range(n).reduce((acc) => acc + acc ** 1.1 + 1, 0);
 	return new Date(Date.now() + hour_offset * 3600000);
 }
 
 export const UPDATE: RequestHandler = async ({ request }) => {
 	const user_data = await get_auth_user_data(request);
-	const { subjectId, skill_level } = await get_request_body(
+	const { subject_id, skill_level } = await get_request_body(
 		request,
 		z.object({
-			subjectId: z.number().min(0).int(),
+			subject_id: z.number().min(0).int(),
 			skill_level: z.number().min(0).int()
 		})
 	);
@@ -24,9 +24,9 @@ export const UPDATE: RequestHandler = async ({ request }) => {
 
 	await prisma_client.subjectProgress.update({
 		where: {
-			subjectId_progressId: {
-				subjectId,
-				progressId: user_data.progressId
+			subject_id_progress_id: {
+				subject_id,
+				progress_id: user_data.progress_id
 			}
 		},
 		data: {
@@ -34,5 +34,5 @@ export const UPDATE: RequestHandler = async ({ request }) => {
 			next_review
 		}
 	});
-	return json({})
+	return json({});
 };

@@ -1,4 +1,4 @@
-import type { SubjectDataOuter } from './wanikani_data';
+import type { SubjectDataOuter } from './wanikani_data/wanikani_types';
 import type { JsonObject } from 'type-fest';
 
 interface LessonInterface<ID extends number> {
@@ -44,14 +44,7 @@ export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<
 	subject_type: 'vocabulary';
 	required_data: {
 		vocabulary: string;
-		kanji_map: Record<
-			string,
-			{
-				kanji: string;
-				form: 'kunyomi' | 'onyomi';
-				reading: string[];
-			}
-		>;
+		string_map: ('kunyomi' | 'onyomi' | 'nanori' | 'not_a_kanji')[];
 	};
 	lesson_type: 'vocabulary_kun_on_yomi';
 }

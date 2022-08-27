@@ -4,7 +4,6 @@ import path from 'path';
 import get_root from './get_root.js';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import 'dotenv/config';
-import { exit } from 'process';
 
 const project_root = get_root();
 
