@@ -67,7 +67,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					}
 				})
 			)?.current_level;
-			if (!current_level) {
+			if (current_level === undefined) {
 				throw error(500, 'User has no current level');
 			}
 			const added_level_subject_ids = (
@@ -110,7 +110,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 	return json({
 		lessons: lessons.map((lesson) => ({
-			subjectId: lesson.subject_id,
+			subject_id: lesson.subject_id,
 			skill_level: lesson.skill_level,
 			next_review: lesson.next_review.toISOString(),
 			subject: get_subject_by_id(lesson.subject_id)

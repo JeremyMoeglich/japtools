@@ -3,7 +3,7 @@
 	import { update_subject_progress } from '$lib/scripts/frontend/user/update_subject_progress';
 	import type { Lesson, VocabularyKunOnYomi } from '$lib/scripts/universal/lesson_type';
 	import { kanjiDataSchema } from '$lib/scripts/universal/wanikani_data/wanikani_schema';
-	import { range } from 'functional-utilities';
+	import { error, range } from 'functional-utilities';
 	import { z } from 'zod';
 	import { isKanji } from 'wanakana';
 	import PrettyObj from '$lib/components/pretty_obj.svelte';
@@ -20,16 +20,16 @@
 
 	const subject_level_decrease: Record<number, number> = {};
 
-	async function decrease_level(subjectId: number) {
-		if (subject_level_decrease[subjectId] === undefined) {
-			subject_level_decrease[subjectId] = 0;
+	async function decrease_level(subject_id: number) {
+		if (subject_level_decrease[subject_id] === undefined) {
+			subject_level_decrease[subject_id] = 0;
 		}
 
-		if (subject_level_decrease[subjectId] < 2) {
-			await update_subject_progress(subjectId, subject_map[subjectId].skill_level - 1);
+		if (subject_level_decrease[subject_id] < 2) {
+			await update_subject_progress(subject_id, subject_map[subject_id].skill_level - 1);
 		}
 
-		subject_level_decrease[subjectId]++;
+		subject_level_decrease[subject_id]++;
 	}
 
 	function single_sort<T>(lst: T[], func: (v: T) => number) {
@@ -227,10 +227,29 @@
 								});
 							}
 						}
+						else if (subject_type === 'radical') {
+							new_lessons.push({
+								lesson_type: 'symbol_and_meaning',
+								required_data: {
+									symbol: subject.data.slug,
+									meanings: subject.data.meanings.map((meaning) => meaning.meaning),
+									to: 'meanings'
+								},
+								subject_id: subject_id,
+								skill_level: skill_level,
+								subject_type: subject_type
+							});
+						}
+						else {
+							throw new Error(`Unsupported subject type ${subject_type}`);
+						}
 						return new_lessons;
 					})
 				)
 			).flat();
+			if (new_lessons.length === 0) {
+				throw new Error('No lessons found, new_lessons length is 0');
+			}
 			lesson_queue = single_sort(
 				lesson_queue.concat(new_lessons),
 				(lesson) => lesson.skill_level + Math.random() * 0.5

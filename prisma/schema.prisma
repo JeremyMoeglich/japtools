@@ -42,5 +42,5 @@ model Progress {
   id               String            @id @default(cuid())
   subject_progress SubjectProgress[]
   User             User[]
-  current_level    Int               @default(0)
+  current_level    Int               @default(1)
 }

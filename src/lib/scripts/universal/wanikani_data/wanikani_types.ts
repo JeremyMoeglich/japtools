@@ -52,10 +52,10 @@ export interface RadicalData {
 	amalgamation_subject_ids: Array<number>;
 	auxiliary_meanings: Array<AuxiliaryMeaning>;
 	character_images: Array<CharacterImage>;
-	characters?: string;
+	characters: string | null;
 	created_at: string;
 	document_url: string;
-	hidden_at?: string;
+	hidden_at: string | null;
 	lesson_position: number;
 	level: number;
 	meaning_mnemonic: string;
@@ -71,10 +71,10 @@ export interface KanjiData {
 	component_subject_ids: Array<number>;
 	created_at: string;
 	document_url: string;
-	hidden_at?: string;
+	hidden_at: string | null;
 	lesson_position: number;
 	level: number;
-	meaning_hint?: string;
+	meaning_hint: string | null
 	meaning_mnemonic: string;
 	meanings: Array<SubjectMeaning>;
 	reading_hint: string;
@@ -112,7 +112,7 @@ export interface VocabularyData {
 	context_sentences: Array<ContextSentence>;
 	created_at: string;
 	document_url: string;
-	hidden_at?: string;
+	hidden_at: string | null;
 	lesson_position: number;
 	level: number;
 	meaning_mnemonic: string;

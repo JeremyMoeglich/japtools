@@ -3,4 +3,8 @@
 	import { user_datas_store } from '$lib/scripts/frontend/auth/user_data';
 </script>
 
-<PrettyObj obj={$user_datas_store} />
+<div>
+	<PrettyObj obj={$user_datas_store} />
+</div>
+
+<a href="/lessons"> Go to lessons </a>

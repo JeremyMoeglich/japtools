@@ -9,7 +9,7 @@ import { subject_store } from './subject_store';
 
 export async function get_lesson_subjects(): Promise<lesson_subject_data_type[]> {
 	const lessons_raw: unknown = await (
-		await fetch('/user/get_lesson_subjects', {
+		await fetch('/api/user/get_lesson_subjects', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -19,7 +19,11 @@ export async function get_lesson_subjects(): Promise<lesson_subject_data_type[]>
 			})
 		})
 	).json();
-	const lessons_raw_arr = z.array(z.unknown()).parse(lessons_raw);
+	const lessons_raw_arr = z
+		.object({
+			lessons: z.array(z.unknown())
+		})
+		.parse(lessons_raw).lessons;
 	const lessons = lessons_raw_arr.map((v) =>
 		parse_to_date(v, lesson_data_type_schema, ['next_review'])
 	);
