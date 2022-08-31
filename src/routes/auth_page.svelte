@@ -11,12 +11,14 @@
 	let register_error: unknown = '';
 </script>
 
+
 <div class="side_alignment">
 	<div>
 		<h2>Sign in</h2>
 		<p>Sign in to your account</p>
 		<form
 			on:submit|preventDefault={async () => {
+				console.log('login');
 				try {
 					await login(email, password);
 				} catch (error) {

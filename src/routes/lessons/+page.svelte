@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { get_lesson_subjects } from '$lib/scripts/frontend/user/get_lesson_subjects';
 	import { update_subject_progress } from '$lib/scripts/frontend/user/update_subject_progress';
-	import type { Lesson, VocabularyKunOnYomi } from '$lib/scripts/universal/lesson_type';
+	import type { Lesson } from '$lib/scripts/universal/lesson_type';
 	import { kanjiDataSchema } from '$lib/scripts/universal/wanikani_data/wanikani_schema';
-	import { error, range } from 'functional-utilities';
+	import { range } from 'functional-utilities';
 	import { z } from 'zod';
 	import { isKanji } from 'wanakana';
 	import PrettyObj from '$lib/components/pretty_obj.svelte';
@@ -50,7 +50,7 @@
 			const subjects = await get_lesson_subjects();
 			const new_lessons = (
 				await Promise.all(
-					subjects.map(async ({ next_review, skill_level, subject, subject_id }) => {
+					subjects.map(async ({ skill_level, subject, subject_id }) => {
 						const subject_type = subject.object;
 						const new_lessons: Lesson[] = [];
 						if (subject_type === 'kanji') {

@@ -1,4 +1,4 @@
-import { browser } from '$app/env';
+import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 import Cookies from 'js-cookie';
 
@@ -9,12 +9,14 @@ if (browser) {
 	if (token) {
 		login_token_store.set(token);
 	}
+
+	login_token_store.subscribe((token) => {
+		if (token) {
+			Cookies.set('login_token', token);
+		} else {
+			Cookies.remove('login_token');
+		}
+	});
+	
 }
 
-login_token_store.subscribe((token) => {
-	if (token) {
-		Cookies.set('login_token', token);
-	} else {
-		Cookies.remove('login_token');
-	}
-});
