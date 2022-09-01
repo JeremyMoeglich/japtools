@@ -5,8 +5,9 @@
 	import { get_lessons } from './get_lessons';
 	import { get } from 'svelte/store';
 	import { subject_store } from '$lib/scripts/frontend/user/subject_store';
-import PrettyObj from '$lib/components/pretty_obj.svelte';
-import ReadingMeaning from './reading_meaning.svelte';
+	import PrettyObj from '$lib/components/pretty_obj.svelte';
+	import SymbolMeaning from './symbol_meaning.svelte';
+	import { browser } from '$app/environment';
 
 	async function decrease_level(subject_id: number) {
 		await update_subject_progress(
@@ -18,19 +19,24 @@ import ReadingMeaning from './reading_meaning.svelte';
 
 	let lesson_queue: Lesson[] = [];
 
-	$: (async () => {
+	async function update_lessons() {
+		lesson_queue = await get_lessons();
 		if (lesson_queue.length === 0) {
-			lesson_queue = await get_lessons();
-			if (lesson_queue.length === 0) {
-				throw new Error('No lessons found');
-			}
+			throw new Error('No lessons found');
 		}
-	})();
+	}
 
 	let current_lesson: Lesson | undefined = undefined;
-	
-	function next_lesson() {
+
+	async function next_lesson() {
 		current_lesson = lesson_queue.shift();
+		if (lesson_queue.length === 0) {
+			await update_lessons();
+		}
+	}
+
+	if (browser) {
+		update_lessons();
 	}
 </script>
 
@@ -40,8 +46,8 @@ import ReadingMeaning from './reading_meaning.svelte';
 	</div>
 	<div class="comp">
 		{#if current_lesson}
-			{#if current_lesson.lesson_type === 'reading_and_meaning'}
-				<ReadingMeaning {current_lesson} />
+			{#if current_lesson.lesson_type === 'symbol_and_meaning'}
+				<SymbolMeaning {current_lesson} callback={next_lesson} />
 			{:else}
 				<p>Unknown lesson type</p>
 			{/if}
