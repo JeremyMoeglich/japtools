@@ -8,12 +8,22 @@
 {:else if typeof obj === 'object'}
 	{#if obj === null}
 		<p>Null</p>
+	{:else if obj instanceof Array}
+		[
+		<ul>
+			{#each Object.entries(obj) as [str, sub_obj]}
+				<li>
+					{str}: <svelte:self obj={sub_obj} />,
+				</li>
+			{/each}
+		</ul>
+		]
 	{:else}
 		{'{'}
 		<ul>
 			{#each Object.entries(obj) as [str, sub_obj]}
 				<li>
-					{str}: <svelte:self obj={sub_obj} />
+					{str}: <svelte:self obj={sub_obj} />,
 				</li>
 			{/each}
 		</ul>
