@@ -1,4 +1,3 @@
-
 export interface CharacterImageMetadataSvg {
 	inline_styles: boolean;
 }
@@ -74,7 +73,7 @@ export interface KanjiData {
 	hidden_at: string | null;
 	lesson_position: number;
 	level: number;
-	meaning_hint: string | null
+	meaning_hint: string | null;
 	meaning_mnemonic: string;
 	meanings: Array<SubjectMeaning>;
 	reading_hint: string;

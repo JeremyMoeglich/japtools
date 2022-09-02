@@ -11,3 +11,4 @@ node_modules
 **/__pycache__
 /prisma/migrations
 /static/kanji.json
+**/target

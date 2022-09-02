@@ -1,6 +1,6 @@
 import get_root from './get_root.js';
 import path from 'path';
-import fs from 'fs'
+import fs from 'fs';
 import { z } from 'zod';
 import { subjectDataOuterSchema } from '$lib/scripts/universal/wanikani_data/wanikani_schema.js';
 

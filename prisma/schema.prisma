@@ -1,8 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
+generator jsclient {
   provider = "prisma-client-js"
+}
+
+generator rsclient {
+  provider = "cargo prisma"
+  output   = "../project-setup-rs/src/db.rs"
 }
 
 datasource db {
@@ -43,4 +45,108 @@ model Progress {
   subject_progress SubjectProgress[]
   User             User[]
   current_level    Int               @default(1)
+}
+
+model SubjectMeaning {
+  id               String          @id @default(cuid())
+  accepted_answer  Boolean
+  meaning          String
+  primary          Boolean
+  RadicalSubject   RadicalSubject? @relation(fields: [radicalSubjectId], references: [id])
+  radicalSubjectId Int?
+  KanjiSubject     KanjiSubject?   @relation(fields: [kanjiSubjectId], references: [id])
+  kanjiSubjectId   Int?
+}
+
+model AuxiliaryMeaning {
+  id                  String             @id @default(cuid())
+  meaning             String
+  type                String
+  RadicalSubject      RadicalSubject?    @relation(fields: [radicalSubjectId], references: [id])
+  radicalSubjectId    Int?
+  KanjiSubject        KanjiSubject?      @relation(fields: [kanjiSubjectId], references: [id])
+  kanjiSubjectId      Int?
+  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id])
+  vocabularySubjectId Int?
+}
+
+enum ReadingType {
+  ONYOMI
+  KUNYOMI
+  NANORI
+}
+
+model KanjiReading {
+  id             String        @id @default(cuid())
+  reading        String
+  type           ReadingType
+  primary        Boolean
+  KanjiSubject   KanjiSubject? @relation(fields: [kanjiSubjectId], references: [id])
+  kanjiSubjectId Int?
+}
+
+model VocabularyReading {
+  id              String  @id @default(cuid())
+  reading         String
+  primary         Boolean
+  accepted_answer Boolean
+}
+
+enum SubjectType {
+  KANJI
+  VOCABULARY
+  RADICAL
+}
+
+model SubjectIndex {
+  id             String              @id @default(cuid())
+  type           SubjectType
+  subjectId      Int
+  radical_ref    RadicalSubject[]
+  kanji_ref_amal KanjiSubject[]
+  vocab_ref      VocabularySubject[]
+}
+
+model RadicalSubject {
+  id                    Int                @id
+  amalgamation_subjects SubjectIndex[]
+  auxiliary_meanings    AuxiliaryMeaning[]
+  characters            String?
+  lesson_position       Int
+  level                 Int
+  meaning_mnemonic      String
+  meanings              SubjectMeaning[]
+}
+
+model KanjiSubject {
+  id                        Int                @id
+  amalgamation_subjects     SubjectIndex[]
+  auxiliary_meanings        AuxiliaryMeaning[]
+  characters                String
+  component_subjects        SubjectIndex[]
+  lesson_position           Int
+  level                     Int
+  meaning_hint              String
+  meaning_mnemonic          String
+  meanings                  SubjectMeaning[]
+  reading_hint              String
+  reading_mnemonic          String
+  readings                  KanjiReading[]
+  visually_similar_subjects SubjectIndex[]
+}
+
+model ContextSentence {
+  id                  String             @id @default(cuid())
+  en                  String
+  ja                  String
+  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id])
+  vocabularySubjectId Int?
+}
+
+model VocabularySubject {
+  id                 Int                @id
+  auxiliary_meanings AuxiliaryMeaning[]
+  characters         String
+  component_subjects SubjectIndex[]
+  context_sentences  ContextSentence[]
 }

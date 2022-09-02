@@ -17,6 +17,4 @@ if (browser) {
 			Cookies.remove('login_token');
 		}
 	});
-	
 }
-

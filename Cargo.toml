@@ -1,0 +1,3 @@
+[workspace]
+members = [ "./project-setup-rs", "./project-setup-rs/prisma-cli" ]
+resolver = "2"

@@ -11,7 +11,6 @@
 	let register_error: unknown = '';
 </script>
 
-
 <div class="side_alignment">
 	<div>
 		<h2>Sign in</h2>

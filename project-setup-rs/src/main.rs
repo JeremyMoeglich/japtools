@@ -6,6 +6,10 @@ use serde::{Deserialize, Serialize};
 use serde_json::to_string;
 use std::{collections::HashMap, env, error::Error, fs::{File, create_dir_all}, io::prelude::*};
 
+mod db;
+use db::PrismaClient;
+use prisma_client_rust::NewClientError;
+
 #[derive(Deserialize, Debug, Serialize, Clone)]
 pub struct CharacterImageMetadataSvg {
     inline_styles: bool,
@@ -233,12 +237,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    let data = to_string(&get_wanikani_data().await?)?;
-    let root_path = get_project_root()?;
-    let file_path = root_path.join("../src/lib/data/wanikani_data.json");
-    create_dir_all(file_path.parent().unwrap())?;
-    println!("Writing to {}", file_path.display());
-    let mut file = File::create(file_path)?;
-    file.write_all(data.as_bytes())?;
+    let data = &get_wanikani_data().await?;
+    let client = db::new_client().await?;
+
     Ok(())
 }
