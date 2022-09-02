@@ -7,6 +7,11 @@ generator rsclient {
   output   = "../project-setup-rs/src/db.rs"
 }
 
+generator zodclient {
+  provider = "zod-prisma"
+  output   = "../src/lib/scripts/universal/prisma_schema.ts"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -30,12 +35,13 @@ model LoginToken {
 }
 
 model SubjectProgress {
+  subject     SubjectIndex @relation(fields: [subject_id], references: [subjectId])
   subject_id  Int
   level       Int
-  skill_level Int      @default(0)
+  skill_level Int          @default(0)
   next_review DateTime
   progress_id String
-  Progress    Progress @relation(fields: [progress_id], references: [id])
+  progress    Progress     @relation(fields: [progress_id], references: [id])
 
   @@unique([subject_id, progress_id])
 }
@@ -48,20 +54,22 @@ model Progress {
 }
 
 model SubjectMeaning {
-  id               String          @id @default(cuid())
-  accepted_answer  Boolean
-  meaning          String
-  primary          Boolean
-  RadicalSubject   RadicalSubject? @relation(fields: [radicalSubjectId], references: [id])
-  radicalSubjectId Int?
-  KanjiSubject     KanjiSubject?   @relation(fields: [kanjiSubjectId], references: [id])
-  kanjiSubjectId   Int?
+  id                  String             @id @default(cuid())
+  accepted_answer     Boolean
+  meaning             String
+  primary             Boolean
+  RadicalSubject      RadicalSubject?    @relation(fields: [radicalSubjectId], references: [id])
+  radicalSubjectId    Int?
+  KanjiSubject        KanjiSubject?      @relation(fields: [kanjiSubjectId], references: [id])
+  kanjiSubjectId      Int?
+  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id])
+  vocabularySubjectId Int?
 }
 
 model AuxiliaryMeaning {
   id                  String             @id @default(cuid())
   meaning             String
-  type                String
+  auxiliary_type      String
   RadicalSubject      RadicalSubject?    @relation(fields: [radicalSubjectId], references: [id])
   radicalSubjectId    Int?
   KanjiSubject        KanjiSubject?      @relation(fields: [kanjiSubjectId], references: [id])
@@ -77,19 +85,21 @@ enum ReadingType {
 }
 
 model KanjiReading {
-  id             String        @id @default(cuid())
+  id             String       @id @default(cuid())
   reading        String
-  type           ReadingType
+  reading_type   ReadingType
   primary        Boolean
-  KanjiSubject   KanjiSubject? @relation(fields: [kanjiSubjectId], references: [id])
-  kanjiSubjectId Int?
+  KanjiSubject   KanjiSubject @relation(fields: [kanjiSubjectId], references: [id])
+  kanjiSubjectId Int
 }
 
 model VocabularyReading {
-  id              String  @id @default(cuid())
-  reading         String
-  primary         Boolean
-  accepted_answer Boolean
+  id                  String            @id @default(cuid())
+  reading             String
+  primary             Boolean
+  accepted_answer     Boolean
+  VocabularySubject   VocabularySubject @relation(fields: [vocabularySubjectId], references: [id])
+  vocabularySubjectId Int
 }
 
 enum SubjectType {
@@ -99,12 +109,14 @@ enum SubjectType {
 }
 
 model SubjectIndex {
-  id             String              @id @default(cuid())
-  type           SubjectType
-  subjectId      Int
-  radical_ref    RadicalSubject[]
-  kanji_ref_amal KanjiSubject[]
-  vocab_ref      VocabularySubject[]
+  subject_type    SubjectType
+  subjectId       Int                 @id
+  radical_ref     RadicalSubject[]
+  kanji_ref_amal  KanjiSubject[]      @relation(name: "amalgamation_subjects")
+  kanji_ref_sim   KanjiSubject[]      @relation(name: "visually_similar_subjects")
+  kanji_ref_comp  KanjiSubject[]      @relation(name: "component_subjects")
+  vocab_ref       VocabularySubject[]
+  SubjectProgress SubjectProgress[]
 }
 
 model RadicalSubject {
@@ -120,10 +132,10 @@ model RadicalSubject {
 
 model KanjiSubject {
   id                        Int                @id
-  amalgamation_subjects     SubjectIndex[]
+  amalgamation_subjects     SubjectIndex[]     @relation(name: "amalgamation_subjects")
   auxiliary_meanings        AuxiliaryMeaning[]
   characters                String
-  component_subjects        SubjectIndex[]
+  component_subjects        SubjectIndex[]     @relation(name: "component_subjects")
   lesson_position           Int
   level                     Int
   meaning_hint              String
@@ -132,7 +144,7 @@ model KanjiSubject {
   reading_hint              String
   reading_mnemonic          String
   readings                  KanjiReading[]
-  visually_similar_subjects SubjectIndex[]
+  visually_similar_subjects SubjectIndex[]     @relation(name: "visually_similar_subjects")
 }
 
 model ContextSentence {
@@ -144,9 +156,15 @@ model ContextSentence {
 }
 
 model VocabularySubject {
-  id                 Int                @id
+  id                 Int                 @id
   auxiliary_meanings AuxiliaryMeaning[]
   characters         String
   component_subjects SubjectIndex[]
   context_sentences  ContextSentence[]
+  lesson_position    Int
+  level              Int
+  meaning_mnemonic   String
+  meanings           SubjectMeaning[]
+  reading_mnemonic   String
+  readings           VocabularyReading[]
 }
