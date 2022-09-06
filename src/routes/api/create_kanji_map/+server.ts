@@ -1,4 +1,4 @@
-import { get_request_body } from '$lib/scripts/backend/endpoint_utils';
+import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
 import type { RequestHandler } from './$types';
 import { z } from 'zod';
 import { json } from '@sveltejs/kit';

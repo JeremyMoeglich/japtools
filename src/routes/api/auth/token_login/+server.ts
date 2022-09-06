@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { get_request_body } from '$lib/scripts/backend/endpoint_utils';
-import { prisma_client } from '$lib/scripts/backend/db/prisma_client';
+import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
+import { prisma_client } from '$lib/scripts/backend/db/prisma_client.server';
 import type { RequestHandler } from './$types';
 import { z } from 'zod';
 

@@ -8,7 +8,7 @@ generator rsclient {
 }
 
 generator zod {
-  provider = "prisma-zod-generator"
+  provider = "npx prisma-zod-generator"
   output   = "../src/lib/scripts/universal/prisma_schemas"
 }
 

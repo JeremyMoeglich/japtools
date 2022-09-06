@@ -1,5 +1,5 @@
-import { prisma_client } from '$lib/scripts/backend/db/prisma_client';
-import { get_auth_user_data, get_request_body } from '$lib/scripts/backend/endpoint_utils';
+import { prisma_client } from '$lib/scripts/backend/db/prisma_client.server';
+import { get_auth_user_data, get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
 import {
 	get_subjects_by_level,
 	get_subject_by_id

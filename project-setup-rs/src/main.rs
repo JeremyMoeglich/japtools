@@ -288,6 +288,29 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                     .collect_vec(),
                             )
                             .await,
+                            db::kanji_subject::readings::set(
+                                join_all(
+                                    kanji_data
+                                        .auxiliary_meanings
+                                        .iter()
+                                        .map(|auxiliary_meaning| async {
+                                            let id = cuid::cuid().unwrap();
+                                            client
+                                                .auxiliary_meaning()
+                                                .create(
+                                                    auxiliary_meaning.meaning.clone(),
+                                                    auxiliary_meaning.meaning_type.clone(),
+                                                    vec![db::auxiliary_meaning::id::set(id.clone())],
+                                                )
+                                                .exec()
+                                                .await
+                                                .unwrap();
+                                            db::auxiliary_meaning::id::equals(id)
+                                        })
+                                        .collect_vec(),
+                                )
+                                .await,
+                                
                         )];
                         client.kanji_subject().upsert(
                             db::kanji_subject::id::equals(subject.id as i32),

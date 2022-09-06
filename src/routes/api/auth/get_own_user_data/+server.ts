@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { get_auth_user_data } from '$lib/scripts/backend/endpoint_utils';
+import { get_auth_user_data } from '$lib/scripts/backend/endpoint_utils.server';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ request }) => {
