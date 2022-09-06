@@ -13,3 +13,4 @@ node_modules
 /static/kanji.json
 **/target
 **/db.rs
+**/prisma_schemas

@@ -39,12 +39,14 @@ if (!existsSync(dotenv_path)) {
 	}
 }
 
+
+cmd("npm run generate");
 cmd(`cd ${path.join(project_root, '/project-setup-rs')} && cargo run --release`);
 
 cmd(`esrun ${path.join(project_root, '/scripts/run.ts')}`);
 
 cmd(
-	`cd ${project_root} && prisma migrate dev --name init && prisma generate && vite build && docker compose down`
+	`cd ${project_root} && npm run migration init && prisma generate && vite build && docker compose down`
 );
 
 console.log(

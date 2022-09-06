@@ -10,7 +10,9 @@
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check --plugin-search-dir=. . && eslint .",
 		"format": "prettier --write --plugin-search-dir=. .",
-		"dosetup": "esrun scripts/setup.ts"
+		"dosetup": "esrun scripts/setup.ts",
+		"generate": "prisma generate",
+		"migration": "prisma migrate dev --name"
 	},
 	"devDependencies": {
 		"@prisma/client": "^4.3.0",
@@ -56,6 +58,7 @@
 		"js-levenshtein": "^1.1.6",
 		"lodash-es": "^4.17.21",
 		"pkg-up": "^4.0.0",
+		"prisma-zod-generator": "^0.5.1",
 		"wanakana": "^5.0.2",
 		"zod": "^3.18.0"
 	}

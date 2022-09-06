@@ -7,9 +7,9 @@ generator rsclient {
   output   = "../project-setup-rs/src/db.rs"
 }
 
-generator zodclient {
-  provider = "zod-prisma"
-  output   = "../src/lib/scripts/universal/prisma_schema.ts"
+generator zod {
+  provider = "prisma-zod-generator"
+  output   = "../src/lib/scripts/universal/prisma_schemas"
 }
 
 datasource db {
@@ -110,41 +110,36 @@ enum SubjectType {
 
 model SubjectIndex {
   subject_type    SubjectType
-  subjectId       Int                 @id
-  radical_ref     RadicalSubject[]
-  kanji_ref_amal  KanjiSubject[]      @relation(name: "amalgamation_subjects")
-  kanji_ref_sim   KanjiSubject[]      @relation(name: "visually_similar_subjects")
-  kanji_ref_comp  KanjiSubject[]      @relation(name: "component_subjects")
-  vocab_ref       VocabularySubject[]
+  subjectId       Int               @id
   SubjectProgress SubjectProgress[]
 }
 
 model RadicalSubject {
-  id                    Int                @id
-  amalgamation_subjects SubjectIndex[]
-  auxiliary_meanings    AuxiliaryMeaning[]
-  characters            String?
-  lesson_position       Int
-  level                 Int
-  meaning_mnemonic      String
-  meanings              SubjectMeaning[]
+  id                       Int                @id
+  amalgamation_subject_ids Int[]
+  auxiliary_meanings       AuxiliaryMeaning[]
+  characters               String?
+  lesson_position          Int
+  level                    Int
+  meaning_mnemonic         String
+  meanings                 SubjectMeaning[]
 }
 
 model KanjiSubject {
-  id                        Int                @id
-  amalgamation_subjects     SubjectIndex[]     @relation(name: "amalgamation_subjects")
-  auxiliary_meanings        AuxiliaryMeaning[]
-  characters                String
-  component_subjects        SubjectIndex[]     @relation(name: "component_subjects")
-  lesson_position           Int
-  level                     Int
-  meaning_hint              String
-  meaning_mnemonic          String
-  meanings                  SubjectMeaning[]
-  reading_hint              String
-  reading_mnemonic          String
-  readings                  KanjiReading[]
-  visually_similar_subjects SubjectIndex[]     @relation(name: "visually_similar_subjects")
+  id                           Int                @id
+  amalgamation_subject_ids     Int[]
+  auxiliary_meanings           AuxiliaryMeaning[]
+  characters                   String
+  component_subject_ids        Int[]
+  lesson_position              Int
+  level                        Int
+  meaning_hint                 String?
+  meaning_mnemonic             String
+  meanings                     SubjectMeaning[]
+  reading_hint                 String
+  reading_mnemonic             String
+  readings                     KanjiReading[]
+  visually_similar_subject_ids Int[]
 }
 
 model ContextSentence {
@@ -156,15 +151,15 @@ model ContextSentence {
 }
 
 model VocabularySubject {
-  id                 Int                 @id
-  auxiliary_meanings AuxiliaryMeaning[]
-  characters         String
-  component_subjects SubjectIndex[]
-  context_sentences  ContextSentence[]
-  lesson_position    Int
-  level              Int
-  meaning_mnemonic   String
-  meanings           SubjectMeaning[]
-  reading_mnemonic   String
-  readings           VocabularyReading[]
+  id                    Int                 @id
+  auxiliary_meanings    AuxiliaryMeaning[]
+  characters            String
+  component_subject_ids Int[]
+  context_sentences     ContextSentence[]
+  lesson_position       Int
+  level                 Int
+  meaning_mnemonic      String
+  meanings              SubjectMeaning[]
+  reading_mnemonic      String
+  readings              VocabularyReading[]
 }

@@ -535,6 +535,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "cuid"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2a2891c056384f8461606f2579208164d67475fb17a0f442ac8d5981d3c2807"
+dependencies = [
+ "hostname 0.3.1",
+ "lazy_static",
+ "rand 0.8.5",
+]
+
+[[package]]
 name = "darling"
 version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -669,7 +680,7 @@ version = "0.1.0"
 source = "git+https://github.com/Brendonovich/prisma-engines?rev=dcea2c532cb777afb290a613f769140647a16804#dcea2c532cb777afb290a613f769140647a16804"
 dependencies = [
  "chrono",
- "cuid",
+ "cuid 0.1.0",
  "enumflags2",
  "indoc",
  "native-types",
@@ -1858,7 +1869,7 @@ dependencies = [
  "async-trait",
  "bigdecimal 0.2.2",
  "chrono",
- "cuid",
+ "cuid 0.1.0",
  "datamodel",
  "futures",
  "indexmap",
@@ -2604,7 +2615,9 @@ name = "project-setup-rs"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "cuid 1.2.0",
  "dotenv",
+ "futures-util",
  "indicatif",
  "itertools",
  "prisma-client-rust",
@@ -2613,6 +2626,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
+ "tokio-stream",
 ]
 
 [[package]]
@@ -2702,7 +2716,7 @@ dependencies = [
  "chrono",
  "connection-string",
  "crossbeam-queue",
- "cuid",
+ "cuid 0.1.0",
  "datamodel",
  "datamodel-connector",
  "futures",
@@ -3413,7 +3427,7 @@ dependencies = [
  "async-trait",
  "bigdecimal 0.2.2",
  "chrono",
- "cuid",
+ "cuid 0.1.0",
  "datamodel",
  "futures",
  "itertools",
@@ -3719,6 +3733,17 @@ dependencies = [
  "rustls",
  "tokio",
  "webpki",
+]
+
+[[package]]
+name = "tokio-stream"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df54d54117d6fdc4e4fea40fe1e4e566b3505700e148a6827e59b34b0d2600d9"
+dependencies = [
+ "futures-core",
+ "pin-project-lite",
+ "tokio",
 ]
 
 [[package]]
