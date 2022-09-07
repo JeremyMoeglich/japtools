@@ -35,13 +35,13 @@ model LoginToken {
 }
 
 model SubjectProgress {
-  subject     SubjectIndex @relation(fields: [subject_id], references: [subjectId])
+  subject     SubjectIndex @relation(fields: [subject_id], references: [subjectId], onDelete: Cascade, onUpdate: Cascade)
   subject_id  Int
   level       Int
   skill_level Int          @default(0)
   next_review DateTime
   progress_id String
-  progress    Progress     @relation(fields: [progress_id], references: [id])
+  progress    Progress     @relation(fields: [progress_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([subject_id, progress_id])
 }
@@ -58,11 +58,11 @@ model SubjectMeaning {
   accepted_answer     Boolean
   meaning             String
   primary             Boolean
-  RadicalSubject      RadicalSubject?    @relation(fields: [radicalSubjectId], references: [id])
+  RadicalSubject      RadicalSubject?    @relation(fields: [radicalSubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   radicalSubjectId    Int?
-  KanjiSubject        KanjiSubject?      @relation(fields: [kanjiSubjectId], references: [id])
+  KanjiSubject        KanjiSubject?      @relation(fields: [kanjiSubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   kanjiSubjectId      Int?
-  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id])
+  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   vocabularySubjectId Int?
 }
 
@@ -70,11 +70,11 @@ model AuxiliaryMeaning {
   id                  String             @id @default(cuid())
   meaning             String
   auxiliary_type      String
-  RadicalSubject      RadicalSubject?    @relation(fields: [radicalSubjectId], references: [id])
+  RadicalSubject      RadicalSubject?    @relation(fields: [radicalSubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   radicalSubjectId    Int?
-  KanjiSubject        KanjiSubject?      @relation(fields: [kanjiSubjectId], references: [id])
+  KanjiSubject        KanjiSubject?      @relation(fields: [kanjiSubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   kanjiSubjectId      Int?
-  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id])
+  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   vocabularySubjectId Int?
 }
 
@@ -89,7 +89,7 @@ model KanjiReading {
   reading        String
   reading_type   ReadingType
   primary        Boolean
-  KanjiSubject   KanjiSubject @relation(fields: [kanjiSubjectId], references: [id])
+  KanjiSubject   KanjiSubject @relation(fields: [kanjiSubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   kanjiSubjectId Int
 }
 
@@ -98,7 +98,7 @@ model VocabularyReading {
   reading             String
   primary             Boolean
   accepted_answer     Boolean
-  VocabularySubject   VocabularySubject @relation(fields: [vocabularySubjectId], references: [id])
+  VocabularySubject   VocabularySubject @relation(fields: [vocabularySubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   vocabularySubjectId Int
 }
 
@@ -146,7 +146,7 @@ model ContextSentence {
   id                  String             @id @default(cuid())
   en                  String
   ja                  String
-  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id])
+  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   vocabularySubjectId Int?
 }
 

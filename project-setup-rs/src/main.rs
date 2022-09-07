@@ -1,5 +1,5 @@
 use dotenv::dotenv;
-use futures_util::{future::join_all, StreamExt};
+use futures_util::StreamExt;
 use indicatif::ProgressBar;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
@@ -242,79 +242,74 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .map(|subject| {
             tokio::spawn(async move {
                 let client = db::new_client().await.expect("Failed to create client");
+
+                let index_exists = client
+                    .subject_index()
+                    .find_unique(db::subject_index::subject_id::equals(subject.id as i32))
+                    .exec()
+                    .await
+                    .unwrap();
+
+                match &index_exists {
+                    Some(index) => match index.subject_type {
+                        db::SubjectType::Radical => {
+                            client
+                                .radical_subject()
+                                .delete(db::radical_subject::id::equals(index.subject_id as i32))
+                                .exec()
+                                .await
+                                .unwrap();
+                        }
+                        db::SubjectType::Kanji => {
+                            client
+                                .kanji_subject()
+                                .delete(db::kanji_subject::id::equals(index.subject_id as i32))
+                                .exec()
+                                .await
+                                .unwrap();
+                        }
+                        db::SubjectType::Vocabulary => {
+                            client
+                                .vocabulary_subject()
+                                .delete(db::vocabulary_subject::id::equals(index.subject_id as i32))
+                                .exec()
+                                .await
+                                .unwrap();
+                        }
+                    },
+                    None => (),
+                }
+
+                if let Some(index) = index_exists {
+                    client
+                        .subject_index()
+                        .delete(db::subject_index::subject_id::equals(
+                            index.subject_id as i32,
+                        ))
+                        .exec()
+                        .await
+                        .unwrap();
+                }
+
                 client
                     .subject_index()
-                    .upsert(
-                        db::subject_index::subject_id::equals(subject.id as i32),
-                        db::subject_index::create(
-                            match &subject.data {
-                                SubjectData::Radical(_) => db::SubjectType::Radical,
-                                SubjectData::Kanji(_) => db::SubjectType::Kanji,
-                                SubjectData::Vocabulary(_) => db::SubjectType::Vocabulary,
-                            },
-                            subject.id as i32,
-                            vec![],
-                        ),
-                        vec![db::subject_index::subject_type::set(match &subject.data {
+                    .create(
+                        match &subject.data {
                             SubjectData::Radical(_) => db::SubjectType::Radical,
                             SubjectData::Kanji(_) => db::SubjectType::Kanji,
                             SubjectData::Vocabulary(_) => db::SubjectType::Vocabulary,
-                        })],
+                        },
+                        subject.id as i32,
+                        vec![],
                     )
                     .exec()
                     .await
                     .unwrap();
                 match &subject.data {
                     SubjectData::Kanji(kanji_data) => {
-                        let kanji_relations = vec![db::kanji_subject::auxiliary_meanings::set(
-                            join_all(
-                                kanji_data
-                                    .auxiliary_meanings
-                                    .iter()
-                                    .map(|auxiliary_meaning| async {
-                                        let id = cuid::cuid().unwrap();
-                                        client
-                                            .auxiliary_meaning()
-                                            .create(
-                                                auxiliary_meaning.meaning.clone(),
-                                                auxiliary_meaning.meaning_type.clone(),
-                                                vec![db::auxiliary_meaning::id::set(id.clone())],
-                                            )
-                                            .exec()
-                                            .await
-                                            .unwrap();
-                                        db::auxiliary_meaning::id::equals(id)
-                                    })
-                                    .collect_vec(),
-                            )
-                            .await,
-                            db::kanji_subject::readings::set(
-                                join_all(
-                                    kanji_data
-                                        .auxiliary_meanings
-                                        .iter()
-                                        .map(|auxiliary_meaning| async {
-                                            let id = cuid::cuid().unwrap();
-                                            client
-                                                .auxiliary_meaning()
-                                                .create(
-                                                    auxiliary_meaning.meaning.clone(),
-                                                    auxiliary_meaning.meaning_type.clone(),
-                                                    vec![db::auxiliary_meaning::id::set(id.clone())],
-                                                )
-                                                .exec()
-                                                .await
-                                                .unwrap();
-                                            db::auxiliary_meaning::id::equals(id)
-                                        })
-                                        .collect_vec(),
-                                )
-                                .await,
-                                
-                        )];
-                        client.kanji_subject().upsert(
-                            db::kanji_subject::id::equals(subject.id as i32),
-                            db::kanji_subject::create(
+                        client
+                            .kanji_subject()
+                            .create(
                                 subject.id as i32,
                                 kanji_data.characters.clone(),
                                 kanji_data.lesson_position as i32,
@@ -348,30 +343,76 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                             .collect(),
                                     ),
                                 ],
-                            ),
-                            vec![
-                                db::kanji_subject::characters::set(kanji_data.characters.clone()),
-                                db::kanji_subject::lesson_position::set(
-                                    kanji_data.lesson_position as i32,
-                                ),
-                                db::kanji_subject::level::set(kanji_data.level as i32),
-                                db::kanji_subject::meaning_hint::set(
-                                    kanji_data.meaning_hint.clone(),
-                                ),
-                                db::kanji_subject::meaning_mnemonic::set(
-                                    kanji_data.meaning_mnemonic.clone(),
-                                ),
-                                db::kanji_subject::reading_hint::set(
-                                    kanji_data.reading_hint.clone(),
-                                ),
-                                db::kanji_subject::reading_mnemonic::set(
-                                    kanji_data.reading_mnemonic.clone(),
-                                ),
-                            ]
-                            .into_iter()
-                            .chain(kanji_relations)
-                            .collect(),
-                        )
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+                        client
+                            .kanji_reading()
+                            .create_many(
+                                kanji_data
+                                    .readings
+                                    .iter()
+                                    .map(|reading| {
+                                        db::kanji_reading::create(
+                                            reading.reading.clone(),
+                                            match reading.reading_type {
+                                                ReadingType::Onyomi => db::ReadingType::Onyomi,
+                                                ReadingType::Kunyomi => db::ReadingType::Kunyomi,
+                                                ReadingType::Nanori => db::ReadingType::Nanori,
+                                            },
+                                            reading.primary,
+                                            db::kanji_subject::id::equals(subject.id as i32),
+                                            vec![],
+                                        )
+                                    })
+                                    .collect(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+
+                        client
+                            .auxiliary_meaning()
+                            .create_many(
+                                kanji_data
+                                    .auxiliary_meanings
+                                    .iter()
+                                    .map(|auxiliary_meaning| {
+                                        db::auxiliary_meaning::create(
+                                            auxiliary_meaning.meaning.clone(),
+                                            auxiliary_meaning.meaning_type.clone(),
+                                            vec![db::auxiliary_meaning::kanji_subject_id::set(
+                                                Some(subject.id as i32),
+                                            )],
+                                        )
+                                    })
+                                    .collect(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+
+                        client
+                            .auxiliary_meaning()
+                            .create_many(
+                                kanji_data
+                                    .auxiliary_meanings
+                                    .iter()
+                                    .map(|auxiliary_meaning| {
+                                        db::auxiliary_meaning::create(
+                                            auxiliary_meaning.meaning.clone(),
+                                            auxiliary_meaning.meaning_type.clone(),
+                                            vec![db::auxiliary_meaning::kanji_subject_id::set(
+                                                Some(subject.id as i32),
+                                            )],
+                                        )
+                                    })
+                                    .collect_vec(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
                     }
                 };
             })
