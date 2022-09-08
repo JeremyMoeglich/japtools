@@ -85,7 +85,7 @@ enum ReadingType {
 }
 
 model KanjiReading {
-  id             String       @id @default(cuid())
+  id             String        @id @default(cuid())
   reading        String
   reading_type   ReadingType
   primary        Boolean
@@ -112,6 +112,8 @@ model SubjectIndex {
   subject_type    SubjectType
   subjectId       Int               @id
   SubjectProgress SubjectProgress[]
+  readings        String[]
+  level           Int
 }
 
 model RadicalSubject {
@@ -129,7 +131,7 @@ model KanjiSubject {
   id                           Int                @id
   amalgamation_subject_ids     Int[]
   auxiliary_meanings           AuxiliaryMeaning[]
-  characters                   String
+  characters                   String             @unique
   component_subject_ids        Int[]
   lesson_position              Int
   level                        Int

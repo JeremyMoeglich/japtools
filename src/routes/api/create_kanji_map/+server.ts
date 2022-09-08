@@ -2,7 +2,7 @@ import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
 import type { RequestHandler } from './$types';
 import { z } from 'zod';
 import { json } from '@sveltejs/kit';
-import { get_subject_by_kanji } from '$lib/scripts/universal/wanikani_data/wanikani_data';
+import { get_subject_by_kanji } from '$lib/scripts/backend/wanikani_data.server';
 
 export const GET: RequestHandler = async ({ request }) => {
 	const { text } = await get_request_body(

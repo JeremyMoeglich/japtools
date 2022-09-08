@@ -39,8 +39,7 @@ if (!existsSync(dotenv_path)) {
 	}
 }
 
-
-cmd("npm run generate");
+cmd('npm run generate');
 cmd(`cd ${path.join(project_root, '/project-setup-rs')} && cargo run --release`);
 
 cmd(`esrun ${path.join(project_root, '/scripts/run.ts')}`);

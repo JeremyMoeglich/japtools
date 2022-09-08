@@ -1,8 +1,8 @@
-import type { SubjectDataOuter } from './wanikani_data/wanikani_types';
+import type { SubjectType } from '@prisma/client';
 import type { JsonObject } from 'type-fest';
 
 interface LessonInterface<ID extends number> {
-	subject_type: SubjectDataOuter['object'];
+	subject_type: SubjectType;
 	subject_id: ID;
 	required_data: JsonObject;
 	skill_level: number;
@@ -10,7 +10,7 @@ interface LessonInterface<ID extends number> {
 }
 
 export interface ReadingAndMeaning<ID extends number> extends LessonInterface<ID> {
-	subject_type: 'vocabulary' | 'kanji';
+	subject_type: 'VOCABULARY' | 'KANJI';
 	required_data: {
 		readings: string[];
 		meanings: string[];
@@ -30,7 +30,7 @@ export interface SymbolAndMeaning<ID extends number> extends LessonInterface<ID>
 }
 
 export interface KanjiNanKunOnYomi<ID extends number> extends LessonInterface<ID> {
-	subject_type: 'kanji';
+	subject_type: 'KANJI';
 	required_data: {
 		kanji: string;
 		kunyomi: string[];
@@ -41,7 +41,7 @@ export interface KanjiNanKunOnYomi<ID extends number> extends LessonInterface<ID
 }
 
 export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<ID> {
-	subject_type: 'vocabulary';
+	subject_type: 'VOCABULARY';
 	required_data: {
 		vocabulary: string;
 		string_map: ('kunyomi' | 'onyomi' | 'nanori' | 'not_a_kanji')[];

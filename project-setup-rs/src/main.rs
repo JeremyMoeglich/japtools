@@ -252,7 +252,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    let map = Arc::new(fetch_wanikani_data().await?);
+    let map = Arc::new(load_wanikani_data().await?);
     let client = Arc::new(db::new_client().await.expect("Failed to create client"));
 
     //write json to file tokio
@@ -331,7 +331,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
                             SubjectData::Vocabulary(_) => db::SubjectType::Vocabulary,
                         },
                         subject.id as i32,
-                        vec![],
+                        match &subject.data {
+                            SubjectData::Radical(data) => data.level as i32,
+                            SubjectData::Kanji(data) => data.level as i32,
+                            SubjectData::Vocabulary(data) => data.level as i32,
+                        },
+                        vec![db::subject_index::readings::set(match &subject.data {
+                            SubjectData::Radical(_) => vec![],
+                            SubjectData::Kanji(data) => data
+                                .readings
+                                .iter()
+                                .map(|x| x.reading.clone())
+                                .collect_vec(),
+                            SubjectData::Vocabulary(data) => data
+                                .readings
+                                .iter()
+                                .map(|x| x.reading.clone())
+                                .collect_vec(),
+                        })],
                     )
                     .exec()
                     .await

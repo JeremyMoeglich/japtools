@@ -3,7 +3,7 @@ import { get_auth_user_data, get_request_body } from '$lib/scripts/backend/endpo
 import {
 	get_subjects_by_level,
 	get_subject_by_id
-} from '$lib/scripts/universal/wanikani_data/wanikani_data';
+} from '$lib/scripts/backend/wanikani_data.server';
 import type { RequestHandler } from './$types';
 import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
