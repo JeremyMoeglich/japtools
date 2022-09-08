@@ -4,6 +4,10 @@ use indicatif::ProgressBar;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, env, error::Error, sync::Arc};
+use tokio::{
+    fs::File,
+    io::{AsyncReadExt, AsyncWriteExt},
+};
 use tokio_stream::{self as stream};
 
 mod db;
@@ -192,7 +196,7 @@ pub struct RequestData {
     pages: Pages,
 }
 
-pub async fn get_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box<dyn Error>> {
+pub async fn fetch_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box<dyn Error>> {
     let client = reqwest::Client::new();
 
     let mut values = Vec::new();
@@ -224,6 +228,18 @@ pub async fn get_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box<d
         .map(|x| (x.id, x))
         .collect::<HashMap<u32, SubjectDataOuter>>();
 
+    let mut file = File::create("wanikani.json").await?;
+    file.write_all(serde_json::to_string(&subject_map).unwrap().as_bytes())
+        .await?;
+
+    Ok(subject_map)
+}
+
+pub async fn load_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box<dyn Error>> {
+    let mut file = File::open("wanikani.json").await?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).await?;
+    let subject_map: HashMap<u32, SubjectDataOuter> = serde_json::from_str(&contents)?;
     Ok(subject_map)
 }
 
@@ -236,12 +252,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    let map = Arc::new(get_wanikani_data().await?);
+    let map = Arc::new(fetch_wanikani_data().await?);
+    let client = Arc::new(db::new_client().await.expect("Failed to create client"));
+
+    //write json to file tokio
 
     let tasks = stream::iter(map.clone().iter().map(|x| x.1.clone()).collect_vec())
         .map(|subject| {
+            let client = client.clone();
             tokio::spawn(async move {
-                let client = db::new_client().await.expect("Failed to create client");
+                println!("Inserting {}", subject.id);
 
                 let index_exists = client
                     .subject_index()
@@ -253,44 +273,55 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 match &index_exists {
                     Some(index) => match index.subject_type {
                         db::SubjectType::Radical => {
-                            client
+                            match client
                                 .radical_subject()
                                 .delete(db::radical_subject::id::equals(index.subject_id as i32))
                                 .exec()
                                 .await
-                                .unwrap();
+                            {
+                                Ok(_) => (),
+                                Err(e) => println!("Error deleting radical: {}", e),
+                            }
                         }
                         db::SubjectType::Kanji => {
-                            client
+                            match client
                                 .kanji_subject()
                                 .delete(db::kanji_subject::id::equals(index.subject_id as i32))
                                 .exec()
                                 .await
-                                .unwrap();
+                            {
+                                Ok(_) => (),
+                                Err(e) => println!("Error deleting kanji: {}", e),
+                            }
                         }
                         db::SubjectType::Vocabulary => {
-                            client
+                            match client
                                 .vocabulary_subject()
                                 .delete(db::vocabulary_subject::id::equals(index.subject_id as i32))
                                 .exec()
                                 .await
-                                .unwrap();
+                            {
+                                Ok(_) => (),
+                                Err(e) => println!("Error deleting vocabulary: {}", e),
+                            }
                         }
                     },
                     None => (),
                 }
 
                 if let Some(index) = index_exists {
-                    client
+                    match client
                         .subject_index()
                         .delete(db::subject_index::subject_id::equals(
                             index.subject_id as i32,
                         ))
                         .exec()
                         .await
-                        .unwrap();
+                    {
+                        Ok(_) => (),
+                        Err(e) => println!("Error deleting index: {}", e),
+                    }
                 }
-
                 client
                     .subject_index()
                     .create(
@@ -362,8 +393,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                                 ReadingType::Nanori => db::ReadingType::Nanori,
                                             },
                                             reading.primary,
-                                            db::kanji_subject::id::equals(subject.id as i32),
-                                            vec![],
+                                            vec![db::kanji_reading::kanji_subject_id::set(Some(
+                                                subject.id as i32,
+                                            ))],
                                         )
                                     })
                                     .collect(),
@@ -414,12 +446,190 @@ async fn main() -> Result<(), Box<dyn Error>> {
                             .await
                             .unwrap();
                     }
+                    SubjectData::Radical(radical_data) => {
+                        client
+                            .radical_subject()
+                            .create(
+                                subject.id as i32,
+                                radical_data.lesson_position as i32,
+                                radical_data.level as i32,
+                                radical_data.meaning_mnemonic.clone(),
+                                vec![
+                                    db::radical_subject::characters::set(
+                                        radical_data.characters.clone(),
+                                    ),
+                                    db::radical_subject::amalgamation_subject_ids::set(
+                                        radical_data
+                                            .amalgamation_subject_ids
+                                            .iter()
+                                            .map(|x| *x as i32)
+                                            .collect(),
+                                    ),
+                                ],
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+                        client
+                            .auxiliary_meaning()
+                            .create_many(
+                                radical_data
+                                    .auxiliary_meanings
+                                    .iter()
+                                    .map(|auxiliary_meaning| {
+                                        db::auxiliary_meaning::create(
+                                            auxiliary_meaning.meaning.clone(),
+                                            auxiliary_meaning.meaning_type.clone(),
+                                            vec![db::auxiliary_meaning::radical_subject_id::set(
+                                                Some(subject.id as i32),
+                                            )],
+                                        )
+                                    })
+                                    .collect_vec(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+                        client
+                            .subject_meaning()
+                            .create_many(
+                                radical_data
+                                    .meanings
+                                    .iter()
+                                    .map(|meaning| {
+                                        db::subject_meaning::create(
+                                            meaning.accepted_answer,
+                                            meaning.meaning.clone(),
+                                            meaning.primary,
+                                            vec![db::subject_meaning::radical_subject_id::set(
+                                                Some(subject.id as i32),
+                                            )],
+                                        )
+                                    })
+                                    .collect_vec(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+                    }
+                    SubjectData::Vocabulary(vocabulary_data) => {
+                        client
+                            .vocabulary_subject()
+                            .create(
+                                subject.id as i32,
+                                vocabulary_data.characters.clone(),
+                                vocabulary_data.lesson_position as i32,
+                                vocabulary_data.level as i32,
+                                vocabulary_data.meaning_mnemonic.clone(),
+                                vocabulary_data.reading_mnemonic.clone(),
+                                vec![db::vocabulary_subject::component_subject_ids::set(
+                                    vocabulary_data
+                                        .component_subject_ids
+                                        .iter()
+                                        .map(|x| *x as i32)
+                                        .collect(),
+                                )],
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+                        client
+                            .auxiliary_meaning()
+                            .create_many(
+                                vocabulary_data
+                                    .auxiliary_meanings
+                                    .iter()
+                                    .map(|auxiliary_meaning| {
+                                        db::auxiliary_meaning::create(
+                                            auxiliary_meaning.meaning.clone(),
+                                            auxiliary_meaning.meaning_type.clone(),
+                                            vec![
+                                                db::auxiliary_meaning::vocabulary_subject_id::set(
+                                                    Some(subject.id as i32),
+                                                ),
+                                            ],
+                                        )
+                                    })
+                                    .collect_vec(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+                        client
+                            .context_sentence()
+                            .create_many(
+                                vocabulary_data
+                                    .context_sentences
+                                    .iter()
+                                    .map(|context_sentence| {
+                                        db::context_sentence::create(
+                                            context_sentence.en.clone(),
+                                            context_sentence.ja.clone(),
+                                            vec![db::context_sentence::vocabulary_subject_id::set(
+                                                Some(subject.id as i32),
+                                            )],
+                                        )
+                                    })
+                                    .collect_vec(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+                        client
+                            .subject_meaning()
+                            .create_many(
+                                vocabulary_data
+                                    .meanings
+                                    .iter()
+                                    .map(|meaning| {
+                                        db::subject_meaning::create(
+                                            meaning.accepted_answer,
+                                            meaning.meaning.clone(),
+                                            meaning.primary,
+                                            vec![db::subject_meaning::vocabulary_subject_id::set(
+                                                Some(subject.id as i32),
+                                            )],
+                                        )
+                                    })
+                                    .collect_vec(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+                        client
+                            .vocabulary_reading()
+                            .create_many(
+                                vocabulary_data
+                                    .readings
+                                    .iter()
+                                    .map(|reading| {
+                                        db::vocabulary_reading::create(
+                                            reading.reading.clone(),
+                                            reading.accepted_answer,
+                                            reading.primary,
+                                            vec![
+                                                db::vocabulary_reading::vocabulary_subject_id::set(
+                                                    Some(subject.id as i32),
+                                                ),
+                                            ],
+                                        )
+                                    })
+                                    .collect_vec(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+                    }
                 };
             })
         })
-        .buffer_unordered(100);
+        .buffer_unordered(300);
 
-    tasks.for_each(|_| async {}).await;
+    tasks
+        .for_each(|v| async {
+            v.unwrap();
+        })
+        .await;
 
     Ok(())
 }

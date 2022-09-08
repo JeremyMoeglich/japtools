@@ -89,17 +89,17 @@ model KanjiReading {
   reading        String
   reading_type   ReadingType
   primary        Boolean
-  KanjiSubject   KanjiSubject @relation(fields: [kanjiSubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  kanjiSubjectId Int
+  KanjiSubject   KanjiSubject? @relation(fields: [kanjiSubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  kanjiSubjectId Int?
 }
 
 model VocabularyReading {
-  id                  String            @id @default(cuid())
+  id                  String             @id @default(cuid())
   reading             String
   primary             Boolean
   accepted_answer     Boolean
-  VocabularySubject   VocabularySubject @relation(fields: [vocabularySubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  vocabularySubjectId Int
+  VocabularySubject   VocabularySubject? @relation(fields: [vocabularySubjectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  vocabularySubjectId Int?
 }
 
 enum SubjectType {
