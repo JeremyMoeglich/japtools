@@ -7,11 +7,6 @@ generator rsclient {
   output   = "../project-setup-rs/src/db.rs"
 }
 
-generator zod {
-  provider = "npx prisma-zod-generator"
-  output   = "../src/lib/scripts/universal/prisma_schemas"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")

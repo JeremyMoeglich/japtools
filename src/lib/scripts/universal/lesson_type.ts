@@ -1,5 +1,6 @@
 import type { SubjectType } from '@prisma/client';
 import type { JsonObject } from 'type-fest';
+import type { ReadingTypeType } from './datatypes';
 
 interface LessonInterface<ID extends number> {
 	subject_type: SubjectType;
@@ -44,7 +45,7 @@ export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<
 	subject_type: 'VOCABULARY';
 	required_data: {
 		vocabulary: string;
-		string_map: ('kunyomi' | 'onyomi' | 'nanori' | 'not_a_kanji')[];
+		string_map: (ReadingTypeType | 'NONE')[];
 	};
 	lesson_type: 'vocabulary_kun_on_yomi';
 }

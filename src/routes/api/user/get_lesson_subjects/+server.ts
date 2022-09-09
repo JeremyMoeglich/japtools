@@ -82,7 +82,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				})
 			).map((subject) => subject.subject_id);
 
-			const possible_subjects = get_subjects_by_level(current_level).filter((subject) => {
+			const possible_subjects = (await get_subjects_by_level(current_level)).filter((subject) => {
 				if (added_level_subject_ids.includes(subject.id)) {
 					return false;
 				}
