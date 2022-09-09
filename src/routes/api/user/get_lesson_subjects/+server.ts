@@ -7,6 +7,7 @@ import {
 import type { RequestHandler } from './$types';
 import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
+import type { SubjectDataType } from '$lib/scripts/universal/datatypes';
 
 const daily_lesson_limit = 20;
 
@@ -54,9 +55,14 @@ export const POST: RequestHandler = async ({ request }) => {
 				next_review: true
 			}
 		});
-		const lesson_total = next_day_lessons.length + lessons.length;
-		if (!(lesson_total >= daily_lesson_limit)) {
-			const amount_to_add = daily_lesson_limit - lesson_total;
+		for (const lesson of next_day_lessons) {
+			if (lessons.length > daily_lesson_limit) {
+				break;
+			}
+			lessons.push(lesson);
+		}
+		if (!(lessons.length >= daily_lesson_limit) && lessons.length < amount) {
+			const amount_to_add = daily_lesson_limit - lessons.length;
 			const current_level = (
 				await prisma_client.progress.findUnique({
 					where: {
@@ -82,14 +88,16 @@ export const POST: RequestHandler = async ({ request }) => {
 				})
 			).map((subject) => subject.subject_id);
 
-			const possible_subjects = (await get_subjects_by_level(current_level)).filter((subject) => {
-				if (added_level_subject_ids.includes(subject.id)) {
-					return false;
+			const possible_subjects = (await get_subjects_by_level(current_level)).filter(
+				(subject: SubjectDataType) => {
+					if (added_level_subject_ids.includes(subject.id)) {
+						return false;
+					}
+					return true;
 				}
-				return true;
-			});
+			);
 			const subjects_to_add = possible_subjects.slice(0, amount_to_add);
-			await Promise.all(
+			const added = await Promise.all(
 				subjects_to_add.map((subject) => {
 					const subject_data = get_subject_by_id(subject.id);
 					if (!subject_data) {
@@ -106,14 +114,19 @@ export const POST: RequestHandler = async ({ request }) => {
 					return promise;
 				})
 			);
+			for (const subject of added) {
+				lessons.push(subject);
+			}
 		}
 	}
 	return json({
-		lessons: lessons.map((lesson) => ({
-			subject_id: lesson.subject_id,
-			skill_level: lesson.skill_level,
-			next_review: lesson.next_review.toISOString(),
-			subject: get_subject_by_id(lesson.subject_id)
-		}))
+		lessons: await Promise.all(
+			lessons.map(async (lesson) => ({
+				subject_id: lesson.subject_id,
+				skill_level: lesson.skill_level,
+				next_review: lesson.next_review.toISOString(),
+				subject: await get_subject_by_id(lesson.subject_id)
+			}))
+		)
 	});
 };

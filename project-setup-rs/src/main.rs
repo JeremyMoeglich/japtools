@@ -3,7 +3,7 @@ use futures_util::StreamExt;
 use indicatif::ProgressBar;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, env, error::Error, sync::Arc};
+use std::{collections::HashMap, env, error::Error, sync::Arc, path::Path};
 use tokio::{
     fs::File,
     io::{AsyncReadExt, AsyncWriteExt},
@@ -236,11 +236,16 @@ pub async fn fetch_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box
 }
 
 pub async fn load_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box<dyn Error>> {
-    let mut file = File::open("wanikani.json").await?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).await?;
-    let subject_map: HashMap<u32, SubjectDataOuter> = serde_json::from_str(&contents)?;
-    Ok(subject_map)
+    let filename = "wanikani.json";
+    if Path::new(filename).exists() {
+        let mut file = File::open(filename).await?;
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).await?;
+        let subject_map: HashMap<u32, SubjectDataOuter> = serde_json::from_str(&contents)?;
+        Ok(subject_map)
+    } else {
+        fetch_wanikani_data().await
+    }
 }
 
 #[tokio::main]

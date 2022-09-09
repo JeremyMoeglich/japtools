@@ -216,6 +216,8 @@ export async function get_lessons() {
 				})
 			)
 		).flat(),
-		(lesson) => lesson.skill_level + Math.random() * 0.5
-	).filter((lesson) => required_level_table[lesson.lesson_type] <= lesson.skill_level);
+		(lesson: Lesson<number>) => lesson.skill_level + Math.random() * 0.5
+	).filter(
+		(lesson: Lesson<number>) => required_level_table[lesson.lesson_type] <= lesson.skill_level
+	);
 }

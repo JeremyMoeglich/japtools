@@ -5,4 +5,3 @@ import { cmd } from './script_util';
 const project_root = get_root();
 
 cmd(`cd ${project_root} && docker-compose up -d`);
-

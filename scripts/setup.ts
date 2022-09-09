@@ -45,9 +45,7 @@ import { z } from 'zod';
 	const max_tries = 10;
 	for (let i = 0; i < max_tries; i++) {
 		try {
-			cmd(
-				`cd ${project_root} && npm run migration init`
-			);
+			cmd(`cd ${project_root} && npm run migration init`);
 			break;
 		} catch (e) {
 			if (
@@ -67,7 +65,12 @@ import { z } from 'zod';
 		}
 	}
 
-	cmd(`cd ${path.join(project_root, '/project-setup-rs')} && cargo run --release && vite build && docker compose down`);
+	cmd(
+		`cd ${path.join(
+			project_root,
+			'/project-setup-rs'
+		)} && cargo run --release && vite build && docker compose down`
+	);
 
 	console.log(
 		'Setup complete,\n\npnpm preview - start server for last build\npnpm dev - start server and watch for changes\npnpm build - build project'

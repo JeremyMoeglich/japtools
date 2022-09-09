@@ -14,7 +14,7 @@
 	$: question = data.to === 'meanings' ? choice(data.meanings) : data.symbol;
 	$: correct_answer = data.to === 'meanings' ? data.symbol : data.meanings;
 
-	let answer: string = '';
+	let answer = '';
 
 	let show_correct = false;
 

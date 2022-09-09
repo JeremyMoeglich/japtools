@@ -1,7 +1,11 @@
 import type { SubjectType } from '@prisma/client';
 import { z } from 'zod';
 
-export const ReadingTypeSchema = z.union([z.literal('ONYOMI'), z.literal('KUNYOMI'), z.literal('NANORI')]);
+export const ReadingTypeSchema = z.union([
+	z.literal('ONYOMI'),
+	z.literal('KUNYOMI'),
+	z.literal('NANORI')
+]);
 export type ReadingTypeType = z.infer<typeof ReadingTypeSchema>;
 
 export const AuxiliaryMeaningSchema = z.object({
