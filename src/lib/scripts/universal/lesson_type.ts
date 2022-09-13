@@ -8,6 +8,7 @@ interface LessonInterface<ID extends number> {
 	required_data: JsonObject;
 	skill_level: number;
 	lesson_type: string;
+	need_input: boolean;
 }
 
 export interface ReadingAndMeaning<ID extends number> extends LessonInterface<ID> {
@@ -19,6 +20,7 @@ export interface ReadingAndMeaning<ID extends number> extends LessonInterface<ID
 		to: 'readings' | 'meanings';
 	};
 	lesson_type: 'reading_and_meaning';
+	need_input: true;
 }
 
 export interface TextAndMeaning<ID extends number> extends LessonInterface<ID> {
@@ -28,6 +30,7 @@ export interface TextAndMeaning<ID extends number> extends LessonInterface<ID> {
 		to: 'symbol' | 'meanings';
 	};
 	lesson_type: 'text_and_meaning';
+	need_input: true;
 }
 
 export interface KanjiNanKunOnYomi<ID extends number> extends LessonInterface<ID> {
@@ -39,6 +42,7 @@ export interface KanjiNanKunOnYomi<ID extends number> extends LessonInterface<ID
 		nanori: string[];
 	};
 	lesson_type: 'kanji_nan_kun_on_yomi';
+	need_input: false;
 }
 
 export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<ID> {
@@ -48,6 +52,7 @@ export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<
 		string_map: (ReadingTypeType | 'NONE')[];
 	};
 	lesson_type: 'vocabulary_kun_on_yomi';
+	need_input: false;
 }
 
 export type Lesson<ID extends number = number> =

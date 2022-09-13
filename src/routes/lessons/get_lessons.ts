@@ -45,7 +45,8 @@ export async function get_lessons() {
 							},
 							subject_id: subject_id,
 							subject_type: 'KANJI',
-							skill_level: skill_level
+							skill_level: skill_level,
+							need_input: false
 						});
 						{
 							const partial_required_data = {
@@ -60,7 +61,8 @@ export async function get_lessons() {
 								},
 								subject_id: subject_id,
 								subject_type: 'KANJI',
-								skill_level: skill_level
+								skill_level: skill_level,
+								need_input: true
 							});
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
@@ -70,7 +72,8 @@ export async function get_lessons() {
 								},
 								subject_id: subject_id,
 								subject_type: 'KANJI',
-								skill_level: skill_level
+								skill_level: skill_level,
+								need_input: true
 							});
 						}
 					} else if (is_vocabulary_data(subject)) {
@@ -88,7 +91,8 @@ export async function get_lessons() {
 								},
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
-								skill_level: skill_level
+								skill_level: skill_level,
+								need_input: true
 							});
 							new_lessons.push({
 								lesson_type: 'text_and_meaning',
@@ -98,7 +102,8 @@ export async function get_lessons() {
 								},
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
-								skill_level: skill_level
+								skill_level: skill_level,
+								need_input: true
 							});
 						}
 						{
@@ -114,7 +119,8 @@ export async function get_lessons() {
 								},
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
-								skill_level: skill_level
+								skill_level: skill_level,
+								need_input: true
 							});
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
@@ -124,7 +130,8 @@ export async function get_lessons() {
 								},
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
-								skill_level: skill_level
+								skill_level: skill_level,
+								need_input: true
 							});
 						}
 
@@ -160,6 +167,9 @@ export async function get_lessons() {
 												const viable_readings = kanji_data[kanji].readings.filter((kanji_reading) =>
 													r.startsWith(kanji_reading.reading)
 												);
+												if (viable_readings.length === 0) {
+													return [kanji, undefined];
+												}
 												if (
 													viable_readings.every((v) => v.reading === viable_readings[0].reading)
 												) {
@@ -182,23 +192,29 @@ export async function get_lessons() {
 									})
 								);
 							})();
-							if (Object.entries(kanji_types).length > 1) {
-								throw new Error('Multiple Vocabulary reading are not supported yet');
+							if (Object.values(kanji_types).every((v) => v !== undefined)) {
+								if (Object.entries(kanji_types).length > 1) {
+									throw new Error('Multiple Vocabulary reading are not supported yet');
+								}
+								if (Object.entries(kanji_types).length === 0) {
+									throw new Error('No Vocabulary reading found');
+								}
+								const kanji_type = Object.values(kanji_types)[0];
+								if (kanji_type === undefined) {
+									throw new Error("Internal error: kanji_type can't be undefined");
+								}
+								new_lessons.push({
+									lesson_type: 'vocabulary_kun_on_yomi',
+									required_data: {
+										vocabulary: txt,
+										string_map: kanji_type.map((v) => (v === undefined ? 'NONE' : v))
+									},
+									subject_id: subject_id,
+									skill_level: skill_level,
+									subject_type: 'VOCABULARY',
+									need_input: false
+								});
 							}
-							if (Object.entries(kanji_types).length === 0) {
-								throw new Error('No Vocabulary reading found');
-							}
-							const kanji_type = Object.values(kanji_types)[0];
-							new_lessons.push({
-								lesson_type: 'vocabulary_kun_on_yomi',
-								required_data: {
-									vocabulary: txt,
-									string_map: kanji_type.map((v) => (v === undefined ? 'NONE' : v))
-								},
-								subject_id: subject_id,
-								skill_level: skill_level,
-								subject_type: 'VOCABULARY'
-							});
 						}
 					} else if (is_radical_data(subject)) {
 						new_lessons.push({
@@ -210,7 +226,8 @@ export async function get_lessons() {
 							},
 							subject_id: subject_id,
 							skill_level: skill_level,
-							subject_type: 'RADICAL'
+							subject_type: 'RADICAL',
+							need_input: true
 						});
 					} else {
 						throw new Error(`Unsupported subject type ${get_subject_type(subject)}`);

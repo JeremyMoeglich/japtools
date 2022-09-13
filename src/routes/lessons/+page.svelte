@@ -45,6 +45,8 @@
 		} finally {
 			is_loading_store.set(false);
 		}
+		current_lesson_state = 'in_progress';
+		current_input = '';
 	}
 
 	if (browser) {
@@ -54,7 +56,7 @@
 	$: current_lesson,
 		(async () => {
 			{
-				// DEV ONLY
+				// DEV ONLY [TODO] remove
 				while (
 					current_lesson?.lesson_type !== 'text_and_meaning' &&
 					get(is_loading_store) === false
@@ -68,10 +70,25 @@
 	let current_lesson_state: 'in_progress' | 'wrong' | 'waiting_for_next' = 'in_progress';
 	let current_input = '';
 	let correct: boolean = false;
+	let question = '';
+
+	function confirm() {
+		if (current_lesson_state === 'in_progress') {
+			if (correct) {
+				current_lesson_state = 'waiting_for_next';
+				next_lesson();
+			} else {
+				current_lesson_state = 'wrong';
+			}
+		} else if (current_lesson_state === 'wrong') {
+			current_lesson_state = 'waiting_for_next';
+			next_lesson();
+		}
+	}
 </script>
 
 <div class="outer">
-	<div class="left">
+	<!-- <div class="left">
 		<p>
 			CURRENT:
 			<PrettyObj obj={current_lesson} />
@@ -80,29 +97,30 @@
 			ALL:
 			<PrettyObj obj={lesson_queue} />
 		</p>
-	</div>
-	<div class="comp">
-		<LessonUi
-			subject_type={current_lesson?.subject_type}
-			bind:response_value={current_input}
-			response_type={current_lesson_state === 'wrong' ? 'locked' : 'ja'}
-		>
-			<span slot="content">
-				<div>
-					{#if current_lesson}
-						{#if current_lesson.lesson_type === 'text_and_meaning'}
-							<TextMeaning {current_lesson} bind:current_input bind:correct />
-						{:else}
-							<p>Unknown lesson type</p>
-						{/if}
-					{/if}
-				</div>
-			</span>
-			<div>
-				<button on:click={next_lesson}>Skip</button>
-			</div>
-		</LessonUi>
-	</div>
+	</div> -->
+	<LessonUi
+		lesson={current_lesson}
+		bind:response_value={current_input}
+		response_type={current_lesson_state === 'wrong' ? 'locked' : 'ja'}
+		{question}
+		next_lesson={confirm}
+	>
+		<div>
+			{#if current_lesson}
+				{#if current_lesson.lesson_type === 'text_and_meaning'}
+					<TextMeaning
+						{current_lesson}
+						bind:current_input
+						bind:correct
+						bind:question
+						show_correct={current_lesson_state === 'wrong'}
+					/>
+				{:else}
+					<p>Unknown lesson type</p>
+				{/if}
+			{/if}
+		</div>
+	</LessonUi>
 </div>
 
 <style>

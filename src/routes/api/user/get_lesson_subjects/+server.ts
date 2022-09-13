@@ -119,14 +119,15 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		}
 	}
+	const lesson_subjects = await Promise.all(
+		lessons.map(async (lesson) => ({
+			subject_id: lesson.subject_id,
+			skill_level: lesson.skill_level,
+			next_review: lesson.next_review.toISOString(),
+			subject: await get_subject_by_id(lesson.subject_id)
+		}))
+	);
 	return json({
-		lessons: await Promise.all(
-			lessons.map(async (lesson) => ({
-				subject_id: lesson.subject_id,
-				skill_level: lesson.skill_level,
-				next_review: lesson.next_review.toISOString(),
-				subject: await get_subject_by_id(lesson.subject_id)
-			}))
-		)
+		lessons: lesson_subjects
 	});
 };

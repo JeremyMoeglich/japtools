@@ -69,5 +69,6 @@
 	.side_alignment {
 		display: flex;
 		justify-content: space-evenly;
+		height: 100%;
 	}
 </style>
