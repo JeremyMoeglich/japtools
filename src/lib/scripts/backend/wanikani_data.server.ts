@@ -268,20 +268,21 @@ export async function get_subjects_by_reading(reading: string): Promise<SubjectD
 	);
 }
 
-export async function get_subject_by_kanji(symbol: string) {
-	return convert_kanji(
-		(await prisma_client.kanjiSubject.findUnique({
-			where: {
-				characters: symbol
-			},
-			include: {
-				auxiliary_meanings: true,
-				meanings: true,
-				readings: true
-			}
-		})) ??
-			(() => {
-				throw error(500, 'Subject not found');
-			})()
-	);
+export async function get_subject_by_kanji(symbol: string): Promise<KanjiDataType | undefined> {
+	const resp = await prisma_client.kanjiSubject.findUnique({
+		where: {
+			characters: symbol
+		},
+		include: {
+			auxiliary_meanings: true,
+			meanings: true,
+			readings: true
+		}
+	});
+
+	if (!resp) {
+		return undefined;
+	}
+
+	return convert_kanji(resp);
 }

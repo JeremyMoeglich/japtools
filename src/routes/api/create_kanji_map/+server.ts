@@ -3,6 +3,7 @@ import type { RequestHandler } from './$types';
 import { z } from 'zod';
 import { json } from '@sveltejs/kit';
 import { get_subject_by_kanji } from '$lib/scripts/backend/wanikani_data.server';
+import type { KanjiDataType } from '$lib/scripts/universal/datatypes';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { text } = await get_request_body(
@@ -15,7 +16,12 @@ export const POST: RequestHandler = async ({ request }) => {
 	const kanji_map = Object.fromEntries(
 		(
 			await Promise.all(
-				text.split('').map(async (char) => [char, await get_subject_by_kanji(char)])
+				text
+					.split('')
+					.map(
+						async (char) =>
+							[char, await get_subject_by_kanji(char)] as [string, KanjiDataType | undefined]
+					)
 			)
 		).filter((char) => char[1] !== undefined)
 	);

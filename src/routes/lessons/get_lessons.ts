@@ -8,7 +8,7 @@ import {
 	type ReadingTypeType
 } from '$lib/scripts/universal/datatypes';
 import type { Lesson } from '$lib/scripts/universal/lesson_type';
-import { error, range } from 'functional-utilities';
+import { error } from 'functional-utilities';
 import { sortBy } from 'lodash-es';
 import { isKanji } from 'wanakana';
 import { z } from 'zod';
@@ -16,7 +16,7 @@ import { z } from 'zod';
 const required_level_table: Record<Lesson['lesson_type'], number> = {
 	kanji_nan_kun_on_yomi: 1,
 	reading_and_meaning: 0,
-	symbol_and_meaning: 0,
+	text_and_meaning: 0,
 	vocabulary_kun_on_yomi: 1
 };
 
@@ -77,11 +77,11 @@ export async function get_lessons() {
 						const txt = subject.characters;
 						{
 							const partial_required_data = {
-								symbol: txt,
+								text: txt,
 								meanings: subject.meanings.map((m) => m.meaning)
 							};
 							new_lessons.push({
-								lesson_type: 'symbol_and_meaning',
+								lesson_type: 'text_and_meaning',
 								required_data: {
 									...partial_required_data,
 									to: 'meanings'
@@ -91,7 +91,7 @@ export async function get_lessons() {
 								skill_level: skill_level
 							});
 							new_lessons.push({
-								lesson_type: 'symbol_and_meaning',
+								lesson_type: 'text_and_meaning',
 								required_data: {
 									...partial_required_data,
 									to: 'symbol'
@@ -147,9 +147,13 @@ export async function get_lessons() {
 										let r = r_ref.reading;
 										let character_string = subject.characters;
 										while (character_string.length > 0) {
-											if (character_string[0] === r[0]) {
+											if (
+												character_string[0] === r[0] ||
+												'っ' + character_string[0] === r.slice(0, 2)
+											) {
 												character_string = character_string.slice(1);
 												r = r.slice(1);
+												kanji_types.push(undefined);
 											} else if (isKanji(character_string[0])) {
 												const kanji = character_string[0];
 												character_string = character_string.slice(1);
@@ -159,9 +163,6 @@ export async function get_lessons() {
 												if (
 													viable_readings.every((v) => v.reading === viable_readings[0].reading)
 												) {
-													range(viable_readings[0].reading.length).forEach(() => {
-														kanji_types.push(undefined);
-													});
 													kanji_types.push(viable_readings[0].reading_type);
 													r = r.slice(viable_readings[0].reading.length);
 												} else {
@@ -172,10 +173,12 @@ export async function get_lessons() {
 													);
 												}
 											} else {
-												throw new Error('Invalid character');
+												throw new Error(
+													`Invalid character ${character_string} in ${subject.characters} for ${r_ref.reading} - ${r}`
+												);
 											}
 										}
-										return [r, kanji_types];
+										return [r_ref.reading, kanji_types];
 									})
 								);
 							})();
@@ -199,9 +202,9 @@ export async function get_lessons() {
 						}
 					} else if (is_radical_data(subject)) {
 						new_lessons.push({
-							lesson_type: 'symbol_and_meaning',
+							lesson_type: 'text_and_meaning',
 							required_data: {
-								symbol: subject.characters ?? error('No characters'),
+								text: subject.characters ?? error('No characters'),
 								meanings: subject.meanings.map((meaning) => meaning.meaning),
 								to: 'meanings'
 							},

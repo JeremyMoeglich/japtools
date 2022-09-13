@@ -3,8 +3,8 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "esrun scripts/run.ts && vite dev --profile",
-		"build": "esrun scripts/build_src.ts && vite build",
-		"package": "esrun scripts/build_src.ts && svelte-kit package",
+		"build": "vite build",
+		"package": "svelte-kit package",
 		"preview": "esrun scripts/run.ts && vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
@@ -16,8 +16,8 @@
 	},
 	"devDependencies": {
 		"@prisma/client": "^4.3.1",
-		"@sveltejs/adapter-auto": "1.0.0-next.71",
-		"@sveltejs/kit": "1.0.0-next.478",
+		"@sveltejs/adapter-auto": "1.0.0-next.72",
+		"@sveltejs/kit": "1.0.0-next.480",
 		"@types/bcrypt": "^5.0.0",
 		"@types/cookie": "^0.5.1",
 		"@typescript-eslint/eslint-plugin": "^5.36.2",
@@ -42,7 +42,10 @@
 		"tslib": "^2.4.0",
 		"type-fest": "^2.19.0",
 		"typescript": "^4.8.3",
-		"vite": "3.1.0"
+		"vite": "3.1.0",
+		"postcss": "^8.4.14",
+		"postcss-load-config": "^4.0.1",
+		"autoprefixer": "^10.4.7"
 	},
 	"type": "module",
 	"dependencies": {
@@ -51,14 +54,17 @@
 		"@types/js-cookie": "^3.0.2",
 		"@types/js-levenshtein": "^1.1.1",
 		"@types/lodash-es": "^4.17.6",
+		"@types/serialize-javascript": "^5.0.2",
 		"@types/wanakana": "^4.0.3",
 		"array-shuffle": "^3.0.0",
+		"daisyui": "^2.25.0",
 		"generate-password": "^1.7.0",
 		"js-cookie": "^3.0.1",
 		"js-levenshtein": "^1.1.6",
 		"lodash-es": "^4.17.21",
 		"pkg-up": "^4.0.0",
 		"prisma-zod-generator": "^0.5.3",
+		"serialize-javascript": "^6.0.0",
 		"wanakana": "^5.0.2",
 		"zod": "^3.19.0"
 	}

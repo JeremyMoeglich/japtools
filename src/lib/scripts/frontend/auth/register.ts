@@ -16,11 +16,21 @@ export async function register(
 		})
 	).json();
 
-	const token = z
+	const token_result = z
 		.object({
 			token: z.string()
 		})
-		.parse(response).token;
-	await token_login(token, false);
-	return undefined;
+		.safeParse(response);
+
+	if (token_result.success) {
+		await token_login(token_result.data.token, false);
+		return undefined;
+	} else {
+		const error = z
+			.object({
+				error: z.string()
+			})
+			.parse(response);
+		return new Error(error.error);
+	}
 }

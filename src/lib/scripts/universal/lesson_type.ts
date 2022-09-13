@@ -21,13 +21,13 @@ export interface ReadingAndMeaning<ID extends number> extends LessonInterface<ID
 	lesson_type: 'reading_and_meaning';
 }
 
-export interface SymbolAndMeaning<ID extends number> extends LessonInterface<ID> {
+export interface TextAndMeaning<ID extends number> extends LessonInterface<ID> {
 	required_data: {
-		symbol: string;
+		text: string;
 		meanings: string[];
 		to: 'symbol' | 'meanings';
 	};
-	lesson_type: 'symbol_and_meaning';
+	lesson_type: 'text_and_meaning';
 }
 
 export interface KanjiNanKunOnYomi<ID extends number> extends LessonInterface<ID> {
@@ -52,6 +52,6 @@ export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<
 
 export type Lesson<ID extends number = number> =
 	| ReadingAndMeaning<ID>
-	| SymbolAndMeaning<ID>
+	| TextAndMeaning<ID>
 	| KanjiNanKunOnYomi<ID>
 	| VocabularyKunOnYomi<ID>;

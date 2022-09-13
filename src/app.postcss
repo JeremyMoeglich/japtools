@@ -1,0 +1,32 @@
+/* Write your global styles here, in PostCSS syntax */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+form {
+	@apply form-control gap-3;
+}
+
+.form_outer {
+	@apply flex flex-col items-center justify-center h-screen gap-3 p-5 bg-gray-800;
+}
+
+input {
+    @apply input input-bordered focus:input-primary w-full max-w-xs;
+}
+
+h1 {
+	@apply text-4xl font-bold text-primary;
+}
+
+h2 {
+	@apply text-3xl font-bold text-secondary;
+}
+
+a {
+	@apply text-secondary hover:text-primary duration-200;
+}
+
+button {
+	@apply btn btn-secondary;
+}

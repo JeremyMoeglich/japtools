@@ -12,13 +12,22 @@ export async function login(email: string, password: string): Promise<Error | un
 			password
 		})
 	});
-
-	const token = z
+	const data: unknown = await result.json();
+	const token_result = z
 		.object({
 			token: z.string()
 		})
-		.parse(await result.json()).token;
+		.safeParse(data);
 
-	await token_login(token, false);
-	return undefined;
+	if (token_result.success) {
+		await token_login(token_result.data.token, false);
+		return undefined;
+	} else {
+		const error = z
+			.object({
+				error: z.string()
+			})
+			.parse(data);
+		return new Error(error.error);
+	}
 }

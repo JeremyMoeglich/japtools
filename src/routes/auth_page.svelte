@@ -12,78 +12,62 @@
 </script>
 
 <div class="side_alignment">
-	<div>
+	<div class="form_outer">
 		<h2>Sign in</h2>
 		<p>Sign in to your account</p>
 		<form
 			on:submit|preventDefault={async () => {
-				console.log('login');
-				try {
-					await login(email, password);
-				} catch (error) {
-					login_error = error;
+				const login_result = await login(email, password);
+				if (login_result !== undefined) {
+					login_error = login_result.message;
 				}
 			}}
+			class="form-control gap-3"
 		>
-			<div>
-				<label for="email">Email</label>
+			<label for="email" class="input-group">
+				<span class="label-text">Email</span>
 				<input type="email" name="email" bind:value={email} />
-			</div>
-			<div>
-				<label for="password">Password</label>
+			</label>
+			<label for="password" class="input-group">
+				<span class="label-text">Password</span>
 				<input type="password" name="password" bind:value={password} />
-			</div>
-			<button type="submit">Sign in</button>
+			</label>
+			<button class="btn-primary" type="submit">Sign in</button>
 		</form>
 		<PrettyObj obj={login_error} />
 	</div>
-	<div>
+	<div class="form_outer">
 		<h2>Sign up</h2>
 		<p>Sign up for a new account</p>
 		<form
 			on:submit|preventDefault={async () => {
-				try {
-					await register(name, email, password);
-				} catch (error) {
-					register_error = error;
+				const register_result = await register(name, email, password);
+				if (register_result !== undefined) {
+					register_error = register_result.message;
 				}
 			}}
 		>
-			<div>
-				<label for="name">Name</label>
+			<label for="name" class="input-group">
+				<span class="label-text">Name</span>
 				<input type="text" name="name" bind:value={name} />
-			</div>
-			<div>
-				<label for="email">Email</label>
+			</label>
+			<label for="email" class="input-group">
+				<span class="label-text">Email</span>
 				<input type="email" name="email" bind:value={email} />
-			</div>
-			<div>
-				<label for="password">Password</label>
+			</label>
+			<label for="password" class="input-group">
+				<span class="label-text">Password</span>
 				<input type="password" name="password" bind:value={password} />
-			</div>
-			<button type="submit">Sign up</button>
+			</label>
+			<button class="btn-primary" type="submit">Sign up</button>
 		</form>
 		<PrettyObj obj={register_error} />
 	</div>
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.side_alignment {
 		display: flex;
 		justify-content: space-evenly;
-	}
-	form {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		& > * {
-			display: flex;
-			gap: 10px;
-			justify-content: space-between;
-		}
-	}
-	button {
-		align-self: center;
-		padding: 5px 10px;
 	}
 </style>

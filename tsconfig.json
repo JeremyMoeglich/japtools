@@ -12,5 +12,5 @@
 		"target": "es2020"
 	},
 	"include": ["./src/**/*.js", "./src/**/*.ts", "./src/**/*.svelte", "./scripts/**/*.ts"],
-	"exclude": ["./node_modules/**", "./svelte-kit/**"]
+	"exclude": ["./node_modules/**", "./svelte-kit/**", "./project-setup-rs/**"]
 }
