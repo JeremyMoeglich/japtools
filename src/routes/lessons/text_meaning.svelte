@@ -29,7 +29,7 @@
 			: current_lesson.subject_type === 'VOCABULARY'
 			? `Type ${txt} in Japanese`
 			: error('Lessons going from meanings to radicals are not supported');
-	$: correct_answer = data.to === 'meanings' ? data.meanings : [data.text];
+	$: correct_answer = data.to === 'meanings' ? data.meanings : [data.text].concat(data.readings);
 
 	function compare(str1: string, str2: string): boolean {
 		const similarity =

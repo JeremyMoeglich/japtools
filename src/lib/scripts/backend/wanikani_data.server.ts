@@ -146,7 +146,6 @@ export async function get_subject_by_id(id: number): Promise<SubjectDataType> {
 						throw error(500, 'Subject not found');
 					})()
 			);
-			console.log(JSON.stringify(radical));
 			return radical;
 		} else {
 			throw error(500, 'Internal Error, unknown subject type');

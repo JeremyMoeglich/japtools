@@ -98,7 +98,8 @@ export async function get_lessons() {
 								lesson_type: 'text_and_meaning',
 								required_data: {
 									...partial_required_data,
-									to: 'symbol'
+									to: 'symbol',
+									readings: subject.readings.map((r) => r.reading)
 								},
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',

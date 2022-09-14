@@ -5,7 +5,9 @@
 	import { check_token_and_login } from '$lib/scripts/frontend/auth/token_login';
 	import IoMdHome from 'svelte-icons/io/IoMdHome.svelte';
 	import IoIosBook from 'svelte-icons/io/IoIosBook.svelte';
-
+	import { is_loading_store } from '$lib/scripts/frontend/is_loading';
+	import { Circle2 } from 'svelte-loading-spinners';
+	
 	check_token_and_login();
 </script>
 
@@ -39,3 +41,26 @@
 		{/if}
 	</div>
 </div>
+
+{#if $is_loading_store}
+	<div class="loading">
+		<div class="spinner">
+			<Circle2 />
+		</div>
+	</div>
+{/if}
+
+<style>
+	.loading {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: fixed;
+		width: 100vw;
+		height: 100vh;
+		top: 0px;
+		left: 0px;
+		z-index: 9999;
+		background-color: rgba(128, 128, 128, 0.308);
+	}
+</style>

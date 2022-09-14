@@ -66,7 +66,7 @@
 		"prisma-zod-generator": "^0.5.3",
 		"serialize-javascript": "^6.0.0",
 		"svelte-icons": "^2.1.0",
-		"svelte-textfit": "^1.1.1",
+		"svelte-loading-spinners": "^0.1.7",
 		"wanakana": "^5.0.2",
 		"zod": "^3.19.0"
 	}

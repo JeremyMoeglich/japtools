@@ -27,8 +27,13 @@ export interface TextAndMeaning<ID extends number> extends LessonInterface<ID> {
 	required_data: {
 		text: string;
 		meanings: string[];
-		to: 'symbol' | 'meanings';
-	};
+		to: 'meanings';
+	} | {
+		text: string;
+		meanings: string[];
+		to: 'symbol';
+		readings: string[];
+	}
 	lesson_type: 'text_and_meaning';
 	need_input: true;
 }
