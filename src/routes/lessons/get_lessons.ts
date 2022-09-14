@@ -14,7 +14,7 @@ import { isKanji } from 'wanakana';
 import { z } from 'zod';
 
 const required_level_table: Record<Lesson['lesson_type'], number> = {
-	kanji_nan_kun_on_yomi: 1,
+	//kanji_nan_kun_on_yomi: 1,
 	reading_and_meaning: 0,
 	text_and_meaning: 0,
 	vocabulary_kun_on_yomi: 1
@@ -28,26 +28,26 @@ export async function get_lessons() {
 				subjects.map(async ({ skill_level, subject, subject_id }) => {
 					const new_lessons: Lesson[] = [];
 					if (is_kanji_data(subject)) {
-						const symbol = subject.characters;
-						new_lessons.push({
-							lesson_type: 'kanji_nan_kun_on_yomi',
-							required_data: {
-								kanji: symbol,
-								kunyomi: subject.readings
-									.filter((r) => r.reading_type === 'KUNYOMI')
-									.map((r) => r.reading),
-								onyomi: subject.readings
-									.filter((r) => r.reading_type === 'ONYOMI')
-									.map((r) => r.reading),
-								nanori: subject.readings
-									.filter((r) => r.reading_type === 'NANORI')
-									.map((r) => r.reading)
-							},
-							subject_id: subject_id,
-							subject_type: 'KANJI',
-							skill_level: skill_level,
-							need_input: false
-						});
+						// const symbol = subject.characters;
+						// new_lessons.push({
+						// 	lesson_type: 'kanji_nan_kun_on_yomi',
+						// 	required_data: {
+						// 		kanji: symbol,
+						// 		kunyomi: subject.readings
+						// 			.filter((r) => r.reading_type === 'KUNYOMI')
+						// 			.map((r) => r.reading),
+						// 		onyomi: subject.readings
+						// 			.filter((r) => r.reading_type === 'ONYOMI')
+						// 			.map((r) => r.reading),
+						// 		nanori: subject.readings
+						// 			.filter((r) => r.reading_type === 'NANORI')
+						// 			.map((r) => r.reading)
+						// 	},
+						// 	subject_id: subject_id,
+						// 	subject_type: 'KANJI',
+						// 	skill_level: skill_level,
+						// 	need_input: false
+						// });
 						{
 							const partial_required_data = {
 								meanings: subject.meanings.map((m) => m.meaning),
@@ -203,17 +203,19 @@ export async function get_lessons() {
 								if (kanji_type === undefined) {
 									throw new Error("Internal error: kanji_type can't be undefined");
 								}
-								new_lessons.push({
-									lesson_type: 'vocabulary_kun_on_yomi',
-									required_data: {
-										vocabulary: txt,
-										string_map: kanji_type.map((v) => (v === undefined ? 'NONE' : v))
-									},
-									subject_id: subject_id,
-									skill_level: skill_level,
-									subject_type: 'VOCABULARY',
-									need_input: false
-								});
+								if (!kanji_type.every((v) => v === undefined)) {
+									new_lessons.push({
+										lesson_type: 'vocabulary_kun_on_yomi',
+										required_data: {
+											vocabulary: txt,
+											string_map: kanji_type.map((v) => (v === undefined ? 'NONE' : v))
+										},
+										subject_id: subject_id,
+										skill_level: skill_level,
+										subject_type: 'VOCABULARY',
+										need_input: false
+									});
+								}
 							}
 						}
 					} else if (is_radical_data(subject)) {

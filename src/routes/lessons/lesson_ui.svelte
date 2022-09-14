@@ -1,5 +1,5 @@
 <script lang="ts">
-import PrettyObj from '$lib/components/pretty_obj.svelte';
+	import PrettyObj from '$lib/components/pretty_obj.svelte';
 
 	import type { Lesson } from '$lib/scripts/universal/lesson_type';
 

@@ -5,17 +5,20 @@
 	import { get_lessons } from './get_lessons';
 	import { get } from 'svelte/store';
 	import { subject_store } from '$lib/scripts/frontend/user/subject_store';
-	import PrettyObj from '$lib/components/pretty_obj.svelte';
 	import { browser } from '$app/environment';
 	import TextMeaning from './text_meaning.svelte';
 	import { is_loading_store } from '$lib/scripts/frontend/is_loading';
 	import LessonUi from './lesson_ui.svelte';
+	import ReadingMeaning from './reading_meaning.svelte';
 
-	async function decrease_level(subject_id: number) {
+	async function change_level(subject_id: number, n: number) {
 		await update_subject_progress(
 			subject_id,
-			(get(subject_store).get(subject_id) ?? error(`Data for Subject ${subject_id} not in store`))
-				.skill_level - 1
+			Math.max(
+				0,
+				(get(subject_store).get(subject_id) ?? error(`Data for Subject ${subject_id} not in store`))
+					.skill_level + n
+			)
 		);
 	}
 
@@ -53,36 +56,27 @@
 		update_lessons();
 	}
 
-	$: current_lesson,
-		(async () => {
-			{
-				// DEV ONLY [TODO] remove
-				while (
-					current_lesson?.lesson_type !== 'text_and_meaning' &&
-					get(is_loading_store) === false
-				) {
-					console.log('Skipping lesson');
-					await next_lesson();
-				}
-			}
-		})();
-
 	let current_lesson_state: 'in_progress' | 'wrong' | 'waiting_for_next' = 'in_progress';
 	let current_input = '';
 	let correct: boolean = false;
 	let question = '';
 
-	function confirm() {
+	async function confirm() {
+		if (!current_lesson) {
+			throw new Error('No lesson');
+		}
 		if (current_lesson_state === 'in_progress') {
 			if (correct) {
 				current_lesson_state = 'waiting_for_next';
-				next_lesson();
+				await change_level(current_lesson.subject_id, 1);
+				await next_lesson();
 			} else {
 				current_lesson_state = 'wrong';
+				await change_level(current_lesson.subject_id, -1);
 			}
 		} else if (current_lesson_state === 'wrong') {
 			current_lesson_state = 'waiting_for_next';
-			next_lesson();
+			await next_lesson();
 		}
 	}
 </script>
@@ -109,6 +103,14 @@
 			{#if current_lesson}
 				{#if current_lesson.lesson_type === 'text_and_meaning'}
 					<TextMeaning
+						{current_lesson}
+						bind:current_input
+						bind:correct
+						bind:question
+						show_correct={current_lesson_state === 'wrong'}
+					/>
+				{:else if current_lesson.lesson_type === 'reading_and_meaning'}
+					<ReadingMeaning
 						{current_lesson}
 						bind:current_input
 						bind:correct
