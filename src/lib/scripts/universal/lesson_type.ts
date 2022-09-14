@@ -63,5 +63,5 @@ export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<
 export type Lesson<ID extends number = number> =
 	| ReadingAndMeaning<ID>
 	| TextAndMeaning<ID>
-	| KanjiNanKunOnYomi<ID>
+	//| KanjiNanKunOnYomi<ID>
 	| VocabularyKunOnYomi<ID>;

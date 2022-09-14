@@ -10,7 +10,7 @@ function get_next_date(n: number): Date {
 	return new Date(Date.now() + hour_offset * 3600000);
 }
 
-export const UPDATE: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	const user_data = await get_auth_user_data(request);
 	const { subject_id, skill_level } = await get_request_body(
 		request,
