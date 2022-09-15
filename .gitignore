@@ -14,3 +14,4 @@ node_modules
 **/target
 **/db.rs
 **/prisma_schemas
+wanikani.json
