@@ -6,7 +6,6 @@
 
 	import type { SubjectType } from '@prisma/client';
 	import type { MaybePromise } from '@sveltejs/kit/types/internal';
-	import { fly } from 'svelte/transition';
 	import SubjectBrowser from './subject_browser.svelte';
 
 	export let lesson: Lesson | undefined;
@@ -14,6 +13,7 @@
 	export let response_value: string = '';
 	export let question: string = '';
 	export let next_lesson: () => MaybePromise<void>;
+	export let show_correct: boolean;
 
 	function toWordUpperCase(str: string) {
 		return str.replace(/\w\S*/g, (txt) => {
@@ -39,7 +39,7 @@
 	<button class="absolute bottom-5 right-5 capitalize z-10">
 		Reset {lesson ? toWordUpperCase(lesson.subject_type) : 'Loading...'} Progress
 	</button>
-	{#if lesson}
+	{#if lesson && show_correct}
 		<div class="absolute bottom-0 left-0 w-full h-1/3">
 			<SubjectBrowser subject={$subject_store.get(lesson.subject_id)?.subject} />
 		</div>
@@ -54,17 +54,9 @@
 	<div
 		class="text-center text-3xl text-white bg-slate-500 p-5 w-full grid grid-cols-1 grid-rows-1 overflow-hidden"
 	>
-		{#key question}
-			<p
-				class="col-start-1 row-start-1"
-				transition:fly={{
-					duration: 200,
-					x: 10
-				}}
-			>
-				{question}
-			</p>
-		{/key}
+		<p class="col-start-1 row-start-1">
+			{question}
+		</p>
 	</div>
 
 	{#if response_type}
@@ -87,6 +79,3 @@
 		<button class="btn btn-secondary" on:click={next_lesson}>Skip</button>
 	</div> -->
 </div>
-
-<style>
-</style>

@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { compare } from '$lib/scripts/universal/compare';
 	import type { ReadingAndMeaning } from '$lib/scripts/universal/lesson_type';
-	import levenshtein from 'js-levenshtein';
 	import { onMount } from 'svelte';
 
 	function choice<T>(arr: T[]): T {
@@ -26,11 +26,7 @@
 
 	$: correct_answer = data.to === 'meanings' ? data.meanings : data.readings;
 
-	function compare(str1: string, str2: string): boolean {
-		const similarity =
-			1 - levenshtein(str1.toLowerCase(), str2.toLowerCase()) / Math.max(str1.length, str2.length);
-		return similarity > 0.8;
-	}
+
 
 	function check_answer(current_input: string, correct_answer: string[]) {
 		if (data.to === 'meanings') {

@@ -52,6 +52,7 @@ function convert_radical(
 		meanings: SubjectMeaning[];
 	}
 ): RadicalDataType {
+	console.log(JSON.stringify(data));
 	return {
 		...data,
 		characters: data.characters ? data.characters : undefined,
@@ -62,7 +63,8 @@ function convert_radical(
 		meanings: data.meanings.map((meaning) => ({
 			...meaning,
 			subject_id: meaning.radicalSubjectId ?? error(500, 'Subject not found')
-		}))
+		})),
+		image_url: data.image_url ? data.image_url : undefined
 	};
 }
 

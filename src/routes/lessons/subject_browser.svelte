@@ -3,9 +3,9 @@
 	import { get_subject_type, type SubjectDataType } from '$lib/scripts/universal/datatypes';
 	import type { SubjectType } from '@prisma/client';
 	import { sortBy } from 'lodash-es';
-	import TextRenderer from './text-renderer/text_renderer.svelte';
 
 	export let subject: SubjectDataType | undefined;
+	export let active_tab: string | undefined = undefined;
 	$: subject_type = subject ? get_subject_type(subject) : undefined;
 	$: title = subject
 		? [
@@ -24,11 +24,13 @@
 		NONE: []
 	};
 	$: active_tab = subject_type ? tabs[subject_type][0] : undefined;
+
+	const primary_sort: (v: { primary: boolean }) => number = (v) => (v.primary ? 0 : 1);
 </script>
 
-<div class="bg-slate-700">
+<div class="bg-slate-700 w-full h-full">
 	<div>
-		<h3>{title}</h3>
+		<h3 class="text-xl text-white p-2 font-bold">{title}</h3>
 	</div>
 	<div>
 		{#if subject}
@@ -49,17 +51,43 @@
 				<div>
 					{#if active_tab === 'Meanings'}
 						<ul class="p-4 pl-8 list-disc">
-							{#each sortBy(subject.meanings, (v) => (v.primary ? 0 : 1)) as meaning}
+							{#each sortBy(subject.meanings, primary_sort) as meaning}
 								<li class:font-bold={meaning.primary}>{meaning.meaning}</li>
 							{/each}
 						</ul>
 					{:else if active_tab === 'Readings' && 'reading_hint' in subject}
-						<p>Onyomi:</p>
+						<h5>Onyomi:</h5>
 						<ul class="p-4 pl-8 list-disc">
-							{#each sortBy( subject.readings.filter((v) => v.reading_type === 'ONYOMI'), (v) => (v.primary ? 0 : 1) ) as reading}
+							{#each sortBy( subject.readings.filter((v) => v.reading_type === 'ONYOMI'), primary_sort ) as reading}
 								<li class:font-bold={reading.primary}>{reading.reading}</li>
 							{/each}
 						</ul>
+						<h5>Kunyomi:</h5>
+						<ul class="p-4 pl-8 list-disc">
+							{#each sortBy( subject.readings.filter((v) => v.reading_type === 'KUNYOMI'), primary_sort ) as reading}
+								<li class:font-bold={reading.primary}>{reading.reading}</li>
+							{/each}
+						</ul>
+						{#if subject.readings.find((v) => v.reading_type === 'NANORI')}
+							<h5>Nanori:</h5>
+							<ul class="p-4 pl-8 list-disc">
+								{#each sortBy( subject.readings.filter((v) => v.reading_type === 'NANORI'), primary_sort ) as reading}
+									<li class:font-bold={reading.primary}>{reading.reading}</li>
+								{/each}
+							</ul>
+						{/if}
+					{:else if active_tab === 'Readings' && 'context_sentences' in subject}
+						<div>
+							<ul class="p-4 pl-8 list-disc">
+								{#each sortBy(subject.readings, primary_sort) as reading}
+									<li class:font-bold={reading.primary}>{reading.reading}</li>
+								{/each}
+							</ul>
+							<p>
+								<h5>Mnemonic:</h5>
+								{subject?.mmneonic}
+							</p>
+						</div>
 					{/if}
 				</div>
 			</div>

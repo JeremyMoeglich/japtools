@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { TextAndMeaning } from '$lib/scripts/universal/lesson_type';
 	import { error } from 'functional-utilities';
-	import levenshtein from 'js-levenshtein';
+	import { compare } from '$lib/scripts/universal/compare';
 	import { onMount } from 'svelte';
 
 	function choice<T>(arr: T[]): T {
@@ -30,28 +30,26 @@
 					type: 'text',
 					value: chosen_meaning
 			  };
-	$: question =
+	$: internal_question =
 		lesson.required_data.to === 'meanings'
 			? lesson.subject_type === 'KANJI'
-				? `What does the Kanji {} mean?`
+				? `What does the Kanji || mean?`
 				: lesson.subject_type === 'VOCABULARY'
-				? `What does the vocabulary {} mean?`
-				: `What does the radical {} stand for?`
+				? `What does the vocabulary || mean?`
+				: `What does this radical stand for?`
 			: lesson.subject_type === 'KANJI'
-			? `Type the kanji that means {}`
+			? `Type the kanji that means ||`
 			: lesson.subject_type === 'VOCABULARY'
-			? `Type {} in Japanese`
+			? `Type || in Japanese`
 			: error('Lessons going from meanings to radicals are not supported');
+	$: question =
+		shown.type === 'text' ? internal_question.replace('||', shown.value) : internal_question;
 	$: correct_answer =
 		lesson.required_data.to === 'meanings'
 			? lesson.required_data.meanings
 			: [lesson.required_data.text].concat(lesson.required_data.readings);
 
-	function compare(str1: string, str2: string): boolean {
-		const similarity =
-			1 - levenshtein(str1.toLowerCase(), str2.toLowerCase()) / Math.max(str1.length, str2.length);
-		return similarity > 0.8;
-	}
+
 
 	function check_answer(current_input: string, correct_answer: string[]) {
 		if (lesson.required_data.to === 'meanings') {
@@ -72,7 +70,13 @@
 </script>
 
 <div class="relative">
-	<h2 class=" text-white text-5xl">{shown}</h2>
+	<h2 class=" text-white text-5xl">
+		{#if shown.type === 'image'}
+			<img src={shown.value} class="w-24 h-24 invert" alt="symbol" />
+		{:else}
+			{shown.value}
+		{/if}
+	</h2>
 	{#if show_correct}
 		<div
 			class="absolute top-20 w-max left-1/2 bg-red-500 text-white p-2 rounded-lg -translate-x-1/2 shadow-xl"

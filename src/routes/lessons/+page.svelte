@@ -50,6 +50,10 @@
 		}
 		current_lesson_state = 'in_progress';
 		current_input = '';
+		// if (current_lesson && current_lesson.subject_id !== 8761) {
+		// 	await change_level(current_lesson.subject_id, 1);
+		// 	await next_lesson();
+		// }
 	}
 
 	if (browser) {
@@ -98,6 +102,7 @@
 		response_type={current_lesson_state === 'wrong' ? 'locked' : 'ja'}
 		{question}
 		next_lesson={confirm}
+		show_correct={current_lesson_state === 'wrong'}
 	>
 		<div>
 			{#if current_lesson}

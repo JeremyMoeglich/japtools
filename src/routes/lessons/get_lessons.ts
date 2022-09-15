@@ -8,6 +8,7 @@ import {
 	type ReadingTypeType
 } from '$lib/scripts/universal/datatypes';
 import type { Lesson } from '$lib/scripts/universal/lesson_type';
+import { error } from 'functional-utilities';
 import { sortBy } from 'lodash-es';
 import { isKanji } from 'wanakana';
 import { z } from 'zod';
@@ -61,7 +62,8 @@ export async function get_lessons() {
 								subject_id: subject_id,
 								subject_type: 'KANJI',
 								skill_level: skill_level,
-								need_input: true
+								need_input: true,
+								preferred_tab: 'Meanings'
 							});
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
@@ -72,7 +74,8 @@ export async function get_lessons() {
 								subject_id: subject_id,
 								subject_type: 'KANJI',
 								skill_level: skill_level,
-								need_input: true
+								need_input: true,
+								preferred_tab: 'Readings'
 							});
 						}
 					} else if (is_vocabulary_data(subject)) {
@@ -91,7 +94,8 @@ export async function get_lessons() {
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
 								skill_level: skill_level,
-								need_input: true
+								need_input: true,
+								preferred_tab: 'Meanings'
 							});
 							new_lessons.push({
 								lesson_type: 'text_and_meaning',
@@ -103,7 +107,8 @@ export async function get_lessons() {
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
 								skill_level: skill_level,
-								need_input: true
+								need_input: true,
+								preferred_tab: 'Meanings'
 							});
 						}
 						{
@@ -120,7 +125,8 @@ export async function get_lessons() {
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
 								skill_level: skill_level,
-								need_input: true
+								need_input: true,
+								preferred_tab: 'Meanings'
 							});
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
@@ -131,7 +137,8 @@ export async function get_lessons() {
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
 								skill_level: skill_level,
-								need_input: true
+								need_input: true,
+								preferred_tab: 'Readings'
 							});
 						}
 
@@ -171,15 +178,18 @@ export async function get_lessons() {
 													return [kanji, undefined];
 												}
 												if (
-													viable_readings.every((v) => v.reading === viable_readings[0].reading)
+													sortBy(viable_readings, (r) => r.reading.length)
+														.reverse()
+														.filter((v) => v.reading.length === viable_readings[0].reading.length)
+														.every((v) => v.reading === viable_readings[0].reading)
 												) {
 													kanji_types.push(viable_readings[0].reading_type);
 													r = r.slice(viable_readings[0].reading.length);
 												} else {
 													throw new Error(
-														`Multiple viable ${kanji} readings ${new Array(
-															new Set(viable_readings.map((v) => v.reading)).keys()
-														).join(', ')}`
+														`Multiple viable ${kanji} readings ${[
+															...new Set(viable_readings.map((v) => v.reading))
+														].join(', ')} on ${r_ref.reading}`
 													);
 												}
 											} else {
@@ -213,7 +223,8 @@ export async function get_lessons() {
 										subject_id: subject_id,
 										skill_level: skill_level,
 										subject_type: 'VOCABULARY',
-										need_input: false
+										need_input: false,
+										preferred_tab: 'Readings'
 									});
 								}
 							}
@@ -227,7 +238,7 @@ export async function get_lessons() {
 											text: subject.characters
 									  }
 									: {
-											image_url: subject.image_url
+											image_url: subject.image_url ?? error('image_url is undefined')
 									  }),
 								meanings: subject.meanings.map((meaning) => meaning.meaning),
 								to: 'meanings'
@@ -235,7 +246,8 @@ export async function get_lessons() {
 							subject_id: subject_id,
 							skill_level: skill_level,
 							subject_type: 'RADICAL',
-							need_input: true
+							need_input: true,
+							preferred_tab: 'Meanings'
 						});
 					} else {
 						throw new Error(`Unsupported subject type ${get_subject_type(subject)}`);

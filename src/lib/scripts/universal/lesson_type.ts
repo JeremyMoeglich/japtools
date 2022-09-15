@@ -9,25 +9,42 @@ interface LessonInterface<ID extends number> {
 	skill_level: number;
 	lesson_type: string;
 	need_input: boolean;
+	preferred_tab: 'Readings' | 'Meanings';
 }
 
-export interface ReadingAndMeaning<ID extends number> extends LessonInterface<ID> {
+export type ReadingAndMeaning<ID extends number> = {
 	subject_type: 'VOCABULARY' | 'KANJI';
-	required_data: {
-		readings: string[];
-		meanings: string[];
-		//excluded_subject_ids: number[];
-		to: 'readings' | 'meanings';
-	};
+	subject_id: ID;
+	skill_level: number;
 	lesson_type: 'reading_and_meaning';
 	need_input: true;
-}
+} & (
+	| {
+			required_data: {
+				readings: string[];
+				meanings: string[];
+				//excluded_subject_ids: number[];
+				to: 'readings';
+			};
+			preferred_tab: 'Readings';
+	  }
+	| {
+			required_data: {
+				readings: string[];
+				meanings: string[];
+				//excluded_subject_ids: number[];
+				to: 'meanings';
+			};
+			preferred_tab: 'Meanings';
+	  }
+);
 
 export type TextAndMeaning<ID extends number> = {
 	lesson_type: 'text_and_meaning';
 	need_input: true;
 	skill_level: number;
 	subject_id: ID;
+	preferred_tab: 'Meanings';
 } & (
 	| {
 			subject_type: 'VOCABULARY' | 'KANJI';
@@ -70,6 +87,7 @@ export interface KanjiNanKunOnYomi<ID extends number> extends LessonInterface<ID
 	};
 	lesson_type: 'kanji_nan_kun_on_yomi';
 	need_input: false;
+	preferred_tab: 'Readings';
 }
 
 export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<ID> {
@@ -80,6 +98,7 @@ export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<
 	};
 	lesson_type: 'vocabulary_kun_on_yomi';
 	need_input: false;
+	preferred_tab: 'Readings';
 }
 
 export type Lesson<ID extends number = number> =

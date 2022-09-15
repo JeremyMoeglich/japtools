@@ -21,6 +21,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	);
 
 	const next_review = get_next_date(skill_level);
+	console.log('next_review', next_review.toLocaleDateString());
 
 	await prisma_client.subjectProgress.update({
 		where: {
