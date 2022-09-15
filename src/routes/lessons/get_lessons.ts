@@ -8,7 +8,6 @@ import {
 	type ReadingTypeType
 } from '$lib/scripts/universal/datatypes';
 import type { Lesson } from '$lib/scripts/universal/lesson_type';
-import { error } from 'functional-utilities';
 import { sortBy } from 'lodash-es';
 import { isKanji } from 'wanakana';
 import { z } from 'zod';
@@ -194,9 +193,6 @@ export async function get_lessons() {
 								);
 							})();
 							if (Object.values(kanji_types).every((v) => v !== undefined)) {
-								if (Object.entries(kanji_types).length > 1) {
-									throw new Error('Multiple Vocabulary reading are not supported yet');
-								}
 								if (Object.entries(kanji_types).length === 0) {
 									throw new Error('No Vocabulary reading found');
 								}
@@ -204,7 +200,10 @@ export async function get_lessons() {
 								if (kanji_type === undefined) {
 									throw new Error("Internal error: kanji_type can't be undefined");
 								}
-								if (!kanji_type.every((v) => v === undefined)) {
+								if (
+									!kanji_type.every((v) => v === undefined) &&
+									Object.entries(kanji_types).length === 1
+								) {
 									new_lessons.push({
 										lesson_type: 'vocabulary_kun_on_yomi',
 										required_data: {
@@ -223,7 +222,13 @@ export async function get_lessons() {
 						new_lessons.push({
 							lesson_type: 'text_and_meaning',
 							required_data: {
-								text: subject.characters ?? error('No characters'),
+								...(subject.characters
+									? {
+											text: subject.characters
+									  }
+									: {
+											image_url: subject.image_url
+									  }),
 								meanings: subject.meanings.map((meaning) => meaning.meaning),
 								to: 'meanings'
 							},

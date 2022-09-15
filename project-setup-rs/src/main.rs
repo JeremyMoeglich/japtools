@@ -3,7 +3,7 @@ use futures_util::StreamExt;
 use indicatif::ProgressBar;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, env, error::Error, sync::Arc, path::Path};
+use std::{collections::HashMap, env, error::Error, path::Path, sync::Arc};
 use tokio::{
     fs::File,
     io::{AsyncReadExt, AsyncWriteExt},
@@ -222,6 +222,7 @@ pub async fn fetch_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box
         values.push(value);
     }
 
+    progress_bar.finish();
     let subject_vector = values.iter().flat_map(|x| x.data.clone()).collect_vec();
     let subject_map = subject_vector
         .into_iter()
@@ -262,12 +263,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     //write json to file tokio
 
-    let tasks = stream::iter(map.clone().iter().map(|x| x.1.clone()).collect_vec())
+    let mut tasks = stream::iter(map.clone().iter().map(|x| x.1.clone()).collect_vec())
         .map(|subject| {
             let client = client.clone();
             tokio::spawn(async move {
-                println!("Inserting {}", subject.id);
-
                 let index_exists = client
                     .subject_index()
                     .find_unique(db::subject_index::subject_id::equals(subject.id as i32))
@@ -487,6 +486,52 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                             .map(|x| *x as i32)
                                             .collect(),
                                     ),
+                                    db::radical_subject::image_url::set(
+                                        match radical_data
+                                            .character_images
+                                            .iter()
+                                            .map(|x| Some(x))
+                                            .find(|x| match &x.unwrap().metadata {
+                                                CharacterImageMetadata::Svg(data) => {
+                                                    data.inline_styles
+                                                }
+                                                _ => false,
+                                            })
+                                            .unwrap_or({
+                                                let v = &radical_data
+                                                    .character_images
+                                                    .iter()
+                                                    .max_by_key(|x| match &x.metadata {
+                                                        CharacterImageMetadata::Png(data) => {
+                                                            let dimensions = {
+                                                                let split =
+                                                                    data.dimensions.split('x');
+                                                                let mut split = split.map(|x| {
+                                                                    x.parse::<u32>().unwrap()
+                                                                });
+                                                                (
+                                                                    split.next().unwrap(),
+                                                                    split.next().unwrap(),
+                                                                )
+                                                            };
+                                                            dimensions.0 * dimensions.1
+                                                        }
+                                                        _ => 0,
+                                                    });
+                                                match v {
+                                                    Some(x) => match &x.metadata {
+                                                        CharacterImageMetadata::Png(_) => {
+                                                            Some(x)
+                                                        }
+                                                        _ => None,
+                                                    },
+                                                    None => None,
+                                                }
+                                            }) {
+                                            Some(x) => Some(x.url.clone()),
+                                            None => None,
+                                        },
+                                    ),
                                 ],
                             )
                             .exec()
@@ -647,11 +692,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
         })
         .buffer_unordered(300);
 
-    tasks
-        .for_each(|v| async {
-            v.unwrap();
-        })
-        .await;
+    let progress_bar = ProgressBar::new(map.len() as u64);
+
+    while let Some(res) = tasks.next().await {
+        res.unwrap();
+        progress_bar.inc(1);
+    }
+    progress_bar.finish();
 
     Ok(())
 }

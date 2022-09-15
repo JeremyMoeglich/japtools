@@ -120,6 +120,7 @@ model RadicalSubject {
   level                    Int
   meaning_mnemonic         String
   meanings                 SubjectMeaning[]
+  image_url                String?
 }
 
 model KanjiSubject {

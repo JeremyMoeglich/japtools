@@ -8,28 +8,44 @@
 		return arr[Math.floor(Math.random() * arr.length)];
 	}
 
-	export let current_lesson: TextAndMeaning<number>;
-	export let current_input: string;
+	export let lesson: TextAndMeaning<number>;
+	export let input: string;
 	export let correct: boolean;
 	export let question: string;
 	export let show_correct: boolean;
 
-	$: data = current_lesson.required_data;
-	$: chosen_meaning = choice(data.meanings);
-	$: txt = data.to === 'meanings' ? data.text : chosen_meaning;
+	$: chosen_meaning = choice(lesson.required_data.meanings);
+	$: shown =
+		lesson.required_data.to === 'meanings'
+			? 'text' in lesson.required_data
+				? {
+						type: 'text',
+						value: lesson.required_data.text
+				  }
+				: {
+						value: lesson.required_data.image_url,
+						type: 'image'
+				  }
+			: {
+					type: 'text',
+					value: chosen_meaning
+			  };
 	$: question =
-		data.to === 'meanings'
-			? current_lesson.subject_type === 'KANJI'
-				? `What does the Kanji ${txt} mean?`
-				: current_lesson.subject_type === 'VOCABULARY'
-				? `What does the vocabulary ${txt} mean?`
-				: `What does the radical ${txt} stand for?`
-			: current_lesson.subject_type === 'KANJI'
-			? `Type the kanji that means ${txt}`
-			: current_lesson.subject_type === 'VOCABULARY'
-			? `Type ${txt} in Japanese`
+		lesson.required_data.to === 'meanings'
+			? lesson.subject_type === 'KANJI'
+				? `What does the Kanji {} mean?`
+				: lesson.subject_type === 'VOCABULARY'
+				? `What does the vocabulary {} mean?`
+				: `What does the radical {} stand for?`
+			: lesson.subject_type === 'KANJI'
+			? `Type the kanji that means {}`
+			: lesson.subject_type === 'VOCABULARY'
+			? `Type {} in Japanese`
 			: error('Lessons going from meanings to radicals are not supported');
-	$: correct_answer = data.to === 'meanings' ? data.meanings : [data.text].concat(data.readings);
+	$: correct_answer =
+		lesson.required_data.to === 'meanings'
+			? lesson.required_data.meanings
+			: [lesson.required_data.text].concat(lesson.required_data.readings);
 
 	function compare(str1: string, str2: string): boolean {
 		const similarity =
@@ -38,7 +54,7 @@
 	}
 
 	function check_answer(current_input: string, correct_answer: string[]) {
-		if (data.to === 'meanings') {
+		if (lesson.required_data.to === 'meanings') {
 			correct = correct_answer.some((answer) => compare(answer, current_input));
 		} else {
 			correct = correct_answer.some(
@@ -48,15 +64,15 @@
 	}
 
 	onMount(() => {
-		check_answer(current_input, correct_answer);
-		current_lesson = current_lesson;
+		check_answer(input, correct_answer);
+		lesson = lesson;
 	});
 
-	$: check_answer(current_input, correct_answer);
+	$: check_answer(input, correct_answer);
 </script>
 
 <div class="relative">
-	<h2 class=" text-white text-5xl">{txt}</h2>
+	<h2 class=" text-white text-5xl">{shown}</h2>
 	{#if show_correct}
 		<div
 			class="absolute top-20 w-max left-1/2 bg-red-500 text-white p-2 rounded-lg -translate-x-1/2 shadow-xl"

@@ -54,7 +54,8 @@ export const RadicalDataSchema = z.object({
 	lesson_position: z.number().int(),
 	level: z.number().int(),
 	meaning_mnemonic: z.string(),
-	meanings: z.array(SubjectMeaningSchema)
+	meanings: z.array(SubjectMeaningSchema),
+	image_url: z.string()
 });
 
 export const KanjiDataSchema = z.object({

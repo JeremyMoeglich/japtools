@@ -103,16 +103,16 @@
 			{#if current_lesson}
 				{#if current_lesson.lesson_type === 'text_and_meaning'}
 					<TextMeaning
-						{current_lesson}
-						bind:current_input
+						lesson={current_lesson}
+						bind:input={current_input}
 						bind:correct
 						bind:question
 						show_correct={current_lesson_state === 'wrong'}
 					/>
 				{:else if current_lesson.lesson_type === 'reading_and_meaning'}
 					<ReadingMeaning
-						{current_lesson}
-						bind:current_input
+						lesson={current_lesson}
+						bind:input={current_input}
 						bind:correct
 						bind:question
 						show_correct={current_lesson_state === 'wrong'}

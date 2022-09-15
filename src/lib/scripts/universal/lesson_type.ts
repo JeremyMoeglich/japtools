@@ -23,20 +23,42 @@ export interface ReadingAndMeaning<ID extends number> extends LessonInterface<ID
 	need_input: true;
 }
 
-export interface TextAndMeaning<ID extends number> extends LessonInterface<ID> {
-	required_data: {
-		text: string;
-		meanings: string[];
-		to: 'meanings';
-	} | {
-		text: string;
-		meanings: string[];
-		to: 'symbol';
-		readings: string[];
-	}
+export type TextAndMeaning<ID extends number> = {
 	lesson_type: 'text_and_meaning';
 	need_input: true;
-}
+	skill_level: number;
+	subject_id: ID;
+} & (
+	| {
+			subject_type: 'VOCABULARY' | 'KANJI';
+			required_data: (
+				| {
+						to: 'meanings';
+				  }
+				| {
+						to: 'symbol';
+						readings: string[];
+				  }
+			) & {
+				meanings: string[];
+				text: string;
+			};
+	  }
+	| {
+			subject_type: 'RADICAL';
+			required_data: {
+				meanings: string[];
+				to: 'meanings';
+			} & (
+				| {
+						text: string;
+				  }
+				| {
+						image_url: string;
+				  }
+			);
+	  }
+);
 
 export interface KanjiNanKunOnYomi<ID extends number> extends LessonInterface<ID> {
 	subject_type: 'KANJI';

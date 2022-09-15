@@ -7,20 +7,20 @@
 		return arr[Math.floor(Math.random() * arr.length)];
 	}
 
-	export let current_lesson: ReadingAndMeaning<number>;
-	export let current_input: string;
+	export let lesson: ReadingAndMeaning<number>;
+	export let input: string;
 	export let correct: boolean;
 	export let question: string;
 	export let show_correct: boolean;
 
-	$: data = current_lesson.required_data;
+	$: data = lesson.required_data;
 	$: chosen_meaning = choice(data.meanings);
 	$: chosen_reading = choice(data.readings);
 	$: txt = data.to === 'meanings' ? chosen_reading : chosen_meaning;
 	$: question =
 		data.to === 'meanings'
 			? `What does the reading ${txt} mean?`
-			: current_lesson.subject_type === 'KANJI'
+			: lesson.subject_type === 'KANJI'
 			? `Type the kanji reading of ${txt}`
 			: `Type the reading of ${txt}`;
 
@@ -43,11 +43,11 @@
 	}
 
 	onMount(() => {
-		check_answer(current_input, correct_answer);
-		current_lesson = current_lesson;
+		check_answer(input, correct_answer);
+		lesson = lesson;
 	});
 
-	$: check_answer(current_input, correct_answer);
+	$: check_answer(input, correct_answer);
 </script>
 
 <div class="relative">

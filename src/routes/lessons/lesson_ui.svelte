@@ -58,8 +58,8 @@
 			<p
 				class="col-start-1 row-start-1"
 				transition:fly={{
-					duration: 500,
-					x: 30
+					duration: 200,
+					x: 10
 				}}
 			>
 				{question}
