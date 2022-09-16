@@ -15,7 +15,7 @@ export async function get_lesson_subjects(): Promise<LessonSubjectDataType[]> {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				amount: 10
+				amount: 4
 			})
 		})
 	).json();

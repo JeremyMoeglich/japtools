@@ -70,7 +70,7 @@
 <div class="relative">
 	<h2 class=" text-white text-5xl">
 		{#if shown.type === 'image'}
-			<img src={shown.value} class="w-24 h-24 invert" alt="symbol" />
+			<img src={shown.value} class="w-16 h-16 invert" alt="symbol" />
 		{:else}
 			{shown.value}
 		{/if}

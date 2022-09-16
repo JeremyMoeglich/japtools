@@ -89,7 +89,7 @@
 							{:else if 'context_sentences' in subject}
 								<div>
 									<h5>Readings:</h5>
-									<ul class="pl-8 list-disc">
+									<ul class="pl-4 list-disc">
 										{#each sortBy(subject.readings, primary_sort) as reading}
 											<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
 										{/each}

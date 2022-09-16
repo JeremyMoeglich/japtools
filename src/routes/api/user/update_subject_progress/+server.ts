@@ -6,6 +6,10 @@ import { z } from 'zod';
 import { json } from '@sveltejs/kit';
 
 function get_next_date(n: number): Date {
+	n--;
+	if (n < 0) {
+		n = 0;
+	}
 	const hour_offset = range(n).reduce((acc) => acc + acc ** 1.1 + 1, 0);
 	return new Date(Date.now() + hour_offset * 3600000);
 }
@@ -21,7 +25,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	);
 
 	const next_review = get_next_date(skill_level);
-	console.log('next_review', next_review.toLocaleDateString());
+	console.log('next_review', next_review.toLocaleDateString(), next_review.toLocaleTimeString());
 
 	await prisma_client.subjectProgress.update({
 		where: {

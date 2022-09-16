@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import AuthPage from './auth_page.svelte';
 	import { logged_in } from '$lib/scripts/frontend/auth/auth_state';
 	import { check_token_and_login } from '$lib/scripts/frontend/auth/token_login';
@@ -7,7 +8,7 @@
 	import IoIosBook from 'svelte-icons/io/IoIosBook.svelte';
 	import { is_loading_store } from '$lib/scripts/frontend/is_loading';
 	import { Circle2 } from 'svelte-loading-spinners';
-	
+
 	check_token_and_login();
 </script>
 
@@ -49,6 +50,8 @@
 		</div>
 	</div>
 {/if}
+
+<SvelteToast />
 
 <style>
 	.loading {

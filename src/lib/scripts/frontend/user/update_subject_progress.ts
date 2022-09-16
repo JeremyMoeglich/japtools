@@ -1,3 +1,6 @@
+import { get } from 'svelte/store';
+import { subject_store } from './subject_store';
+
 export async function update_subject_progress(subject_id: number, skill_level: number) {
 	const response = await fetch('/api/user/update_subject_progress', {
 		method: 'POST',
@@ -12,4 +15,12 @@ export async function update_subject_progress(subject_id: number, skill_level: n
 	if (response.status !== 200) {
 		throw new Error(await response.text());
 	}
+	const current_subject_store = get(subject_store);
+	const current_subject = current_subject_store.get(subject_id);
+	if (!current_subject) {
+		return;
+	}
+	current_subject.skill_level = skill_level;
+	current_subject_store.set(subject_id, current_subject);
+	subject_store.set(current_subject_store);
 }

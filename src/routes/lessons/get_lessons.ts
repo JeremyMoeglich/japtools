@@ -256,7 +256,7 @@ export async function get_lessons() {
 				})
 			)
 		).flat(),
-		(lesson: Lesson<number>) => lesson.skill_level + Math.random() * 0.5
+		(lesson: Lesson<number>) => lesson.skill_level + Math.random() * 0.4
 	).filter(
 		(lesson: Lesson<number>) => required_level_table[lesson.lesson_type] <= lesson.skill_level
 	);

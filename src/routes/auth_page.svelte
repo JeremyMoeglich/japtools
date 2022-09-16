@@ -2,6 +2,7 @@
 	import PrettyObj from '$lib/components/pretty_obj.svelte';
 	import { login } from '$lib/scripts/frontend/auth/login';
 	import { register } from '$lib/scripts/frontend/auth/register';
+	import { toast } from '@zerodevx/svelte-toast';
 
 	let name = '';
 	let email = '';
@@ -21,6 +22,13 @@
 				if (login_result !== undefined) {
 					login_error = login_result.message;
 				}
+				toast.push('Logged in', {
+					duration: 2000,
+					theme: {
+						'--toastBackground': '#00ff00',
+						'--toastColor': '#ffffff',
+					}
+				});
 			}}
 			class="form-control gap-3"
 		>
@@ -45,6 +53,13 @@
 				if (register_result !== undefined) {
 					register_error = register_result.message;
 				}
+				toast.push('Account created', {
+					duration: 2000,
+					theme: {
+						'--toastBackground': '#00ff00',
+						'--toastColor': '#ffffff',
+					}
+				});
 			}}
 		>
 			<label for="name" class="input-group">
