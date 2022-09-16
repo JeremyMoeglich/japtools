@@ -2,6 +2,7 @@ import {
 	LessonSubjectDataSchema,
 	type LessonSubjectDataType
 } from '$lib/scripts/universal/datatypes';
+import { domain } from '$lib/scripts/frontend/domain';
 import { parse_to_date } from '$lib/scripts/universal/zod_util';
 import { get } from 'svelte/store';
 import { z } from 'zod';
@@ -9,7 +10,7 @@ import { subject_store } from './subject_store';
 
 export async function get_lesson_subjects(): Promise<LessonSubjectDataType[]> {
 	const lessons_raw: unknown = await (
-		await fetch('/api/user/get_lesson_subjects', {
+		await fetch(`${domain}/api/user/get_lesson_subjects`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

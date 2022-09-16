@@ -1,3 +1,4 @@
+import { domain } from '$lib/scripts/frontend/domain';
 import { get } from 'svelte/store';
 import { logged_in } from './auth_state';
 import { login_token_store } from './login_token';
@@ -8,7 +9,7 @@ export async function logout() {
 	if (!token) {
 		return;
 	}
-	await fetch('/api/auth/delete_token', {
+	await fetch(`${domain}/api/auth/delete_token`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'

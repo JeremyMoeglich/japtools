@@ -7,6 +7,7 @@ import {
 	KanjiDataSchema,
 	type ReadingTypeType
 } from '$lib/scripts/universal/datatypes';
+import { domain } from '$lib/scripts/frontend/domain';
 import type { Lesson } from '$lib/scripts/universal/lesson_type';
 import { error } from 'functional-utilities';
 import { sortBy } from 'lodash-es';
@@ -146,7 +147,7 @@ export async function get_lessons() {
 							const kanji_types = await (async () => {
 								const kanji_data = z.record(z.string(), KanjiDataSchema).parse(
 									await (
-										await fetch('/api/create_kanji_map', {
+										await fetch(`${domain}/api/create_kanji_map`, {
 											method: 'POST',
 											body: JSON.stringify({
 												text: txt

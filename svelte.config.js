@@ -2,20 +2,24 @@
 
 import staticAdapter from '@sveltejs/adapter-static';
 import nodeAdapter from '@sveltejs/adapter-node';
+import cloudflareAdapter from '@sveltejs/adapter-cloudflare';
 import preprocess from 'svelte-preprocess';
 
-const hasAdapter = process.env.ADAPTER;
-const adapt = hasAdapter ? hasAdapter : 'node';
+const adapt = process.env.ADAPTER;
 
 const getAdapters = (adapt) => {
 	switch (adapt) {
 		case 'node':
-			return nodeAdapter;
+			return nodeAdapter();
 		case 'static':
-			return staticAdapter;
+			return staticAdapter({
+				fallback: 'index.html',
+			});
+		case 'cloudflare':
+			return cloudflareAdapter();
 		default:
 			console.log('unknown adapter, using node');
-			return nodeAdapter;
+			return nodeAdapter();
 	}
 };
 
@@ -32,7 +36,7 @@ const config = {
 	],
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter
 	}
 };
 

@@ -1,4 +1,5 @@
 import { user_data_type_schema } from '$lib/scripts/universal/datatypes';
+import { domain } from '$lib/scripts/frontend/domain';
 import { parse_to_date } from '$lib/scripts/universal/zod_util';
 import { get } from 'svelte/store';
 import { z } from 'zod';
@@ -22,7 +23,7 @@ export async function check_token_and_login() {
 
 export async function token_login(token: string, validate = true) {
 	if (validate) {
-		const result = await fetch('/api/auth/token_login', {
+		const result = await fetch(`${domain}/api/auth/token_login`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -42,7 +43,7 @@ export async function token_login(token: string, validate = true) {
 	}
 
 	login_token_store.set(token);
-	const response = await (await fetch('/api/auth/get_own_user_data')).json();
+	const response = await (await fetch(`${domain}/api/auth/get_own_user_data`)).json();
 	const parsed = parse_to_date(
 		z
 			.object({

@@ -1,8 +1,9 @@
+import { domain } from '$lib/scripts/frontend/domain';
 import { get } from 'svelte/store';
 import { subject_store } from './subject_store';
 
 export async function update_subject_progress(subject_id: number, skill_level: number) {
-	const response = await fetch('/api/user/update_subject_progress', {
+	const response = await fetch(`${domain}/api/user/update_subject_progress`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'

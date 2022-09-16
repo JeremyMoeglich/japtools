@@ -1,3 +1,4 @@
+import { domain } from '$lib/scripts/frontend/domain';
 import { z } from 'zod';
 import { token_login } from './token_login';
 
@@ -7,7 +8,7 @@ export async function register(
 	password: string
 ): Promise<Error | undefined> {
 	const response = await (
-		await fetch('/api/auth/create', {
+		await fetch(`${domain}/api/auth/create`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

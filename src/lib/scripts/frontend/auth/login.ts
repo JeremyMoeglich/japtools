@@ -1,8 +1,9 @@
 import { token_login } from './token_login';
 import { z } from 'zod';
+import { domain } from '$lib/scripts/frontend/domain';
 
 export async function login(email: string, password: string): Promise<Error | undefined> {
-	const result = await fetch('/api/auth/login', {
+	const result = await fetch(`${domain}/api/auth/login`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
