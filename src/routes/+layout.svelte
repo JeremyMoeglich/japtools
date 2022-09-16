@@ -10,6 +10,17 @@
 	import { Circle2 } from 'svelte-loading-spinners';
 
 	check_token_and_login();
+
+	let testv: string = 'Nothing yet';
+	(async () => {
+		try {
+			const res = await fetch('/api/test');
+			const data = await res.json();
+			testv = JSON.stringify(data);
+		} catch (e) {
+			testv = 'Error';
+		}
+	})();
 </script>
 
 <div class="flex flex-col h-screen">
@@ -34,6 +45,9 @@
 			</a>
 		{/if}
 	</div>
+	<p>
+		{testv}
+	</p>
 	<div class="content h-full">
 		{#if $logged_in}
 			<slot />

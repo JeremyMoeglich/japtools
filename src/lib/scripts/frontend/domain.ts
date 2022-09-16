@@ -1,1 +1,3 @@
-export const domain = 'https://japtools.moeglich.dev';
+import { dev } from '$app/environment';
+
+export const domain = dev ? '' : 'https://japtools.moeglich.dev';

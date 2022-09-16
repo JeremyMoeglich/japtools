@@ -2,18 +2,17 @@
 	"name": "japtools",
 	"version": "0.1.0",
 	"scripts": {
-		"dev": "esrun scripts/run.ts && vite dev",
+		"dev": "vite dev",
 		"build": "vite build",
 		"build:static": "cross-env ADAPTER=static npm run build",
 		"build:node": "cross-env ADAPTER=node npm run build",
 		"build:cloudflare": "cross-env ADAPTER=cloudflare npm run build",
 		"package": "svelte-kit package",
-		"preview": "esrun scripts/run.ts && vite preview",
+		"preview": "vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check --plugin-search-dir=. . && eslint .",
 		"format": "prettier --write --plugin-search-dir=. .",
-		"dosetup": "esrun scripts/setup.ts",
 		"generate": "prisma-merge -b ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && prisma generate && prisma generate --schema ./prisma/rsschema.prisma",
 		"migration": "prisma migrate dev --name",
 		"dev:app": "tauri dev",
@@ -23,7 +22,8 @@
 		"update:prod": "npm run generate:prod && dotenv -e .env.prod -- npm run updatedb",
 		"update:dev": "npm run generate:dev && dotenv -e .env -- npm run updatedb",
 		"generate:prod": "dotenv -e .env.prod -- prisma generate",
-		"generate:dev": "dotenv -e .env -- npm run generate"
+		"generate:dev": "dotenv -e .env -- npm run generate",
+		"dev:prod": "dotenv -e .env.prod -- npm run dev"
 	},
 	"devDependencies": {
 		"@digitak/esrun": "^3.2.11",
