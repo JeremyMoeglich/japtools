@@ -1,9 +1,12 @@
+import { get_body } from '$lib/scripts/backend/endpoint_utils.server';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from '../../../../.svelte-kit/types/src/routes/api/$types';
 
-export const POST: RequestHandler = async () => {
+export const POST: RequestHandler = async ({ request }) => {
+    const body = await get_body(request);
     return json({
-        'message': 'This is a post request'
+        'message': 'This is a post request',
+        'echo': body
     })
 }
 

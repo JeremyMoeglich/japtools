@@ -14,7 +14,13 @@
 	let testv: string = 'Nothing yet';
 	(async () => {
 		try {
-			const res = await fetch('/api/test');
+			const res = await fetch('/api/test', {
+				method: 'POST',
+				body: JSON.stringify({ test: 'test' }),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
 			const data = await res.json();
 			testv = JSON.stringify(data);
 		} catch (e) {
