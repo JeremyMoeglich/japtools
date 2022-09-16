@@ -27,7 +27,7 @@ pub struct RequestData {
     pages: Pages,
 }
 
-const cache_file: &str = "target/wanikani.json";
+const CACHE_FILE: &str = "target/wanikani.json";
 
 pub async fn fetch_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box<dyn Error>> {
     let client = reqwest::Client::new();
@@ -62,7 +62,7 @@ pub async fn fetch_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box
         .map(|x| (x.id, x))
         .collect::<HashMap<u32, SubjectDataOuter>>();
 
-    let mut file = File::create(cache_file).await?;
+    let mut file = File::create(CACHE_FILE).await?;
     file.write_all(serde_json::to_string(&subject_map).unwrap().as_bytes())
         .await?;
 
@@ -70,7 +70,7 @@ pub async fn fetch_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box
 }
 
 pub async fn load_wanikani_data() -> Result<HashMap<u32, SubjectDataOuter>, Box<dyn Error>> {
-    let filename = cache_file;
+    let filename = CACHE_FILE;
     if Path::new(filename).exists() {
         let mut file = File::open(filename).await?;
         let mut contents = String::new();
