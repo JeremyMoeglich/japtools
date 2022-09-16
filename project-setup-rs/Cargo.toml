@@ -8,7 +8,6 @@ edition = "2021"
 
 [dependencies]
 chrono = "0.4.22"
-dotenv = "0.15.0"
 indicatif = "0.17.0"
 itertools = "0.10.0"
 project-root = "0.2.2"
