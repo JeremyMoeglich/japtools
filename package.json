@@ -58,6 +58,7 @@
 		"@types/number-to-words": "^1.2.1",
 		"@types/serialize-javascript": "^5.0.2",
 		"@types/wanakana": "^4.0.3",
+		"@zerodevx/svelte-toast": "^0.7.2",
 		"array-shuffle": "^3.0.0",
 		"daisyui": "^2.25.0",
 		"generate-password": "^1.7.0",

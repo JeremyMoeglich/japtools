@@ -11,6 +11,7 @@
 	import LessonUi from './lesson_ui.svelte';
 	import ReadingMeaning from './reading_meaning.svelte';
 
+
 	async function change_level(subject_id: number, n: number) {
 		await update_subject_progress(
 			subject_id,
@@ -70,7 +71,7 @@
 			throw new Error('No lesson');
 		}
 		if (current_lesson_state === 'in_progress') {
-			if (correct) {
+			if (correct || current_lesson.skill_level === 0) {
 				current_lesson_state = 'waiting_for_next';
 				await change_level(current_lesson.subject_id, 1);
 				await next_lesson();
@@ -110,7 +111,7 @@
 			? 'ja'
 			: 'en'}
 		{question}
-		next_lesson={confirm}
+		confirm={confirm}
 		show_correct={current_lesson_state === 'wrong'}
 	>
 		<div>

@@ -1,6 +1,7 @@
 <script lang="ts">
-	import PrettyObj from '$lib/components/pretty_obj.svelte';
 	import { subject_store } from '$lib/scripts/frontend/user/subject_store';
+	import { update_subject_progress } from '$lib/scripts/frontend/user/update_subject_progress';
+	import { toast } from '@zerodevx/svelte-toast';
 
 	import type { Lesson } from '$lib/scripts/universal/lesson_type';
 
@@ -13,7 +14,7 @@
 	export let response_type: 'ja' | 'en' | 'locked' | undefined;
 	export let response_value: string = '';
 	export let question: string = '';
-	export let next_lesson: () => MaybePromise<boolean>;
+	export let confirm: () => MaybePromise<boolean>;
 	export let show_correct: boolean;
 
 	function toWordUpperCase(str: string) {
@@ -37,10 +38,27 @@
 	<p class="absolute top-5 left-5">
 		ID: {lesson ? lesson.subject_id : 'Loading...'}
 	</p>
-	<button class="absolute bottom-5 right-5 capitalize z-10">
-		Reset {lesson ? toWordUpperCase(lesson.subject_type) : 'Loading...'} Progress
-	</button>
-	{#if lesson && show_correct}
+	{#if lesson && lesson.skill_level !== 0}
+		<button
+			class="absolute bottom-5 right-5 capitalize z-10"
+			on:click={async () => {
+				if (!lesson) {
+					return;
+				}
+				await update_subject_progress(lesson.subject_id, 0);
+				toast.push('Progress reset', {
+					duration: 2000,
+					theme: {
+						'--toastBackground': '#ff0000',
+						'--toastColor': '#ffffff'
+					}
+				});
+			}}
+		>
+			Reset {lesson ? toWordUpperCase(lesson.subject_type) : 'Loading...'} Progress
+		</button>
+	{/if}
+	{#if lesson && (show_correct || lesson.skill_level === 0)}
 		<div class="absolute bottom-0 left-0 w-full h-2/5">
 			<SubjectBrowser subject={$subject_store.get(lesson.subject_id)?.subject} />
 		</div>
@@ -60,8 +78,10 @@
 		</p>
 	</div>
 
-	{#if response_type}
-		<LessonInput {response_type} bind:response_value submit_callback={next_lesson} />
+	{#if response_type && lesson?.skill_level !== 0}
+		<LessonInput {response_type} bind:response_value submit_callback={confirm} />
+	{:else if lesson?.skill_level === 0}
+		<button on:click={confirm} class="mt-8">Next</button>
 	{/if}
 
 	<!-- <div class="absolute bottom-5 right-5 flex">
