@@ -9,7 +9,7 @@ specifiers:
   '@sveltejs/adapter-static': 1.0.0-next.43
   '@sveltejs/kit': 1.0.0-next.480
   '@tauri-apps/cli': ^1.1.0
-  '@types/bcrypt': ^5.0.0
+  '@types/bcryptjs': ^2.4.2
   '@types/cookie': ^0.5.1
   '@types/js-cookie': ^3.0.2
   '@types/js-levenshtein': ^1.1.1
@@ -22,7 +22,7 @@ specifiers:
   '@zerodevx/svelte-toast': ^0.7.2
   array-shuffle: ^3.0.0
   autoprefixer: ^10.4.7
-  bcrypt: ^5.0.1
+  bcryptjs: ^2.4.3
   cookie: ^0.5.0
   cross-env: ^7.0.3
   cuid: ^2.1.8
@@ -88,12 +88,12 @@ devDependencies:
   '@sveltejs/adapter-static': 1.0.0-next.43
   '@sveltejs/kit': 1.0.0-next.480_svelte@3.50.1+vite@3.1.0
   '@tauri-apps/cli': 1.1.0
-  '@types/bcrypt': 5.0.0
+  '@types/bcryptjs': 2.4.2
   '@types/cookie': 0.5.1
   '@typescript-eslint/eslint-plugin': 5.36.2_2l2r3i3lm6jysqd4ac3ql4n2mm
   '@typescript-eslint/parser': 5.36.2_itqs5654cmlnjraw6gjzqacppi
   autoprefixer: 10.4.8_postcss@8.4.16
-  bcrypt: 5.0.1
+  bcryptjs: 2.4.3
   cookie: 0.5.0
   cross-env: 7.0.3
   cuid: 2.1.8
@@ -245,24 +245,6 @@ packages:
   /@keyfox/pochi/0.5.6:
     resolution: {integrity: sha512-ON7zCPI41Ud8CtE8TZTgxDZgrsVDAStYTZX1ZsNzgXN92/TzhASTMzLncMLwBkQs5348kmz6Pdpz/WQHsSIygg==}
     dev: false
-
-  /@mapbox/node-pre-gyp/1.0.10:
-    resolution: {integrity: sha512-4ySo4CjzStuprMwk35H5pPbkymjv1SF3jGLj6rAHp/xT/RF7TL7bd9CTm1xDY49K2qF7jmR/g7k+SkLETP6opA==}
-    hasBin: true
-    dependencies:
-      detect-libc: 2.0.1
-      https-proxy-agent: 5.0.1
-      make-dir: 3.1.0
-      node-fetch: 2.6.7
-      nopt: 5.0.0
-      npmlog: 5.0.1
-      rimraf: 3.0.2
-      semver: 7.3.7
-      tar: 6.1.11
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-    dev: true
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -786,10 +768,8 @@ packages:
     engines: {node: '>= 10'}
     dev: true
 
-  /@types/bcrypt/5.0.0:
-    resolution: {integrity: sha512-agtcFKaruL8TmcvqbndlqHPSJgsolhf/qPWchFlgnW1gECTN/nKbFcoFnvKAQRFfKbh+BO6A3SWdJu9t+xF3Lw==}
-    dependencies:
-      '@types/node': 18.7.16
+  /@types/bcryptjs/2.4.2:
+    resolution: {integrity: sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==}
     dev: true
 
   /@types/cookie/0.5.1:
@@ -1259,16 +1239,8 @@ packages:
       tweetnacl: 0.14.5
     dev: true
 
-  /bcrypt/5.0.1:
-    resolution: {integrity: sha512-9BTgmrhZM2t1bNuDtrtIMVSmmxZBrJ71n8Wg+YgdjHuIWYF7SjjmCPZFB+/5i/o/PIeRpwVJR3P+NrpIItUjqw==}
-    engines: {node: '>= 10.0.0'}
-    requiresBuild: true
-    dependencies:
-      '@mapbox/node-pre-gyp': 1.0.10
-      node-addon-api: 3.2.1
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
+  /bcryptjs/2.4.3:
+    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
     dev: true
 
   /binary-extensions/2.2.0:
@@ -1733,11 +1705,6 @@ packages:
 
   /detect-indent/6.1.0:
     resolution: {integrity: sha512-reYkTUJAZb9gUuZ2RvVCNhVHdg62RHnJ7WJl8ftMi4diZ6NWlciOzQN88pUhSELEwflJht4oQDv0F0BMlwaYtA==}
-    engines: {node: '>=8'}
-    dev: true
-
-  /detect-libc/2.0.1:
-    resolution: {integrity: sha512-463v3ZeIrcWtdgIg6vI6XUncguvr2TnGl4SzDXinkt9mSLpBJKXT3mW6xT3VQdDN11+WVs29pgvivTc4Lp8v+w==}
     engines: {node: '>=8'}
     dev: true
 
@@ -3580,10 +3547,6 @@ packages:
   /new-github-issue-url/0.2.1:
     resolution: {integrity: sha512-md4cGoxuT4T4d/HDOXbrUHkTKrp/vp+m3aOA7XXVYwNsUNMK49g3SQicTSeV5GIz/5QVGAeYRAOlyp9OvlgsYA==}
     engines: {node: '>=10'}
-    dev: true
-
-  /node-addon-api/3.2.1:
-    resolution: {integrity: sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==}
     dev: true
 
   /node-domexception/1.0.0:
