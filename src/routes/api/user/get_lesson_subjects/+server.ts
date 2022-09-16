@@ -99,10 +99,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			const subjects_to_add = possible_subjects.slice(0, amount_to_add);
 			const added = await Promise.all(
 				subjects_to_add.map((subject) => {
-					const subject_data = get_subject_by_id(subject.id);
-					if (!subject_data) {
-						throw error(500, 'Could not get subject data');
-					}
 					const promise = prisma_client.subjectProgress.create({
 						data: {
 							progress_id: user_data.progress_id,

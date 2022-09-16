@@ -108,7 +108,7 @@ export async function get_lessons() {
 								subject_type: 'VOCABULARY',
 								skill_level: skill_level,
 								need_input: true,
-								preferred_tab: 'Meanings'
+								preferred_tab: 'Readings'
 							});
 						}
 						{

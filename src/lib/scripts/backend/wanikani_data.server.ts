@@ -52,7 +52,6 @@ function convert_radical(
 		meanings: SubjectMeaning[];
 	}
 ): RadicalDataType {
-	console.log(JSON.stringify(data));
 	return {
 		...data,
 		characters: data.characters ? data.characters : undefined,

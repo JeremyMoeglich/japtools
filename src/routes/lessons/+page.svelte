@@ -74,13 +74,18 @@
 				current_lesson_state = 'waiting_for_next';
 				await change_level(current_lesson.subject_id, 1);
 				await next_lesson();
+				return true;
 			} else {
 				current_lesson_state = 'wrong';
 				await change_level(current_lesson.subject_id, -1);
+				return false;
 			}
 		} else if (current_lesson_state === 'wrong') {
 			current_lesson_state = 'waiting_for_next';
 			await next_lesson();
+			return true;
+		} else {
+			return true;
 		}
 	}
 </script>
@@ -99,7 +104,11 @@
 	<LessonUi
 		lesson={current_lesson}
 		bind:response_value={current_input}
-		response_type={current_lesson_state === 'wrong' ? 'locked' : 'ja'}
+		response_type={current_lesson_state === 'wrong'
+			? 'locked'
+			: current_lesson?.preferred_tab === 'Readings'
+			? 'ja'
+			: 'en'}
 		{question}
 		next_lesson={confirm}
 		show_correct={current_lesson_state === 'wrong'}
@@ -109,7 +118,7 @@
 				{#if current_lesson.lesson_type === 'text_and_meaning'}
 					<TextMeaning
 						lesson={current_lesson}
-						bind:input={current_input}
+						input_value={current_input}
 						bind:correct
 						bind:question
 						show_correct={current_lesson_state === 'wrong'}
@@ -117,7 +126,7 @@
 				{:else if current_lesson.lesson_type === 'reading_and_meaning'}
 					<ReadingMeaning
 						lesson={current_lesson}
-						bind:input={current_input}
+						input_value={current_input}
 						bind:correct
 						bind:question
 						show_correct={current_lesson_state === 'wrong'}

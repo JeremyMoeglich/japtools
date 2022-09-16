@@ -3,6 +3,7 @@
 	import { get_subject_type, type SubjectDataType } from '$lib/scripts/universal/datatypes';
 	import type { SubjectType } from '@prisma/client';
 	import { sortBy } from 'lodash-es';
+	import TextRenderer from './text-renderer/text_renderer.svelte';
 
 	export let subject: SubjectDataType | undefined;
 	export let active_tab: string | undefined = undefined;
@@ -48,47 +49,59 @@
 						</button>
 					{/each}
 				</div>
-				<div>
-					{#if active_tab === 'Meanings'}
-						<ul class="p-4 pl-8 list-disc">
-							{#each sortBy(subject.meanings, primary_sort) as meaning}
-								<li class:font-bold={meaning.primary}>{meaning.meaning}</li>
-							{/each}
-						</ul>
-					{:else if active_tab === 'Readings' && 'reading_hint' in subject}
-						<h5>Onyomi:</h5>
-						<ul class="p-4 pl-8 list-disc">
-							{#each sortBy( subject.readings.filter((v) => v.reading_type === 'ONYOMI'), primary_sort ) as reading}
-								<li class:font-bold={reading.primary}>{reading.reading}</li>
-							{/each}
-						</ul>
-						<h5>Kunyomi:</h5>
-						<ul class="p-4 pl-8 list-disc">
-							{#each sortBy( subject.readings.filter((v) => v.reading_type === 'KUNYOMI'), primary_sort ) as reading}
-								<li class:font-bold={reading.primary}>{reading.reading}</li>
-							{/each}
-						</ul>
-						{#if subject.readings.find((v) => v.reading_type === 'NANORI')}
-							<h5>Nanori:</h5>
-							<ul class="p-4 pl-8 list-disc">
-								{#each sortBy( subject.readings.filter((v) => v.reading_type === 'NANORI'), primary_sort ) as reading}
-									<li class:font-bold={reading.primary}>{reading.reading}</li>
-								{/each}
-							</ul>
-						{/if}
-					{:else if active_tab === 'Readings' && 'context_sentences' in subject}
-						<div>
-							<ul class="p-4 pl-8 list-disc">
-								{#each sortBy(subject.readings, primary_sort) as reading}
-									<li class:font-bold={reading.primary}>{reading.reading}</li>
-								{/each}
-							</ul>
-							<p>
+				<div class="p-4">
+					<div class="flex gap-4">
+						{#if active_tab === 'Meanings'}
+							<div>
+								<h5>Meanings:</h5>
+								<ul class="pl-4 list-disc">
+									{#each sortBy(subject.meanings, primary_sort) as meaning}
+										<li class="w-max" class:font-bold={meaning.primary}>{meaning.meaning}</li>
+									{/each}
+								</ul>
+							</div>
+							<div>
 								<h5>Mnemonic:</h5>
-								{subject?.mmneonic}
-							</p>
-						</div>
-					{/if}
+								<TextRenderer html={subject.meaning_mnemonic} />
+							</div>
+						{:else if active_tab === 'Readings' && 'readings' in subject}
+							{#if 'reading_hint' in subject}
+								<h5>Onyomi:</h5>
+								<ul class="pl-4 list-disc">
+									{#each sortBy( subject.readings.filter((v) => v.reading_type === 'ONYOMI'), primary_sort ) as reading}
+										<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
+									{/each}
+								</ul>
+								<h5>Kunyomi:</h5>
+								<ul class="pl-4 list-disc">
+									{#each sortBy( subject.readings.filter((v) => v.reading_type === 'KUNYOMI'), primary_sort ) as reading}
+										<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
+									{/each}
+								</ul>
+								{#if subject.readings.find((v) => v.reading_type === 'NANORI')}
+									<h5>Nanori:</h5>
+									<ul class="pl-4 list-disc">
+										{#each sortBy( subject.readings.filter((v) => v.reading_type === 'NANORI'), primary_sort ) as reading}
+											<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
+										{/each}
+									</ul>
+								{/if}
+							{:else if 'context_sentences' in subject}
+								<div>
+									<h5>Readings:</h5>
+									<ul class="pl-8 list-disc">
+										{#each sortBy(subject.readings, primary_sort) as reading}
+											<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
+										{/each}
+									</ul>
+								</div>
+							{/if}
+							<div>
+								<h5>Mnemonic:</h5>
+								<TextRenderer html={subject.reading_mnemonic} />
+							</div>
+						{/if}
+					</div>
 				</div>
 			</div>
 		{/if}

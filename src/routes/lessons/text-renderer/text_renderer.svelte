@@ -1,5 +1,4 @@
 <script lang="ts">
-	import PrettyObj from '$lib/components/pretty_obj.svelte';
 	import { error } from 'functional-utilities';
 	import { z } from 'zod';
 
@@ -10,7 +9,8 @@
 		z.literal('en'),
 		z.literal('vocabulary'),
 		z.literal('kanji'),
-		z.literal('radical')
+		z.literal('radical'),
+		z.literal('reading')
 	]);
 
 	type Tag = z.infer<typeof tag_schema>;
@@ -53,6 +53,8 @@
 			<span class="kanji">{section.content}</span>
 		{:else if section.type === 'radical'}
 			<span class="radical">{section.content}</span>
+		{:else if section.type === 'reading'}
+			<span class="reading">{section.content}</span>
 		{:else}
 			{error('Unreachable')}
 		{/if}

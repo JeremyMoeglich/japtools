@@ -8,7 +8,7 @@
 	}
 
 	export let lesson: ReadingAndMeaning<number>;
-	export let input: string;
+	export let input_value: string;
 	export let correct: boolean;
 	export let question: string;
 	export let show_correct: boolean;
@@ -22,7 +22,7 @@
 			? `What does the reading ${txt} mean?`
 			: lesson.subject_type === 'KANJI'
 			? `Type the kanji reading of ${txt}`
-			: `Type the reading of ${txt}`;
+			: `Type the vocabulary reading of ${txt}`;
 
 	$: correct_answer = data.to === 'meanings' ? data.meanings : data.readings;
 
@@ -33,17 +33,17 @@
 			correct = correct_answer.some((answer) => compare(answer, current_input));
 		} else {
 			correct = correct_answer.some(
-				(answer) => answer.toLowerCase() === current_input.toLowerCase()
+				(answer) => answer.toLowerCase().trim() === current_input.toLowerCase().trim()
 			);
 		}
 	}
 
 	onMount(() => {
-		check_answer(input, correct_answer);
+		check_answer(input_value, correct_answer);
 		lesson = lesson;
 	});
 
-	$: check_answer(input, correct_answer);
+	$: check_answer(input_value, correct_answer);
 </script>
 
 <div class="relative">

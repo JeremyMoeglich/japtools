@@ -9,7 +9,7 @@
 	}
 
 	export let lesson: TextAndMeaning<number>;
-	export let input: string;
+	export let input_value: string;
 	export let correct: boolean;
 	export let question: string;
 	export let show_correct: boolean;
@@ -49,24 +49,22 @@
 			? lesson.required_data.meanings
 			: [lesson.required_data.text].concat(lesson.required_data.readings);
 
-
-
 	function check_answer(current_input: string, correct_answer: string[]) {
 		if (lesson.required_data.to === 'meanings') {
 			correct = correct_answer.some((answer) => compare(answer, current_input));
 		} else {
 			correct = correct_answer.some(
-				(answer) => answer.toLowerCase() === current_input.toLowerCase()
+				(answer) => answer.toLowerCase().trim() === current_input.toLowerCase().trim()
 			);
 		}
 	}
 
 	onMount(() => {
-		check_answer(input, correct_answer);
+		check_answer(input_value, correct_answer);
 		lesson = lesson;
 	});
 
-	$: check_answer(input, correct_answer);
+	$: check_answer(input_value, correct_answer);
 </script>
 
 <div class="relative">

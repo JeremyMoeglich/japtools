@@ -44,22 +44,25 @@ export type TextAndMeaning<ID extends number> = {
 	need_input: true;
 	skill_level: number;
 	subject_id: ID;
-	preferred_tab: 'Meanings';
 } & (
 	| {
 			subject_type: 'VOCABULARY' | 'KANJI';
-			required_data: (
-				| {
-						to: 'meanings';
-				  }
-				| {
-						to: 'symbol';
-						readings: string[];
-				  }
-			) & {
+			required_data: {
+				to: 'meanings';
 				meanings: string[];
 				text: string;
 			};
+			preferred_tab: 'Meanings';
+	  }
+	| {
+			subject_type: 'VOCABULARY' | 'KANJI';
+			required_data: {
+				to: 'symbol';
+				readings: string[];
+				meanings: string[];
+				text: string;
+			};
+			preferred_tab: 'Readings';
 	  }
 	| {
 			subject_type: 'RADICAL';
@@ -74,6 +77,7 @@ export type TextAndMeaning<ID extends number> = {
 						image_url: string;
 				  }
 			);
+			preferred_tab: 'Meanings';
 	  }
 );
 

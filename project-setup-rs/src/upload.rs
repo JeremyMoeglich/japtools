@@ -176,6 +176,28 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                             .unwrap();
 
                         client
+                            .subject_meaning()
+                            .create_many(
+                                kanji_data
+                                    .meanings
+                                    .iter()
+                                    .map(|meaning| {
+                                        db::subject_meaning::create(
+                                            meaning.accepted_answer,
+                                            meaning.meaning.clone(),
+                                            meaning.primary,
+                                            vec![db::subject_meaning::kanji_subject_id::set(Some(
+                                                subject.id as i32,
+                                            ))],
+                                        )
+                                    })
+                                    .collect_vec(),
+                            )
+                            .exec()
+                            .await
+                            .unwrap();
+
+                        client
                             .auxiliary_meaning()
                             .create_many(
                                 kanji_data
@@ -425,7 +447,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                 };
             })
         })
-        .buffer_unordered(10);
+        .buffer_unordered(100);
 
     let progress_bar = ProgressBar::new(map.len() as u64);
 
