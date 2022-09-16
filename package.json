@@ -7,7 +7,7 @@
 		"build:static": "cross-env ADAPTER=static npm run build",
 		"build:node": "cross-env ADAPTER=node npm run build",
 		"build:cloudflare": "cross-env ADAPTER=cloudflare npm run build",
-		"setup_rust": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+		"setup_rust": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
 		"package": "svelte-kit package",
 		"preview": "esrun scripts/run.ts && vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
