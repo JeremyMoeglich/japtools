@@ -7,7 +7,6 @@
 		"build:static": "cross-env ADAPTER=static npm run build",
 		"build:node": "cross-env ADAPTER=node npm run build",
 		"build:cloudflare": "cross-env ADAPTER=cloudflare npm run build",
-		"setup_rust": "apt install cargo -y",
 		"package": "svelte-kit package",
 		"preview": "esrun scripts/run.ts && vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
@@ -15,7 +14,7 @@
 		"lint": "prettier --check --plugin-search-dir=. . && eslint .",
 		"format": "prettier --write --plugin-search-dir=. .",
 		"dosetup": "esrun scripts/setup.ts",
-		"generate": "prisma generate",
+		"generate": "prisma-merge -b ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && prisma generate && prisma generate --schema ./prisma/rsschema.prisma",
 		"migration": "prisma migrate dev --name",
 		"dev:app": "tauri dev",
 		"build:app": "tauri build",
@@ -23,8 +22,8 @@
 		"updatedb": "cargo run --release --bin project-setup-rs",
 		"update:prod": "npm run generate:prod && dotenv -e .env.prod -- npm run updatedb",
 		"update:dev": "npm run generate:dev && dotenv -e .env -- npm run updatedb",
-		"generate:prod": "dotenv -e .env.prod -- npx prisma generate",
-		"generate:dev": "dotenv -e .env -- npx prisma generate"
+		"generate:prod": "dotenv -e .env.prod -- prisma generate",
+		"generate:dev": "dotenv -e .env -- npm run generate"
 	},
 	"devDependencies": {
 		"@digitak/esrun": "^3.2.11",
@@ -56,6 +55,7 @@
 		"prettier": "^2.7.1",
 		"prettier-plugin-svelte": "^2.7.0",
 		"prisma": "^4.3.1",
+		"prisma-merge": "^0.2.0",
 		"prisma-zod-generator": "^0.5.3",
 		"sass": "^1.54.9",
 		"svelte": "^3.50.1",

@@ -2,11 +2,6 @@ generator jsclient {
   provider = "prisma-client-js"
 }
 
-generator rsclient {
-  provider = "cargo prisma"
-  output   = "../project-setup-rs/src/db.rs"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")

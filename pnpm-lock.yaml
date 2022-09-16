@@ -44,6 +44,7 @@ specifiers:
   prettier: ^2.7.1
   prettier-plugin-svelte: ^2.7.0
   prisma: ^4.3.1
+  prisma-merge: ^0.2.0
   prisma-zod-generator: ^0.5.3
   sass: ^1.54.9
   svelte: ^3.50.1
@@ -109,6 +110,7 @@ devDependencies:
   prettier: 2.7.1
   prettier-plugin-svelte: 2.7.0_nk6d2fkgcllkkdynqbuearcure
   prisma: 4.3.1
+  prisma-merge: 0.2.0
   prisma-zod-generator: 0.5.3_prisma@4.3.1
   sass: 1.54.9
   svelte: 3.50.1
@@ -4054,6 +4056,20 @@ packages:
     resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
     engines: {node: '>=10.13.0'}
     hasBin: true
+    dev: true
+
+  /prisma-merge/0.2.0:
+    resolution: {integrity: sha512-+JUtw7P4ebcprjg0/KsgZukPBJuVPuo/Dv63NaZO7vsk4mufc+ekkhnm0n31HvnuYp3TAiPSarxUpbdpd0Ixcw==}
+    engines: {node: '>=8.0.0'}
+    hasBin: true
+    dependencies:
+      '@oclif/command': 1.8.16
+      '@oclif/config': 1.18.3
+      '@oclif/plugin-help': 3.3.1
+      glob: 7.2.3
+      tslib: 1.14.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /prisma-zod-generator/0.5.3_prisma@4.3.1:
