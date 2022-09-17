@@ -1,6 +1,6 @@
 name = "japtools"
 account_id = "bb481713922c167bf9bf226476a2444d"
-route = "https://japtools.moeglich.dev"
+route = "https://japtools.moeglich.dev/*"
 
 workers_dev = false
 
