@@ -26,11 +26,12 @@ jobs:
 
       - name: build & deploy
         run: |
-          npm run generate:prod
+          npm run generate:serv
           npm run build:cloudflare
         env:
           CI: true
-          
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - uses: cloudflare/wrangler-action@2.0.0
         name: Deploy to Cloudflare (Production)
         with:

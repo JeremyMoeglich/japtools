@@ -23,8 +23,9 @@
 		"update:prod": "npm run generate:prod && dotenv -e .env.prod -- npm run updatedb",
 		"update:dev": "npm run generate:dev && dotenv -e .env -- npm run updatedb",
 		"generate:prod": "dotenv -e .env.prod -- prisma generate",
+		"generate:serv": "dotenv -e .env.serv -- prisma generate",
 		"generate:dev": "dotenv -e .env -- npm run generate",
-		"dev:prod": "dotenv -e .env.prod -- npm run dev"
+		"dev:prod": "dotenv -e .env -- npm run dev"
 	},
 	"devDependencies": {
 		"@digitak/esrun": "^3.2.11",
