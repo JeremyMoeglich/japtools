@@ -1,6 +1,6 @@
 import { parse } from 'cookie';
 import type { user_data_type } from '../universal/datatypes';
-import { prisma_client } from './db/prisma_client.server';
+import { prisma_client_promise } from './db/prisma_client.server';
 import type { JsonValue } from 'type-fest';
 import type { z } from 'zod';
 import type { ZodObjectAny } from '../universal/zod_util';
@@ -38,7 +38,9 @@ export async function get_auth_user_data(request: Request): Promise<user_data_ty
 	if (!cookies?.login_token) {
 		throw error(401, 'Unauthorized, no login token');
 	}
-	const data = await prisma_client.loginToken.findUnique({
+	const data = await (
+		await prisma_client_promise
+	).loginToken.findUnique({
 		where: {
 			value: cookies.login_token
 		},
@@ -52,7 +54,9 @@ export async function get_auth_user_data(request: Request): Promise<user_data_ty
 		throw error(401, 'Invalid login token');
 	}
 
-	const user = await prisma_client.user.findUnique({
+	const user = await (
+		await prisma_client_promise
+	).user.findUnique({
 		where: {
 			id: user_id
 		},
@@ -66,7 +70,9 @@ export async function get_auth_user_data(request: Request): Promise<user_data_ty
 	});
 
 	if (!user) {
-		await prisma_client.loginToken.delete({
+		await (
+			await prisma_client_promise
+		).loginToken.delete({
 			where: {
 				value: cookies.login_token
 			}

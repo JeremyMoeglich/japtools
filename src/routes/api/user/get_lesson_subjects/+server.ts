@@ -1,4 +1,4 @@
-import { prisma_client } from '$lib/scripts/backend/db/prisma_client.server';
+import { prisma_client_promise } from '$lib/scripts/backend/db/prisma_client.server';
 import { get_auth_user_data, get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
 import {
 	get_subjects_by_level,
@@ -20,7 +20,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		})
 	);
 	const current_date = new Date();
-	const lessons = await prisma_client.subjectProgress.findMany({
+	const lessons = await (
+		await prisma_client_promise
+	).subjectProgress.findMany({
 		where: {
 			progress_id: user_data.progress_id,
 			next_review: {
@@ -38,7 +40,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		take: amount
 	});
 	if (lessons.length < amount) {
-		const next_day_lessons = await prisma_client.subjectProgress.findMany({
+		const next_day_lessons = await (
+			await prisma_client_promise
+		).subjectProgress.findMany({
 			where: {
 				progress_id: user_data.progress_id,
 				next_review: {
@@ -64,7 +68,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		if (!(lessons.length >= daily_lesson_limit) && lessons.length < amount) {
 			const amount_to_add = daily_lesson_limit - lessons.length;
 			const current_level = (
-				await prisma_client.progress.findUnique({
+				await (
+					await prisma_client_promise
+				).progress.findUnique({
 					where: {
 						id: user_data.progress_id
 					},
@@ -77,7 +83,9 @@ export const POST: RequestHandler = async ({ request }) => {
 				throw error(500, 'User has no current level');
 			}
 			const added_level_subject_ids = (
-				await prisma_client.subjectProgress.findMany({
+				await (
+					await prisma_client_promise
+				).subjectProgress.findMany({
 					where: {
 						level: current_level,
 						progress_id: user_data.progress_id
@@ -98,8 +106,10 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 			const subjects_to_add = possible_subjects.slice(0, amount_to_add);
 			const added = await Promise.all(
-				subjects_to_add.map((subject) => {
-					const promise = prisma_client.subjectProgress.create({
+				subjects_to_add.map(async (subject) => {
+					const promise = await (
+						await prisma_client_promise
+					).subjectProgress.create({
 						data: {
 							progress_id: user_data.progress_id,
 							subject_id: subject.id,

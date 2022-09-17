@@ -8,9 +8,8 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
-		"strict": true,
-		"target": "es2020"
+		"strict": true
 	},
-	"include": ["./src/**/*.js", "./src/**/*.ts", "./src/**/*.svelte", "./scripts/**/*.ts"],
-	"exclude": ["./node_modules/**", "./svelte-kit/**", "./project-setup-rs/**"]
+	"include": ["./**/*.js", "./**/*.ts", "./**/*.svelte"],
+	"exclude": ["./node_modules/**", "./project-setup-rs/**", "./target/**"]
 }

@@ -1,4 +1,4 @@
-import { prisma_client } from './db/prisma_client.server';
+import { prisma_client_promise } from './db/prisma_client.server';
 import type {
 	KanjiDataType,
 	RadicalDataType,
@@ -93,7 +93,9 @@ function convert_kanji(
 }
 
 export async function get_subject_by_id(id: number): Promise<SubjectDataType> {
-	const subject_index = await prisma_client.subjectIndex.findUnique({
+	const subject_index = await (
+		await prisma_client_promise
+	).subjectIndex.findUnique({
 		where: {
 			subjectId: id
 		}
@@ -101,7 +103,9 @@ export async function get_subject_by_id(id: number): Promise<SubjectDataType> {
 	if (subject_index) {
 		if (subject_index.subject_type === 'KANJI') {
 			return convert_kanji(
-				(await prisma_client.kanjiSubject.findUnique({
+				(await (
+					await prisma_client_promise
+				).kanjiSubject.findUnique({
 					where: {
 						id: subject_index.subjectId
 					},
@@ -117,7 +121,9 @@ export async function get_subject_by_id(id: number): Promise<SubjectDataType> {
 			);
 		} else if (subject_index.subject_type === 'VOCABULARY') {
 			return convert_vocabulary(
-				(await prisma_client.vocabularySubject.findUnique({
+				(await (
+					await prisma_client_promise
+				).vocabularySubject.findUnique({
 					where: {
 						id: subject_index.subjectId
 					},
@@ -134,7 +140,9 @@ export async function get_subject_by_id(id: number): Promise<SubjectDataType> {
 			);
 		} else if (subject_index.subject_type === 'RADICAL') {
 			const radical = convert_radical(
-				(await prisma_client.radicalSubject.findUnique({
+				(await (
+					await prisma_client_promise
+				).radicalSubject.findUnique({
 					where: {
 						id: subject_index.subjectId
 					},
@@ -156,7 +164,9 @@ export async function get_subject_by_id(id: number): Promise<SubjectDataType> {
 }
 
 export async function get_subjects_by_level(level: number): Promise<SubjectDataType[]> {
-	const subject_index = await prisma_client.subjectIndex.findMany({
+	const subject_index = await (
+		await prisma_client_promise
+	).subjectIndex.findMany({
 		where: {
 			level: level
 		}
@@ -165,7 +175,9 @@ export async function get_subjects_by_level(level: number): Promise<SubjectDataT
 		subject_index.map(async (subject) => {
 			if (subject.subject_type === 'KANJI') {
 				return convert_kanji(
-					(await prisma_client.kanjiSubject.findUnique({
+					(await (
+						await prisma_client_promise
+					).kanjiSubject.findUnique({
 						where: {
 							id: subject.subjectId
 						},
@@ -181,7 +193,9 @@ export async function get_subjects_by_level(level: number): Promise<SubjectDataT
 				);
 			} else if (subject.subject_type === 'VOCABULARY') {
 				return convert_vocabulary(
-					(await prisma_client.vocabularySubject.findUnique({
+					(await (
+						await prisma_client_promise
+					).vocabularySubject.findUnique({
 						where: {
 							id: subject.subjectId
 						},
@@ -198,7 +212,9 @@ export async function get_subjects_by_level(level: number): Promise<SubjectDataT
 				);
 			} else if (subject.subject_type === 'RADICAL') {
 				return convert_radical(
-					(await prisma_client.radicalSubject.findUnique({
+					(await (
+						await prisma_client_promise
+					).radicalSubject.findUnique({
 						where: {
 							id: subject.subjectId
 						},
@@ -219,7 +235,9 @@ export async function get_subjects_by_level(level: number): Promise<SubjectDataT
 }
 
 export async function get_subjects_by_reading(reading: string): Promise<SubjectDataType[]> {
-	const subject_index = await prisma_client.subjectIndex.findMany({
+	const subject_index = await (
+		await prisma_client_promise
+	).subjectIndex.findMany({
 		where: {
 			readings: {
 				has: reading
@@ -230,7 +248,9 @@ export async function get_subjects_by_reading(reading: string): Promise<SubjectD
 		subject_index.map(async (subject) => {
 			if (subject.subject_type === 'KANJI') {
 				return convert_kanji(
-					(await prisma_client.kanjiSubject.findUnique({
+					(await (
+						await prisma_client_promise
+					).kanjiSubject.findUnique({
 						where: {
 							id: subject.subjectId
 						},
@@ -246,7 +266,9 @@ export async function get_subjects_by_reading(reading: string): Promise<SubjectD
 				);
 			} else if (subject.subject_type === 'VOCABULARY') {
 				return convert_vocabulary(
-					(await prisma_client.vocabularySubject.findUnique({
+					(await (
+						await prisma_client_promise
+					).vocabularySubject.findUnique({
 						where: {
 							id: subject.subjectId
 						},
@@ -271,7 +293,9 @@ export async function get_subjects_by_reading(reading: string): Promise<SubjectD
 }
 
 export async function get_subject_by_kanji(symbol: string): Promise<KanjiDataType | undefined> {
-	const resp = await prisma_client.kanjiSubject.findUnique({
+	const resp = await (
+		await prisma_client_promise
+	).kanjiSubject.findUnique({
 		where: {
 			characters: symbol
 		},

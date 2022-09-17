@@ -1,6 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
-import { prisma_client } from '$lib/scripts/backend/db/prisma_client.server';
+import { prisma_client_promise } from '$lib/scripts/backend/db/prisma_client.server';
 import type { RequestHandler } from './$types';
 import bcryptjs from 'bcryptjs';
 const { hash } = bcryptjs;
@@ -17,7 +17,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		})
 	);
 	const { email, password, name } = body;
-	const user_exists = await prisma_client.user.findUnique({
+	const user_exists = await (
+		await prisma_client_promise
+	).user.findUnique({
 		where: { email: email },
 		select: { id: true }
 	});
@@ -26,7 +28,9 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 	const password_hash = await hash(password, 10);
 	const progress_cuid = cuid();
-	const user = await prisma_client.user.create({
+	const user = await (
+		await prisma_client_promise
+	).user.create({
 		data: {
 			email: email,
 			password_hash: password_hash,
@@ -34,7 +38,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			progress: { create: { id: progress_cuid } }
 		}
 	});
-	const token = await prisma_client.loginToken.create({
+	const token = await (
+		await prisma_client_promise
+	).loginToken.create({
 		data: {
 			user_id: user.id,
 			value: cuid()

@@ -1,5 +1,5 @@
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
-import { prisma_client } from '$lib/scripts/backend/db/prisma_client.server';
+import { prisma_client_promise } from '$lib/scripts/backend/db/prisma_client.server';
 import type { RequestHandler } from './$types';
 import { z } from 'zod';
 import { json } from '@sveltejs/kit';
@@ -12,7 +12,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		})
 	);
 	const { token } = body;
-	await prisma_client.loginToken.delete({
+	await (
+		await prisma_client_promise
+	).loginToken.delete({
 		where: { value: token }
 	});
 	return json({});

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-check
 
 import staticAdapter from '@sveltejs/adapter-static';
@@ -7,13 +8,14 @@ import preprocess from 'svelte-preprocess';
 
 const adapt = process.env.ADAPTER;
 
+// @ts-ignore
 const getAdapters = (adapt) => {
 	switch (adapt) {
 		case 'node':
 			return nodeAdapter();
 		case 'static':
 			return staticAdapter({
-				fallback: 'index.html',
+				fallback: 'index.html'
 			});
 		case 'cloudflare':
 			return cloudflareAdapter();

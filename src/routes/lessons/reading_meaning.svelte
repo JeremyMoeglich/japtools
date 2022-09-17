@@ -26,8 +26,6 @@
 
 	$: correct_answer = data.to === 'meanings' ? data.meanings : data.readings;
 
-
-
 	function check_answer(current_input: string, correct_answer: string[]) {
 		if (data.to === 'meanings') {
 			correct = correct_answer.some((answer) => compare(answer, current_input));

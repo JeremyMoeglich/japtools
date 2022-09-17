@@ -35,5 +35,5 @@ jobs:
       - uses: cloudflare/wrangler-action@2.0.0
         name: Deploy to Cloudflare (Production)
         with:
-          apiToken: "${{ secrets.CF_API_TOKEN }}"
-          environment: "production"
+          apiToken: '${{ secrets.CF_API_TOKEN }}'
+          environment: 'production'

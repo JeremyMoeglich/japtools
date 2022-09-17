@@ -1,4 +1,4 @@
-import { prisma_client } from '$lib/scripts/backend/db/prisma_client.server';
+import { prisma_client_promise } from '$lib/scripts/backend/db/prisma_client.server';
 import { get_auth_user_data, get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
 import type { RequestHandler } from './$types';
 import { range } from 'functional-utilities';
@@ -27,7 +27,9 @@ export const POST: RequestHandler = async ({ request }) => {
 	const next_review = get_next_date(skill_level);
 	console.log('next_review', next_review.toLocaleDateString(), next_review.toLocaleTimeString());
 
-	await prisma_client.subjectProgress.update({
+	await (
+		await prisma_client_promise
+	).subjectProgress.update({
 		where: {
 			subject_id_progress_id: {
 				subject_id,

@@ -26,7 +26,7 @@
 					duration: 2000,
 					theme: {
 						'--toastBackground': '#00ff00',
-						'--toastColor': '#ffffff',
+						'--toastColor': '#ffffff'
 					}
 				});
 			}}
@@ -57,7 +57,7 @@
 					duration: 2000,
 					theme: {
 						'--toastBackground': '#00ff00',
-						'--toastColor': '#ffffff',
+						'--toastColor': '#ffffff'
 					}
 				});
 			}}

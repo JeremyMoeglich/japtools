@@ -2,8 +2,8 @@
 	"name": "japtools",
 	"version": "0.1.0",
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
+		"dev": "npm run generate:dev && dotenv -e .env -- vite dev",
+		"build": "npm run generate:serv && dotenv -e .env.serv -- vite build",
 		"build:static": "cross-env ADAPTER=static npm run build",
 		"build:node": "cross-env ADAPTER=node npm run build",
 		"build:cloudflare": "cross-env ADAPTER=cloudflare npm run build",

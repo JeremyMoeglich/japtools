@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
-import { prisma_client } from '$lib/scripts/backend/db/prisma_client.server';
+import { prisma_client_promise } from '$lib/scripts/backend/db/prisma_client.server';
 import type { RequestHandler } from './$types';
 import { z } from 'zod';
 
@@ -18,7 +18,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 	}
 	const { token } = body;
-	const loginToken = await prisma_client.loginToken.findUnique({
+	const loginToken = await (
+		await prisma_client_promise
+	).loginToken.findUnique({
 		where: { value: token },
 		select: { user_id: true, time: true }
 	});

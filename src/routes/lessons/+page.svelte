@@ -11,7 +11,6 @@
 	import LessonUi from './lesson_ui.svelte';
 	import ReadingMeaning from './reading_meaning.svelte';
 
-
 	async function change_level(subject_id: number, n: number) {
 		await update_subject_progress(
 			subject_id,
@@ -111,7 +110,7 @@
 			? 'ja'
 			: 'en'}
 		{question}
-		confirm={confirm}
+		{confirm}
 		show_correct={current_lesson_state === 'wrong'}
 	>
 		<div>

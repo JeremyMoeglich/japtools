@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
-import { prisma_client } from '$lib/scripts/backend/db/prisma_client.server';
+import { prisma_client_promise } from '$lib/scripts/backend/db/prisma_client.server';
 import type { RequestHandler } from './$types';
 import bcryptjs from 'bcryptjs';
 const { compare } = bcryptjs;
@@ -46,8 +46,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		);
 	}
-	const user_id = (await prisma_client.user.findUnique({ where: { email }, select: { id: true } }))
-		?.id;
+	const user_id = (
+		await (await prisma_client_promise).user.findUnique({ where: { email }, select: { id: true } })
+	)?.id;
 
 	if (!user_id) {
 		return json(
@@ -60,7 +61,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 	}
 	const password_hash: string | undefined = (
-		await prisma_client.user.findUnique({
+		await (
+			await prisma_client_promise
+		).user.findUnique({
 			where: { id: user_id },
 			select: {
 				password_hash: true
@@ -89,7 +92,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		);
 	}
-	const current_token = await prisma_client.loginToken.findUnique({
+	const current_token = await (
+		await prisma_client_promise
+	).loginToken.findUnique({
 		where: { user_id: user_id },
 		select: { value: true, time: true }
 	});
@@ -100,10 +105,12 @@ export const POST: RequestHandler = async ({ request }) => {
 				token: current_token.value
 			});
 		} else {
-			await prisma_client.loginToken.delete({ where: { user_id: user_id } });
+			await (await prisma_client_promise).loginToken.delete({ where: { user_id: user_id } });
 		}
 	}
-	const new_token = await prisma_client.loginToken.create({
+	const new_token = await (
+		await prisma_client_promise
+	).loginToken.create({
 		data: {
 			user_id: user_id,
 			value: cuid()
