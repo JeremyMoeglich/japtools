@@ -447,7 +447,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                 };
             })
         })
-        .buffer_unordered(10);
+        .buffer_unordered(50);
 
     let progress_bar = ProgressBar::new(map.len() as u64);
 

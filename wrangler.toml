@@ -1,0 +1,13 @@
+name = "japtools"
+account_id = "bb481713922c167bf9bf226476a2444d"
+
+main = "./.cloudflare/worker.js"
+
+[site]
+bucket = "./.cloudflare/public"
+
+[build]
+command = "npx pnpm i --store=node_modules/.pnpm-store && npm run generate:prod && npm run build:cloudflare"
+
+compatibility_date = "2022-09-17"
+workers_dev = false

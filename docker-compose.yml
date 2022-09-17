@@ -1,12 +1,12 @@
 version: '3.9'
 services:
   db:
-    image: postgres:14
+    image: cockroachdb/cockroach:v22.1.7
+    command: start-single-node --insecure
     container_name: db
     restart: always
-    environment:
-      POSTGRES_PASSWORD: ${DATABASE_KEY}
     volumes:
-      - ./docker_volume/postgre/:/var/lib/postgresql/data
+      - ./docker_volume/cockroach/:/cockroach/cockroach-data
     ports:
-      - '5432:5432'
+      - '26257:26257'
+      - '8080:8080'

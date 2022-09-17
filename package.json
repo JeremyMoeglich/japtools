@@ -18,6 +18,7 @@
 		"dev:app": "tauri dev",
 		"build:app": "tauri build",
 		"migrate:prod": "dotenv -e .env.prod -- npx prisma migrate dev --name",
+		"migrate:dev": "dotenv -e .env -- npx prisma migrate dev --name",
 		"updatedb": "cargo run --release --bin project-setup-rs",
 		"update:prod": "npm run generate:prod && dotenv -e .env.prod -- npm run updatedb",
 		"update:dev": "npm run generate:dev && dotenv -e .env -- npm run updatedb",
@@ -65,6 +66,7 @@
 		"tslib": "^2.4.0",
 		"type-fest": "^2.19.0",
 		"typescript": "^4.8.3",
+		"@sveltejs/adapter-cloudflare-workers": "1.0.0-next.56",
 		"vite": "3.1.0"
 	},
 	"type": "module",

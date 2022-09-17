@@ -2,7 +2,7 @@
 
 import staticAdapter from '@sveltejs/adapter-static';
 import nodeAdapter from '@sveltejs/adapter-node';
-import cloudflareAdapter from '@sveltejs/adapter-cloudflare';
+import cloudflareAdapter from '@sveltejs/adapter-cloudflare-workers';
 import preprocess from 'svelte-preprocess';
 
 const adapt = process.env.ADAPTER;

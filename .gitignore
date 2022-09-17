@@ -16,3 +16,4 @@ node_modules
 **/prisma_schemas
 wanikani.json
 vite-profile.cpuprofile
+.cloudflare

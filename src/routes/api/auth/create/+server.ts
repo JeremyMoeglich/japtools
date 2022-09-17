@@ -2,7 +2,8 @@ import { error, json } from '@sveltejs/kit';
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
 import { prisma_client } from '$lib/scripts/backend/db/prisma_client.server';
 import type { RequestHandler } from './$types';
-import { hash } from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
+const { hash } = bcryptjs;
 import cuid from 'cuid';
 import { z } from 'zod';
 

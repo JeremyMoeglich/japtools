@@ -1,0 +1,37 @@
+name: Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: Use Node.js 17.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 17.x
+
+      - name: build & deploy
+        run: |
+          npm run generate:prod
+          npm run build:cloudflare
+        env:
+          CI: true
+      - uses: cloudflare/wrangler-action@2.0.0
+        name: Deploy to Cloudflare (Production)
+        with:
+          apiToken: "${{ secrets.CF_API_TOKEN }}"
+          environment: "production"
