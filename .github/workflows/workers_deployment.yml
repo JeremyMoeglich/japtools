@@ -36,5 +36,7 @@ jobs:
         with:
           apiToken: '${{ secrets.CF_API_TOKEN }}'
           environment: 'production'
+          secrets: |
+            DATABASE_URL
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
