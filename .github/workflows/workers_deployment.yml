@@ -24,13 +24,6 @@ jobs:
         with:
           node-version: 17.x
 
-      - name: build & deploy
-        run: |
-          npm run generate:serv
-          npm run build:cloudflare
-        env:
-          CI: true
-
       - uses: cloudflare/wrangler-action@2.0.0
         name: Deploy to Cloudflare (Production)
         with:
