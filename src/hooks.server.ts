@@ -5,6 +5,7 @@ import { inspect } from 'node-inspect-extracted';
 export const handle: Handle = async ({ event, resolve }) => {
 	const { platform } = event;
 	init_globals(platform);
-	console.log('handle', inspect({ event, resolve }));
+	console.log('handle-env', inspect(platform.env));
+	console.log('handle-env', inspect(globalThis));
 	return await resolve(event);
 };
