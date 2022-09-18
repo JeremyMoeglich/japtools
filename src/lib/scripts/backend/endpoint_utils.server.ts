@@ -5,6 +5,7 @@ import type { JsonValue } from 'type-fest';
 import type { z } from 'zod';
 import type { ZodObjectAny } from '../universal/zod_util';
 import { error } from '@sveltejs/kit';
+import { typed_entries } from 'functional-utilities';
 
 export async function get_request_body<T extends ZodObjectAny>(
 	request: Request,
@@ -80,4 +81,14 @@ export async function get_auth_user_data(request: Request): Promise<user_data_ty
 		throw error(401, "Login token doesn't match any user");
 	}
 	return user;
+}
+
+export function init_globals(platform: Readonly<App.Platform>) {
+	const env = platform.env;
+	typed_entries(env).forEach(([key, value]) => {
+		if (typeof globalThis !== 'undefined' && globalThis) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			(globalThis as any)[key] = value;
+		}
+	});
 }
