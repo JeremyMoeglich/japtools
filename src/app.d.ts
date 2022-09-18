@@ -5,7 +5,13 @@
 // and what to do when importing types
 declare namespace App {
 	// interface Locals {}
-	// interface Platform {}
+	interface Platform {
+		env: {
+			YOUR_KV_NAMESPACE: KVNamespace;
+			YOUR_DURABLE_OBJECT_NAMESPACE: DurableObjectNamespace;
+			DATABASE_URL: string;
+		};
+	}
 	// interface Session {}
 	// interface Stuff {}
 }
