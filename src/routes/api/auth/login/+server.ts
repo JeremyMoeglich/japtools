@@ -6,6 +6,7 @@ import bcryptjs from 'bcryptjs';
 const { compare } = bcryptjs;
 import cuid from 'cuid';
 import { z } from 'zod';
+import { inspect } from 'node-inspect-extracted';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await get_request_body(
@@ -15,6 +16,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			password: z.string().min(8)
 		})
 	);
+	console.log(inspect(globalThis));
 	if (body instanceof Error) {
 		return json(
 			{
