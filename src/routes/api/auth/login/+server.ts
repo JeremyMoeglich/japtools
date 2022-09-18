@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	console.log(`
 		Email: ${body.email}
 		Password: ${body.password}
-		ENV: ${JSON.stringify(process.env)}
+		ENV: ${JSON.stringify(globalThis)}
 	`);
 	if (body instanceof Error) {
 		return json(
