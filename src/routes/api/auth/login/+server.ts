@@ -8,7 +8,7 @@ const { compare } = bcryptjs;
 import cuid from 'cuid';
 import { z } from 'zod';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, platform }) => {
 	const body = await get_request_body(
 		request,
 		z.object({
@@ -16,11 +16,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			password: z.string().min(8)
 		})
 	);
-	console.log(`
-		Email: ${body.email}
-		Password: ${body.password}
-		ENV: ${inspect(globalThis)}
-	`);
+	console.log('body', inspect(platform));
 	if (body instanceof Error) {
 		return json(
 			{
