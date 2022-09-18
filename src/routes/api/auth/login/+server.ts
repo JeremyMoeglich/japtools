@@ -3,6 +3,7 @@ import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
 import { prisma_client_promise } from '$lib/scripts/backend/db/prisma_client.server';
 import type { RequestHandler } from './$types';
 import bcryptjs from 'bcryptjs';
+import { inspect } from 'node-inspect-extracted';
 const { compare } = bcryptjs;
 import cuid from 'cuid';
 import { z } from 'zod';
@@ -18,7 +19,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	console.log(`
 		Email: ${body.email}
 		Password: ${body.password}
-		ENV: ${JSON.stringify(globalThis)}
+		ENV: ${inspect(globalThis)}
 	`);
 	if (body instanceof Error) {
 		return json(

@@ -86,6 +86,7 @@
 		"js-cookie": "^3.0.1",
 		"js-levenshtein": "^1.1.6",
 		"lodash-es": "^4.17.21",
+		"node-inspect-extracted": "^1.1.0",
 		"number-to-words": "^1.2.4",
 		"svelte-icons": "^2.1.0",
 		"svelte-loading-spinners": "^0.1.7",
