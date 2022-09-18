@@ -85,10 +85,14 @@ export async function get_auth_user_data(request: Request): Promise<user_data_ty
 
 export function init_globals(platform: Readonly<App.Platform>) {
 	const env = platform.env;
-	typed_entries(env).forEach(([key, value]) => {
-		if (typeof globalThis !== 'undefined' && globalThis) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			(globalThis as any)[key] = value;
-		}
-	});
+	if (!('process' in globalThis)) {
+		(globalThis as any).process = {
+			env: {
+				...typed_entries(env).reduce((acc, [key, value]) => {
+					acc[key] = value;
+					return acc;
+				}, {} as Record<string, string>)
+			}
+		};
+	}
 }
