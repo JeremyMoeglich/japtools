@@ -15,6 +15,11 @@ export const POST: RequestHandler = async ({ request }) => {
 			password: z.string().min(8)
 		})
 	);
+	console.log(`
+		Email: ${body.email}
+		Password: ${body.password}
+		ENV: ${JSON.stringify(process.env)}
+	`);
 	if (body instanceof Error) {
 		return json(
 			{
