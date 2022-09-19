@@ -927,6 +927,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "dbsetup"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "cuid 1.2.0",
+ "futures-util",
+ "indicatif",
+ "itertools",
+ "prisma-client-rust",
+ "project-root",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-stream",
+]
+
+[[package]]
 name = "dbus"
 version = "0.9.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3862,24 +3880,6 @@ name = "project-root"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8bccbff07d5ed689c4087d20d7307a52ab6141edeedf487c3876a55b86cf63df"
-
-[[package]]
-name = "project-setup-rs"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "cuid 1.2.0",
- "futures-util",
- "indicatif",
- "itertools",
- "prisma-client-rust",
- "project-root",
- "reqwest",
- "serde",
- "serde_json",
- "tokio",
- "tokio-stream",
-]
 
 [[package]]
 name = "quaint"

@@ -1,3 +1,7 @@
 [workspace]
-members = [ "./project-setup-rs", "./project-setup-rs/prisma-cli", "./src-tauri" ]
+members = [
+    "./packages/db-setup-rs",
+    "./packages/db-setup-rs/prisma-cli",
+    "./apps/app",
+]
 resolver = "2"

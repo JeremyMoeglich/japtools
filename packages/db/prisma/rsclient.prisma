@@ -1,5 +1,0 @@
-generator rsclient {
-  provider = "cargo prisma"
-  output   = "../project-setup-rs/src/db.rs"
-}
-

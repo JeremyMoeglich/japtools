@@ -3,16 +3,7 @@
 	"pipeline": {
 		"build": {
 			"dependsOn": ["^build"]
-		},
-        "build:web:static": {
-            "dependsOn": ["japtools-web"]
-        },
-        "build:web:vercel": {
-            "dependsOn": ["build:web:static"]
-        },
-        "build:app": {
-            "dependsOn": ["build:web:static"]
-        }
+		}
 	},
 	"globalDependencies": ["$DATABASE_URL"]
 }

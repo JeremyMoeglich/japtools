@@ -2,15 +2,29 @@
 	"name": "japtools",
 	"version": "0.1.0",
 	"description": "",
+	"workspaces": [
+		"packages/*",
+		"apps/*"
+	],
 	"scripts": {
-		"build": "turbo run build",
-		"dev": "turbo run dev",
-		"test": "turbo run test",
-		"lint": "turbo run lint"
+		"build": "dotenv -e .env.serverless -- turbo run build",
+		"dev": "dotenv -e .env.serverless -- turbo run dev",
+		"test": "dotenv -e .env.serverless -- turbo run test",
+		"lint": "dotenv -e .env.serverless -- turbo run lint",
+		"dbsetup": "npm run generate:full && dotenv -e .env.serverless -- cargo run --release --bin dbsetup",
+		"generate": "dotenv -e .env.serverless -- prisma generate --data-proxy",
+		"generate:full": "prisma-merge -b ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && prisma generate --schema ./prisma/rsschema.prisma --data-proxy"
 	},
 	"keywords": [],
 	"author": "",
 	"devDependencies": {
+		"@prisma/client": "^4.3.1",
+		"dotenv-cli": "^6.0.0",
+		"prisma": "^4.3.1",
+		"prisma-merge": "^0.2.0",
 		"turbo": "^1.4.7"
+	},
+	"dependencies": {
+		"typescript": "^4.8.3"
 	}
 }

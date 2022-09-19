@@ -1,0 +1,8 @@
+{
+    "scripts": {
+        "build": "cargo build --release"
+    },
+    "dependencies": {
+        "@japtools/web": "workspace:*"
+    }
+}
