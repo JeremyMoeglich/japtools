@@ -1,0 +1,5 @@
+/build
+/.svelte-kit
+/package
+/static/kanji.json
+.cloudflare

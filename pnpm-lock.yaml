@@ -1,130 +1,137 @@
 lockfileVersion: 5.4
 
-specifiers:
-  '@digitak/esrun': ^3.2.11
-  '@keyfox/pochi': ^0.5.6
-  '@prisma/client': ^4.3.1
-  '@sveltejs/adapter-cloudflare': 1.0.0-next.34
-  '@sveltejs/adapter-node': 1.0.0-next.92
-  '@sveltejs/adapter-static': 1.0.0-next.43
-  '@sveltejs/kit': 1.0.0-next.480
-  '@tauri-apps/cli': ^1.1.1
-  '@types/bcryptjs': ^2.4.2
-  '@types/cookie': ^0.5.1
-  '@types/js-cookie': ^3.0.2
-  '@types/js-levenshtein': ^1.1.1
-  '@types/lodash-es': ^4.17.6
-  '@types/number-to-words': ^1.2.1
-  '@types/serialize-javascript': ^5.0.2
-  '@types/wanakana': ^4.0.3
-  '@typescript-eslint/eslint-plugin': ^5.37.0
-  '@typescript-eslint/parser': ^5.37.0
-  '@zerodevx/svelte-toast': ^0.7.2
-  array-shuffle: ^3.0.0
-  autoprefixer: ^10.4.11
-  bcryptjs: ^2.4.3
-  cookie: ^0.5.0
-  cross-env: ^7.0.3
-  cuid: ^2.1.8
-  daisyui: ^2.28.0
-  dotenv: ^16.0.2
-  dotenv-cli: ^6.0.0
-  eslint: ^8.23.1
-  eslint-config-prettier: ^8.5.0
-  eslint-plugin-svelte3: ^4.0.0
-  functional-utilities: ^1.17.0
-  js-cookie: ^3.0.1
-  js-levenshtein: ^1.1.6
-  lodash-es: ^4.17.21
-  node-inspect-extracted: ^1.1.0
-  node-sass: ^7.0.3
-  number-to-words: ^1.2.4
-  pkg-up: ^4.0.0
-  postcss: ^8.4.16
-  postcss-load-config: ^4.0.1
-  prettier: ^2.7.1
-  prettier-plugin-svelte: ^2.7.0
-  prisma: ^4.3.1
-  prisma-merge: ^0.2.0
-  prisma-zod-generator: ^0.5.3
-  sass: ^1.54.9
-  svelte: ^3.50.1
-  svelte-check: ^2.9.0
-  svelte-icons: ^2.1.0
-  svelte-loading-spinners: ^0.1.7
-  svelte-preprocess: ^4.10.7
-  tailwindcss: ^3.1.8
-  ts-to-zod: ^1.13.1
-  tslib: ^2.4.0
-  type-fest: ^2.19.0
-  typescript: ^4.8.3
-  vite: 3.1.0
-  wanakana: ^5.0.2
-  zod: ^3.19.1
+importers:
 
-dependencies:
-  '@keyfox/pochi': 0.5.6
-  '@types/js-cookie': 3.0.2
-  '@types/js-levenshtein': 1.1.1
-  '@types/lodash-es': 4.17.6
-  '@types/number-to-words': 1.2.1
-  '@types/serialize-javascript': 5.0.2
-  '@types/wanakana': 4.0.3
-  '@zerodevx/svelte-toast': 0.7.2
-  array-shuffle: 3.0.0
-  daisyui: 2.28.0_6b4luod745iryv24jvdbvzbbsa
-  js-cookie: 3.0.1
-  js-levenshtein: 1.1.6
-  lodash-es: 4.17.21
-  node-inspect-extracted: 1.1.0
-  number-to-words: 1.2.4
-  svelte-icons: 2.1.0
-  svelte-loading-spinners: 0.1.7
-  wanakana: 5.0.2
-  zod: 3.19.1
+  .:
+    specifiers:
+      turbo: ^1.4.7
+    devDependencies:
+      turbo: 1.4.7
 
-devDependencies:
-  '@digitak/esrun': 3.2.11
-  '@prisma/client': 4.3.1_prisma@4.3.1
-  '@sveltejs/adapter-cloudflare': 1.0.0-next.34
-  '@sveltejs/adapter-node': 1.0.0-next.92
-  '@sveltejs/adapter-static': 1.0.0-next.43
-  '@sveltejs/kit': 1.0.0-next.480_svelte@3.50.1+vite@3.1.0
-  '@tauri-apps/cli': 1.1.1
-  '@types/bcryptjs': 2.4.2
-  '@types/cookie': 0.5.1
-  '@typescript-eslint/eslint-plugin': 5.37.0_22c5fnooleyfkzrkkgdmel5kmi
-  '@typescript-eslint/parser': 5.37.0_irgkl5vooow2ydyo6aokmferha
-  autoprefixer: 10.4.11_postcss@8.4.16
-  bcryptjs: 2.4.3
-  cookie: 0.5.0
-  cross-env: 7.0.3
-  cuid: 2.1.8
-  dotenv: 16.0.2
-  dotenv-cli: 6.0.0
-  eslint: 8.23.1
-  eslint-config-prettier: 8.5.0_eslint@8.23.1
-  eslint-plugin-svelte3: 4.0.0_rhh4tpcyg7zwtq6pdnkzw5gxma
-  functional-utilities: 1.17.0
-  node-sass: 7.0.3
-  pkg-up: 4.0.0
-  postcss: 8.4.16
-  postcss-load-config: 4.0.1_postcss@8.4.16
-  prettier: 2.7.1
-  prettier-plugin-svelte: 2.7.0_nk6d2fkgcllkkdynqbuearcure
-  prisma: 4.3.1
-  prisma-merge: 0.2.0
-  prisma-zod-generator: 0.5.3_prisma@4.3.1
-  sass: 1.54.9
-  svelte: 3.50.1
-  svelte-check: 2.9.0_uflugsnve3m2dsawzez2imuhiq
-  svelte-preprocess: 4.10.7_5jwnrc6tqgovv4vmzymtlswmoy
-  tailwindcss: 3.1.8
-  ts-to-zod: 1.13.1
-  tslib: 2.4.0
-  type-fest: 2.19.0
-  typescript: 4.8.3
-  vite: 3.1.0_sass@1.54.9
+  apps/japtools:
+    specifiers:
+      '@digitak/esrun': ^3.2.11
+      '@keyfox/pochi': ^0.5.6
+      '@prisma/client': ^4.3.1
+      '@sveltejs/adapter-cloudflare': 1.0.0-next.34
+      '@sveltejs/adapter-node': 1.0.0-next.92
+      '@sveltejs/adapter-static': 1.0.0-next.43
+      '@sveltejs/kit': 1.0.0-next.480
+      '@tauri-apps/cli': ^1.1.1
+      '@types/bcryptjs': ^2.4.2
+      '@types/cookie': ^0.5.1
+      '@types/js-cookie': ^3.0.2
+      '@types/js-levenshtein': ^1.1.1
+      '@types/lodash-es': ^4.17.6
+      '@types/number-to-words': ^1.2.1
+      '@types/serialize-javascript': ^5.0.2
+      '@types/wanakana': ^4.0.3
+      '@typescript-eslint/eslint-plugin': ^5.37.0
+      '@typescript-eslint/parser': ^5.37.0
+      '@zerodevx/svelte-toast': ^0.7.2
+      array-shuffle: ^3.0.0
+      autoprefixer: ^10.4.11
+      bcryptjs: ^2.4.3
+      cookie: ^0.5.0
+      cross-env: ^7.0.3
+      cuid: ^2.1.8
+      daisyui: ^2.28.0
+      dotenv: ^16.0.2
+      dotenv-cli: ^6.0.0
+      eslint: ^8.23.1
+      eslint-config-prettier: ^8.5.0
+      eslint-plugin-svelte3: ^4.0.0
+      functional-utilities: ^1.17.0
+      js-cookie: ^3.0.1
+      js-levenshtein: ^1.1.6
+      lodash-es: ^4.17.21
+      node-inspect-extracted: ^1.1.0
+      node-sass: ^7.0.3
+      number-to-words: ^1.2.4
+      pkg-up: ^4.0.0
+      postcss: ^8.4.16
+      postcss-load-config: ^4.0.1
+      prettier: ^2.7.1
+      prettier-plugin-svelte: ^2.7.0
+      prisma: ^4.3.1
+      prisma-merge: ^0.2.0
+      prisma-zod-generator: ^0.5.3
+      sass: ^1.54.9
+      svelte: ^3.50.1
+      svelte-check: ^2.9.0
+      svelte-icons: ^2.1.0
+      svelte-loading-spinners: ^0.1.7
+      svelte-preprocess: ^4.10.7
+      tailwindcss: ^3.1.8
+      ts-to-zod: ^1.13.1
+      tslib: ^2.4.0
+      type-fest: ^2.19.0
+      typescript: ^4.8.3
+      vite: 3.1.0
+      wanakana: ^5.0.2
+      zod: ^3.19.1
+    dependencies:
+      '@keyfox/pochi': 0.5.6
+      '@types/js-cookie': 3.0.2
+      '@types/js-levenshtein': 1.1.1
+      '@types/lodash-es': 4.17.6
+      '@types/number-to-words': 1.2.1
+      '@types/serialize-javascript': 5.0.2
+      '@types/wanakana': 4.0.3
+      '@zerodevx/svelte-toast': 0.7.2
+      array-shuffle: 3.0.0
+      daisyui: 2.28.0_6b4luod745iryv24jvdbvzbbsa
+      js-cookie: 3.0.1
+      js-levenshtein: 1.1.6
+      lodash-es: 4.17.21
+      node-inspect-extracted: 1.1.0
+      number-to-words: 1.2.4
+      svelte-icons: 2.1.0
+      svelte-loading-spinners: 0.1.7
+      wanakana: 5.0.2
+      zod: 3.19.1
+    devDependencies:
+      '@digitak/esrun': 3.2.11
+      '@prisma/client': 4.3.1_prisma@4.3.1
+      '@sveltejs/adapter-cloudflare': 1.0.0-next.34
+      '@sveltejs/adapter-node': 1.0.0-next.92
+      '@sveltejs/adapter-static': 1.0.0-next.43
+      '@sveltejs/kit': 1.0.0-next.480_svelte@3.50.1+vite@3.1.0
+      '@tauri-apps/cli': 1.1.1
+      '@types/bcryptjs': 2.4.2
+      '@types/cookie': 0.5.1
+      '@typescript-eslint/eslint-plugin': 5.37.0_22c5fnooleyfkzrkkgdmel5kmi
+      '@typescript-eslint/parser': 5.37.0_irgkl5vooow2ydyo6aokmferha
+      autoprefixer: 10.4.11_postcss@8.4.16
+      bcryptjs: 2.4.3
+      cookie: 0.5.0
+      cross-env: 7.0.3
+      cuid: 2.1.8
+      dotenv: 16.0.2
+      dotenv-cli: 6.0.0
+      eslint: 8.23.1
+      eslint-config-prettier: 8.5.0_eslint@8.23.1
+      eslint-plugin-svelte3: 4.0.0_rhh4tpcyg7zwtq6pdnkzw5gxma
+      functional-utilities: 1.17.0
+      node-sass: 7.0.3
+      pkg-up: 4.0.0
+      postcss: 8.4.16
+      postcss-load-config: 4.0.1_postcss@8.4.16
+      prettier: 2.7.1
+      prettier-plugin-svelte: 2.7.0_nk6d2fkgcllkkdynqbuearcure
+      prisma: 4.3.1
+      prisma-merge: 0.2.0
+      prisma-zod-generator: 0.5.3_prisma@4.3.1
+      sass: 1.54.9
+      svelte: 3.50.1
+      svelte-check: 2.9.0_uflugsnve3m2dsawzez2imuhiq
+      svelte-preprocess: 4.10.7_5jwnrc6tqgovv4vmzymtlswmoy
+      tailwindcss: 3.1.8
+      ts-to-zod: 1.13.1
+      tslib: 2.4.0
+      type-fest: 2.19.0
+      typescript: 4.8.3
+      vite: 3.1.0_sass@1.54.9
 
 packages:
 
@@ -2707,7 +2714,7 @@ packages:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.8
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
     dev: true
@@ -4938,6 +4945,139 @@ packages:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
     dependencies:
       safe-buffer: 5.2.1
+    dev: true
+
+  /turbo-android-arm64/1.4.7:
+    resolution: {integrity: sha512-BtWtH8e8w1GhtYpGQmkcDS/AUzVZhQ4ZZN+qtUFei1wZD7VAdtJ9Wcsfi3WD+mXA6vtpIpRJVfQMcShr8l8ErA==}
+    cpu: [arm64]
+    os: [android]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-darwin-64/1.4.7:
+    resolution: {integrity: sha512-bMvZaAz5diec9feZ0XpQosYI8U0kiOQM2tj2sv0Y2WZbe227wodVMCQMyUowmcotO8nr6NF76Xo5E+H+dnY6LQ==}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-darwin-arm64/1.4.7:
+    resolution: {integrity: sha512-AyfxYfKgh1EigQKjypbnDoMLuy4e/n/go+KYiWKKIpOaWXWLBokrBWzYN/aI3NMDRUJWK5ExdlWI9Nleelq8uQ==}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-freebsd-64/1.4.7:
+    resolution: {integrity: sha512-T5/osfbCh0rL53MFS5byFFfsR3vPMHIKIJ4fMMCNkoHsmFj2R0Pv53nqhEItogt0FJwCDHPyt7oBqO83H/AWQQ==}
+    cpu: [x64]
+    os: [freebsd]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-freebsd-arm64/1.4.7:
+    resolution: {integrity: sha512-PL+SaO78AUCas+YKj01UiS2rpmGcxz8XPmLdFWmq6PYjPX6GL5UBAc3pkBphIm0aTLZtsikoEul+JrwAuAy6UA==}
+    cpu: [arm64]
+    os: [freebsd]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-linux-32/1.4.7:
+    resolution: {integrity: sha512-dK94UwDzySMALoQtjBVVPbWJZP6xw3yHGuytM3q5p4kfMZPSA+rgNBn5T5Af2Rc7jxlLAsu5ODJ0SgIbWSF5Hg==}
+    cpu: [ia32]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-linux-64/1.4.7:
+    resolution: {integrity: sha512-F6IM23zgTYo9gYJaNp17gVvQBt0hMIvz52OF91DpPYSLpV2h9OSlzPJ3j5TGaWueS/bc/YCV23+VojXX/MauGQ==}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-linux-arm/1.4.7:
+    resolution: {integrity: sha512-FTh4itdMNZ7IxGKknFnQ6iPO9vGGKqyySkCYLR01lnw6BTnKL9KuM9XUCBRyn7dNmHhAnqu1ZtVsBkH7CE7DEw==}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-linux-arm64/1.4.7:
+    resolution: {integrity: sha512-kFe5jzj3FoY6jAEwyNEswndj1t/fPl0qyxfcQv6aNPz7Nb2Lh7mY/EEse+CG3ydIo5RZKba7ppQoBSDmHx7JsA==}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-linux-mips64le/1.4.7:
+    resolution: {integrity: sha512-756nG8dnPQVcnl9s70S4NQ43aJjpsnc2h0toktPO+9u2ayv9XTbIPvZLFsS55bDeYhodDGvxoB96W6Xnx01hyQ==}
+    cpu: [mipsel]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-linux-ppc64le/1.4.7:
+    resolution: {integrity: sha512-VS2ofGN/XsafNGJdZ21UguURHb7KRG879yWLj59hO1d+0xXXQbx7ljsmEPOhiE4UjEdx4Ur6P44BhztTgDx9Og==}
+    cpu: [ppc64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-windows-32/1.4.7:
+    resolution: {integrity: sha512-M5GkZdA0CbJAOcR8SScM63CBV+NtX7qjhoNNOl0F99nGJ+rO3dH71CcM/rbhlz9SQzKQoX8rcuwZHe4r2HZAug==}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-windows-64/1.4.7:
+    resolution: {integrity: sha512-ftZUtZ1BX1vi8MbxKr+a7riIkhwvGnNTtWGprVu+aDJ8PnV+lNqbkrLJGvKP7Cn22hGTfzcjNNPcJ5PBZpQEQw==}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo-windows-arm64/1.4.7:
+    resolution: {integrity: sha512-mZ79XeJFfaeVKdBV3w0eoGaqAxFnwxrme0jZtSWemAbeDSCF/13wcbLGwtq0+Lu0LxEGweeQ5AqsCIc9t9i6sA==}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /turbo/1.4.7:
+    resolution: {integrity: sha512-oIk7PAISPidDOkTM5M+ydEe5GDQ/+TahDgIbaYKeAAy2Qpmur4s0HybSDWHIdxLqI96OPD/mOKymRLrjh3Mdhg==}
+    hasBin: true
+    requiresBuild: true
+    optionalDependencies:
+      turbo-android-arm64: 1.4.7
+      turbo-darwin-64: 1.4.7
+      turbo-darwin-arm64: 1.4.7
+      turbo-freebsd-64: 1.4.7
+      turbo-freebsd-arm64: 1.4.7
+      turbo-linux-32: 1.4.7
+      turbo-linux-64: 1.4.7
+      turbo-linux-arm: 1.4.7
+      turbo-linux-arm64: 1.4.7
+      turbo-linux-mips64le: 1.4.7
+      turbo-linux-ppc64le: 1.4.7
+      turbo-windows-32: 1.4.7
+      turbo-windows-64: 1.4.7
+      turbo-windows-arm64: 1.4.7
     dev: true
 
   /tweetnacl/0.14.5:

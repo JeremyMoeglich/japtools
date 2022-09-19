@@ -11,5 +11,5 @@
 		"strict": true
 	},
 	"include": ["./**/*.js", "./**/*.ts", "./**/*.svelte"],
-	"exclude": ["./node_modules/**", "./project-setup-rs/**", "./target/**"]
+	"exclude": ["./node_modules/**", "packages/db/scripts/project-setup-rs/**", "./target/**"]
 }
