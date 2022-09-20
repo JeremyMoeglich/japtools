@@ -22,7 +22,10 @@ const getAdapters = (adapt) => {
 				fallback: 'index.html'
 			});
 		case 'vercel':
-			return vercelAdapter();
+			return vercelAdapter({
+				edge: true,
+				split: true
+			});
 		default:
 			console.log('unknown adapter, using node');
 			return nodeAdapter();
