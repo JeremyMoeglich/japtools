@@ -9,6 +9,7 @@
 	import type { MaybePromise } from '@sveltejs/kit/types/internal';
 	import LessonInput from './lesson_input.svelte';
 	import SubjectBrowser from './subject_browser.svelte';
+	import PrettyObj from '$lib/components/pretty_obj.svelte';
 
 	export let lesson: Lesson | undefined;
 	export let response_type: 'ja' | 'en' | 'locked' | undefined;
@@ -32,9 +33,17 @@
 		RADICAL: '#0000ff',
 		VOCABULARY: '#ba00ba'
 	};
+
+	let input_element: HTMLInputElement | undefined;
+	let next_button: HTMLButtonElement | undefined;
+
+	$: next_button?.focus();
+	$: input_element?.focus();
+
+	$: subject = lesson ? $subject_store.get(lesson.subject_id)?.subject : undefined;
 </script>
 
-<div class="lesson_ui w-full flex flex-col items-center relative">
+<div class="lesson_ui w-full flex flex-col items-center relative min-h-full justify-start">
 	<p class="absolute top-5 left-5">
 		ID: {lesson ? lesson.subject_id : 'Loading...'}
 	</p>
@@ -58,30 +67,42 @@
 			Reset {lesson ? toWordUpperCase(lesson.subject_type) : 'Loading...'} Progress
 		</button>
 	{/if}
-	{#if lesson && (show_correct || lesson.skill_level === 0)}
-		<div class="absolute bottom-0 left-0 w-full h-2/5">
-			<SubjectBrowser subject={$subject_store.get(lesson.subject_id)?.subject} />
-		</div>
-	{/if}
 	<div
 		style:background-color={lesson ? color_map[lesson.subject_type] : '#99a1ad'}
 		class="w-full p-6 pt-16 pb-16 flex justify-center duration-1000"
 	>
 		<slot />
 	</div>
+	{lesson?.subject_type}
 
-	<div
-		class="text-center text-3xl text-white bg-slate-500 p-5 w-full grid grid-cols-1 grid-rows-1 overflow-hidden"
-	>
+	<div class="text-center text-3xl text-white bg-slate-500 p-5 w-full">
 		<p class="col-start-1 row-start-1">
-			{question}
+			{lesson?.skill_level === 0
+				? `New ${toWordUpperCase(lesson.subject_type)} - ${subject?.characters}`
+				: question}
 		</p>
 	</div>
 
-	{#if response_type && lesson?.skill_level !== 0}
-		<LessonInput {response_type} bind:response_value submit_callback={confirm} />
-	{:else if lesson?.skill_level === 0}
-		<button on:click={confirm} class="mt-8">Next</button>
+	<div class="mt-8 mb-8">
+		{#if response_type && lesson?.skill_level !== 0}
+			<LessonInput
+				{response_type}
+				bind:response_value
+				submit_callback={async () => {
+					return await confirm();
+				}}
+				bind:input_element
+			/>
+		{:else if lesson?.skill_level === 0}
+			<button on:click={confirm} bind:this={next_button}>Next</button>
+		{/if}
+		<PrettyObj obj={lesson} />
+	</div>
+
+	{#if lesson && (show_correct || lesson.skill_level === 0)}
+		<div class="mt-auto">
+			<SubjectBrowser {subject} />
+		</div>
 	{/if}
 
 	<!-- <div class="absolute bottom-5 right-5 flex">

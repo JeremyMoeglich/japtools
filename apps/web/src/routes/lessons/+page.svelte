@@ -72,12 +72,17 @@
 		if (current_lesson_state === 'in_progress') {
 			if (correct || current_lesson.skill_level === 0) {
 				current_lesson_state = 'waiting_for_next';
-				await change_level(current_lesson.subject_id, 1);
+				const change_level_promise = change_level(current_lesson.subject_id, 1);
+				if (lesson_queue.length === 0) {
+					await change_level_promise;
+				}
 				await next_lesson();
 				return true;
 			} else {
 				current_lesson_state = 'wrong';
-				await change_level(current_lesson.subject_id, -1);
+				if (current_lesson.skill_level > 1) {
+					await change_level(current_lesson.subject_id, -1);
+				}
 				return false;
 			}
 		} else if (current_lesson_state === 'wrong') {

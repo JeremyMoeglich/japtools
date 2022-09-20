@@ -5,6 +5,7 @@
 	export let response_type: 'ja' | 'en' | 'locked';
 	export let response_value: string;
 	export let submit_callback: () => MaybePromise<boolean>;
+	export let input_element: HTMLInputElement | undefined;
 
 	let last_value: string;
 
@@ -38,7 +39,7 @@
 	$: response_value !== last_value && update_response_value(response_value);
 </script>
 
-<div class="flex mt-8 gap-4">
+<div class="flex gap-4">
 	<div>
 		<input
 			on:keypress={(e) => {
@@ -49,6 +50,7 @@
 			type="text"
 			bind:value={response_value}
 			class="input-primary text-black bg-white"
+			bind:this={input_element}
 		/>
 	</div>
 	<button class="btn btn-secondary" on:click={submit}>Confirm</button>

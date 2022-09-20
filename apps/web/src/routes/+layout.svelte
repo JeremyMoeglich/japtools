@@ -9,23 +9,6 @@
 	import { Circle2 } from 'svelte-loading-spinners';
 
 	check_token_and_login();
-
-	let testv: string = 'Nothing yet';
-	(async () => {
-		try {
-			const res = await fetch('/api/test', {
-				method: 'POST',
-				body: JSON.stringify({ test: 'test' }),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-			const data = await res.json();
-			testv = JSON.stringify(data);
-		} catch (e) {
-			testv = 'Error';
-		}
-	})();
 </script>
 
 <div class="flex flex-col h-screen">
@@ -34,25 +17,18 @@
 		{#if $logged_in}
 			<a href="/">
 				<div class="flex flex-col items-center">
-					<div class="w-7 h-7">
-						<Home />
-					</div>
+					<Home size={24} />
 					Home
 				</div>
 			</a>
 			<a href="/lessons">
 				<div class="flex flex-col items-center">
-					<div class="w-7 h-7">
-						<Book />
-					</div>
+					<Book size={24} />
 					Lessons
 				</div>
 			</a>
 		{/if}
 	</div>
-	<p>
-		{testv}
-	</p>
 	<div class="content h-full">
 		{#if $logged_in}
 			<slot />
