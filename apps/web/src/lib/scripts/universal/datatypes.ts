@@ -46,48 +46,54 @@ export const VocabularyReadingSchema = z.object({
 	subject_id: z.number().int()
 });
 
-export const RadicalDataSchema = z.object({
-	id: z.number().int(),
-	amalgamation_subject_ids: z.array(z.number().int()),
-	auxiliary_meanings: z.array(AuxiliaryMeaningSchema),
-	characters: z.string().optional(),
-	lesson_position: z.number().int(),
-	level: z.number().int(),
-	meaning_mnemonic: z.string(),
-	meanings: z.array(SubjectMeaningSchema),
-	image_url: z.string().optional()
-});
+export const RadicalDataSchema = z
+	.object({
+		id: z.number().int(),
+		amalgamation_subject_ids: z.array(z.number().int()),
+		auxiliary_meanings: z.array(AuxiliaryMeaningSchema),
+		characters: z.string().optional(),
+		lesson_position: z.number().int(),
+		level: z.number().int(),
+		meaning_mnemonic: z.string(),
+		meanings: z.array(SubjectMeaningSchema),
+		image_url: z.string().optional()
+	})
+	.strict();
 
-export const KanjiDataSchema = z.object({
-	id: z.number().int(),
-	amalgamation_subject_ids: z.array(z.number().int()),
-	auxiliary_meanings: z.array(AuxiliaryMeaningSchema),
-	characters: z.string(),
-	component_subject_ids: z.array(z.number().int()),
-	lesson_position: z.number().int(),
-	level: z.number().int(),
-	meaning_hint: z.string().optional(),
-	meaning_mnemonic: z.string(),
-	meanings: z.array(SubjectMeaningSchema),
-	reading_hint: z.string(),
-	reading_mnemonic: z.string(),
-	readings: z.array(KanjiReadingSchema),
-	visually_similar_subject_ids: z.array(z.number().int())
-});
+export const KanjiDataSchema = z
+	.object({
+		id: z.number().int(),
+		amalgamation_subject_ids: z.array(z.number().int()),
+		auxiliary_meanings: z.array(AuxiliaryMeaningSchema),
+		characters: z.string(),
+		component_subject_ids: z.array(z.number().int()),
+		lesson_position: z.number().int(),
+		level: z.number().int(),
+		meaning_hint: z.string().optional(),
+		meaning_mnemonic: z.string(),
+		meanings: z.array(SubjectMeaningSchema),
+		reading_hint: z.string(),
+		reading_mnemonic: z.string(),
+		readings: z.array(KanjiReadingSchema),
+		visually_similar_subject_ids: z.array(z.number().int())
+	})
+	.strict();
 
-export const VocabularyDataSchema = z.object({
-	id: z.number().int(),
-	auxiliary_meanings: z.array(AuxiliaryMeaningSchema),
-	characters: z.string(),
-	component_subject_ids: z.array(z.number().int()),
-	context_sentences: z.array(ContextSentenceSchema),
-	lesson_position: z.number().int(),
-	level: z.number().int(),
-	meaning_mnemonic: z.string(),
-	meanings: z.array(SubjectMeaningSchema),
-	reading_mnemonic: z.string(),
-	readings: z.array(VocabularyReadingSchema)
-});
+export const VocabularyDataSchema = z
+	.object({
+		id: z.number().int(),
+		auxiliary_meanings: z.array(AuxiliaryMeaningSchema),
+		characters: z.string(),
+		component_subject_ids: z.array(z.number().int()),
+		context_sentences: z.array(ContextSentenceSchema),
+		lesson_position: z.number().int(),
+		level: z.number().int(),
+		meaning_mnemonic: z.string(),
+		meanings: z.array(SubjectMeaningSchema),
+		reading_mnemonic: z.string(),
+		readings: z.array(VocabularyReadingSchema)
+	})
+	.strict();
 
 export const SubjectDataSchema = z.union([
 	RadicalDataSchema,

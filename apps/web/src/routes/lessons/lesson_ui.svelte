@@ -73,7 +73,7 @@
 	>
 		<slot />
 	</div>
-	{lesson?.subject_type}
+	<!-- {lesson?.subject_type} -->
 
 	<div class="text-center text-3xl text-white bg-slate-500 p-5 w-full">
 		<p class="col-start-1 row-start-1">
@@ -96,7 +96,7 @@
 		{:else if lesson?.skill_level === 0}
 			<button on:click={confirm} bind:this={next_button}>Next</button>
 		{/if}
-		<PrettyObj obj={lesson} />
+		<!-- <PrettyObj obj={subject} /> -->
 	</div>
 
 	{#if lesson && (show_correct || lesson.skill_level === 0)}

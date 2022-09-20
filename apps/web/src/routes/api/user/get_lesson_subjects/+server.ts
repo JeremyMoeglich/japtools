@@ -132,7 +132,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			return false;
 		}
 	});
-
 	const lesson_subjects = await Promise.all(
 		filtered_lessons.map(async (lesson) => ({
 			subject_id: lesson.subject_id,

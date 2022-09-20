@@ -20,6 +20,7 @@ export async function get_lesson_subjects(): Promise<LessonSubjectDataType[]> {
 			})
 		})
 	).json();
+
 	const lessons_raw_arr = z
 		.object({
 			lessons: z.array(z.unknown())
@@ -28,7 +29,6 @@ export async function get_lesson_subjects(): Promise<LessonSubjectDataType[]> {
 	const lessons = lessons_raw_arr.map((v) =>
 		parse_to_date(v, LessonSubjectDataSchema, ['next_review'])
 	);
-	LessonSubjectDataSchema.strict().array().parse(lessons);
 	const current_subject_store = get(subject_store);
 	lessons.forEach((lesson) => {
 		current_subject_store.set(lesson.subject_id, lesson);
