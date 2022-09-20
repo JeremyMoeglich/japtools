@@ -4,7 +4,7 @@ import { prisma_client } from '$lib/scripts/backend/prisma_client.server';
 import type { RequestHandler } from './$types';
 import bcryptjs from 'bcryptjs';
 const { compare } = bcryptjs;
-import cuid from 'cuid';
+import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { inspect } from 'node-inspect-extracted';
 
@@ -115,7 +115,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	).loginToken.create({
 		data: {
 			user_id: user_id,
-			value: cuid()
+			value: uuidv4()
 		}
 	});
 	return json(

@@ -4,8 +4,8 @@ import { prisma_client } from '$lib/scripts/backend/prisma_client.server';
 import type { RequestHandler } from './$types';
 import bcryptjs from 'bcryptjs';
 const { hash } = bcryptjs;
-import cuid from 'cuid';
 import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = await get_request_body(
@@ -27,7 +27,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		throw error(400, 'User already exists');
 	}
 	const password_hash = await hash(password, 10);
-	const progress_cuid = cuid();
+	const progress_uuid = uuidv4();
 	const user = await (
 		prisma_client
 	).user.create({
@@ -35,7 +35,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			email: email,
 			password_hash: password_hash,
 			name: name,
-			progress: { create: { id: progress_cuid } }
+			progress: { create: { id: progress_uuid } }
 		}
 	});
 	const token = await (
@@ -43,7 +43,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	).loginToken.create({
 		data: {
 			user_id: user.id,
-			value: cuid()
+			value: uuidv4()
 		}
 	});
 	return json(

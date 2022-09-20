@@ -22,7 +22,6 @@
 		"bcryptjs": "^2.4.3",
 		"carbon-icons-svelte": "^11.3.0",
 		"cookie": "^0.5.0",
-		"cuid": "^2.1.8",
 		"eslint": "^8.23.1",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
@@ -49,6 +48,7 @@
 		"@types/lodash-es": "^4.17.6",
 		"@types/number-to-words": "^1.2.1",
 		"@types/serialize-javascript": "^5.0.2",
+		"@types/uuid": "^8.3.4",
 		"@types/wanakana": "^4.0.3",
 		"@zerodevx/svelte-toast": "^0.7.2",
 		"array-shuffle": "^3.0.0",
@@ -60,6 +60,7 @@
 		"node-inspect-extracted": "^1.1.0",
 		"number-to-words": "^1.2.4",
 		"svelte-loading-spinners": "^0.1.7",
+		"uuid": "^9.0.0",
 		"wanakana": "^5.0.2",
 		"zod": "^3.19.1"
 	}
