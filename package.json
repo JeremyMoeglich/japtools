@@ -17,7 +17,7 @@
 		"lint": "dotenv -e .env.serverless -- turbo run lint",
 		"dbsetup": "npm run generate:node && dotenv -e .env.node -- cargo run --release --bin dbsetup && npm run generate",
 		"generate": "dotenv -e .env.serverless -- prisma generate --data-proxy",
-		"generate:node": "prisma-merge -b ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && prisma generate --schema ./prisma/rsschema.prisma",
+		"generate:node": "prisma-merge -e ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && prisma generate --schema ./prisma/rsschema.prisma",
 		"migrate:dev": "dotenv -e .env.node -- prisma migrate dev --name",
 		"studio": "dotenv -e .env.node -- prisma studio"
 	},
