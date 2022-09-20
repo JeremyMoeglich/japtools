@@ -122,11 +122,11 @@ export function is_radical_data(subject: SubjectDataType): subject is RadicalDat
 }
 
 export const user_data_type_schema = z.object({
-	id: z.string().uuid(),
+	id: z.string(),
 	name: z.string().min(4).max(100),
 	email: z.string().email(),
 	created_at: z.date(),
-	progress_id: z.string().uuid()
+	progress_id: z.string()
 });
 
 export type user_data_type = z.infer<typeof user_data_type_schema>;
