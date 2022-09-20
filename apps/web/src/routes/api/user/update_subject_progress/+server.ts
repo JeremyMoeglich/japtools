@@ -1,4 +1,4 @@
-import { prisma_client } from '@japtools/db';
+import { prisma_client } from '$lib/scripts/backend/prisma_client.server';
 import { get_auth_user_data, get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
 import type { RequestHandler } from './$types';
 import { range } from 'functional-utilities';

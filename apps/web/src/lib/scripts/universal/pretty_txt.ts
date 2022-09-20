@@ -1,4 +1,4 @@
-const serializer = (key: unknown, value: unknown) => {
+const serializer = (_: unknown, value: unknown) => {
 	if (value instanceof Map) {
 		return `Map(${JSON.stringify([...value], serializer)})`;
 	} else if (value instanceof Set) {

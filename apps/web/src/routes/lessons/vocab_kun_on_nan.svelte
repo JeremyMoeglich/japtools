@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { VocabularyKunOnYomi } from '$lib/scripts/universal/lesson_type';
-	import type { ReadingType } from '@japtools/db';
+	import type { ReadingType } from '@prisma/client/edge';
 	import { typed_keys, zip, range } from 'functional-utilities';
 
 	export let current_lesson: VocabularyKunOnYomi<number>;

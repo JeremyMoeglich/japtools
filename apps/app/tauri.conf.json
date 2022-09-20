@@ -1,10 +1,9 @@
 {
 	"$schema": "../node_modules/@tauri-apps/cli/schema.json",
 	"build": {
-		"beforeBuildCommand": "pnpm build:static",
-		"beforeDevCommand": "pnpm dev",
+		"beforeDevCommand": "pnpm run --filter @japtools/web dev:web",
 		"devPath": "http://localhost:5173",
-		"distDir": "../build"
+		"distDir": "../web/build"
 	},
 	"package": {
 		"productName": "japtools",

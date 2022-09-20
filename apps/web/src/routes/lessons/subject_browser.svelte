@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { get_subject_type, type SubjectDataType } from '$lib/scripts/universal/datatypes';
-	import type { SubjectType } from '@japtools/db';
+	import type { SubjectType } from '@prisma/client/edge';
 	import { sortBy } from 'lodash-es';
 	import TextRenderer from './text-renderer/text_renderer.svelte';
 

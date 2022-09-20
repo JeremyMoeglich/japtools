@@ -1,4 +1,4 @@
-import type { SubjectType } from '@japtools/db';
+import type { SubjectType } from '@prisma/client/edge';
 import { z } from 'zod';
 
 export const ReadingTypeSchema = z.union([

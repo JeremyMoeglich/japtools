@@ -1,4 +1,4 @@
-import type { SubjectType } from '@japtools/db';
+import type { SubjectType } from '@prisma/client/edge';
 import type { JsonObject } from 'type-fest';
 import type { ReadingTypeType } from './datatypes';
 

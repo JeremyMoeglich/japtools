@@ -1,5 +1,5 @@
 import { get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
-import { prisma_client } from '@japtools/db';
+import { prisma_client } from '$lib/scripts/backend/prisma_client.server';
 import type { RequestHandler } from './$types';
 import { z } from 'zod';
 import { json } from '@sveltejs/kit';

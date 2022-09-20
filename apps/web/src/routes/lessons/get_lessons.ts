@@ -179,10 +179,15 @@ export async function get_lessons() {
 													return [kanji, undefined];
 												}
 												if (
-													sortBy(viable_readings, (r) => r.reading.length)
+													sortBy(viable_readings, (r: { reading: string }) => r.reading.length)
 														.reverse()
-														.filter((v) => v.reading.length === viable_readings[0].reading.length)
-														.every((v) => v.reading === viable_readings[0].reading)
+														.filter(
+															(v: { reading: string }) =>
+																v.reading.length === viable_readings[0].reading.length
+														)
+														.every(
+															(v: { reading: string }) => v.reading === viable_readings[0].reading
+														)
 												) {
 													kanji_types.push(viable_readings[0].reading_type);
 													r = r.slice(viable_readings[0].reading.length);

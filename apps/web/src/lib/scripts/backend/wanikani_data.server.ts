@@ -1,4 +1,4 @@
-import { prisma_client } from '@japtools/db';
+import { prisma_client } from '$lib/scripts/backend/prisma_client.server';
 import type {
 	KanjiDataType,
 	RadicalDataType,
@@ -15,7 +15,7 @@ import type {
 	SubjectMeaning,
 	VocabularyReading,
 	VocabularySubject
-} from '@japtools/db';
+} from '@prisma/client/edge';
 
 function convert_vocabulary(
 	data: VocabularySubject & {

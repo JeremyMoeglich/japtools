@@ -1,8 +1,22 @@
 {
 	"$schema": "https://turborepo.org/schema.json",
 	"pipeline": {
-		"build": {
-			"dependsOn": ["^build"]
+		"build:app": {
+			"dependsOn": ["^build:app"]
+		},
+		"build:web": {
+			"dependsOn": ["^build:web"]
+		},
+		"check": {
+			"dependsOn": ["^check"]
+		},
+		"dev:app": {
+			"dependsOn": ["^dev:app"],
+			"cache": false
+		},
+		"dev:web": {
+			"dependsOn": ["^dev:web"],
+			"cache": false
 		}
 	},
 	"globalDependencies": ["$DATABASE_URL"]

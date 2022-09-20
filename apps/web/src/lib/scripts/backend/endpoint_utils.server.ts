@@ -1,6 +1,6 @@
 import { parse } from 'cookie';
 import type { user_data_type } from '../universal/datatypes';
-import { prisma_client } from '@japtools/db';
+import { prisma_client } from '$lib/scripts/backend/prisma_client.server';
 import type { JsonValue } from 'type-fest';
 import type { z } from 'zod';
 import type { ZodObjectAny } from '../universal/zod_util';

@@ -3,8 +3,9 @@
 
 import staticAdapter from '@sveltejs/adapter-static';
 import nodeAdapter from '@sveltejs/adapter-node';
-import cloudflareAdapter from '@sveltejs/adapter-cloudflare';
+import vercelAdapter from '@sveltejs/adapter-vercel';
 import preprocess from 'svelte-preprocess';
+import { optimizeImports } from 'carbon-preprocess-svelte';
 
 const adapt = process.env.ADAPTER;
 process.env.PUBLIC_URL = '';
@@ -20,8 +21,8 @@ const getAdapters = (adapt) => {
 			return staticAdapter({
 				fallback: 'index.html'
 			});
-		case 'cloudflare':
-			return cloudflareAdapter();
+		case 'vercel':
+			return vercelAdapter();
 		default:
 			console.log('unknown adapter, using node');
 			return nodeAdapter();
@@ -37,7 +38,8 @@ const config = {
 	preprocess: [
 		preprocess({
 			postcss: true
-		})
+		}),
+		optimizeImports()
 	],
 
 	kit: {

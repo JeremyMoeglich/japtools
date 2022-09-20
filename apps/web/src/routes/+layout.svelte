@@ -4,8 +4,7 @@
 	import AuthPage from './auth_page.svelte';
 	import { logged_in } from '$lib/scripts/frontend/auth/auth_state';
 	import { check_token_and_login } from '$lib/scripts/frontend/auth/token_login';
-	import IoMdHome from 'svelte-icons/io/IoMdHome.svelte';
-	import IoIosBook from 'svelte-icons/io/IoIosBook.svelte';
+	import { Home, Book } from 'carbon-icons-svelte';
 	import { is_loading_store } from '$lib/scripts/frontend/is_loading';
 	import { Circle2 } from 'svelte-loading-spinners';
 
@@ -36,7 +35,7 @@
 			<a href="/">
 				<div class="flex flex-col items-center">
 					<div class="w-7 h-7">
-						<IoMdHome />
+						<Home />
 					</div>
 					Home
 				</div>
@@ -44,7 +43,7 @@
 			<a href="/lessons">
 				<div class="flex flex-col items-center">
 					<div class="w-7 h-7">
-						<IoIosBook />
+						<Book />
 					</div>
 					Lessons
 				</div>

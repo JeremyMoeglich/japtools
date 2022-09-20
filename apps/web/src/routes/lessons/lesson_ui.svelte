@@ -5,7 +5,7 @@
 
 	import type { Lesson } from '$lib/scripts/universal/lesson_type';
 
-	import type { SubjectType } from '@japtools/db';
+	import type { SubjectType } from '@prisma/client/edge';
 	import type { MaybePromise } from '@sveltejs/kit/types/internal';
 	import LessonInput from './lesson_input.svelte';
 	import SubjectBrowser from './subject_browser.svelte';
@@ -19,7 +19,7 @@
 
 	function toWordUpperCase(str: string) {
 		return str.replace(/\w\S*/g, (txt) => {
-			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+			return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
 		});
 	}
 
