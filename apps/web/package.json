@@ -2,7 +2,7 @@
 	"name": "@japtools/web",
 	"version": "0.1.0",
 	"scripts": {
-		"build:app": "cross-env ADAPTER=static vite build",
+		"build:app": "cross-env ADAPTER=static cross-env VITE_STATIC_URL=1 vite build",
 		"build:web": "cross-env ADAPTER=vercel vite build",
 		"dev:web": "vite dev",
 		"check": "svelte-check --tsconfig ./tsconfig.json"

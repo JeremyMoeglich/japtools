@@ -8,7 +8,6 @@ import preprocess from 'svelte-preprocess';
 import { optimizeImports } from 'carbon-preprocess-svelte';
 
 const adapt = process.env.ADAPTER;
-process.env.PUBLIC_URL = '';
 
 
 // @ts-ignore
