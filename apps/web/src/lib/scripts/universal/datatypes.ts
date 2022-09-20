@@ -107,7 +107,6 @@ export type RadicalDataType = z.infer<typeof RadicalDataSchema>;
 export type VocabularyDataType = z.infer<typeof VocabularyDataSchema>;
 
 export function get_subject_type(subject: SubjectDataType): SubjectType {
-	console.log(subject);
 	if ('reading_hint' in subject) {
 		return 'KANJI';
 	} else if ('reading_mnemonic' in subject) return 'VOCABULARY';

@@ -25,6 +25,8 @@
 	let lesson_queue: Lesson[] = [];
 
 	async function update_lessons() {
+		await Promise.all(level_change_promises);
+		level_change_promises = [];
 		lesson_queue = await get_lessons();
 		if (lesson_queue.length === 0) {
 			throw new Error('No lessons found');
@@ -37,17 +39,15 @@
 	let current_lesson: Lesson | undefined = undefined;
 
 	async function next_lesson() {
-		current_lesson = lesson_queue.shift();
-		if (current_lesson === undefined) {
-			is_loading_store.set(true);
-		}
 		try {
 			if (lesson_queue.length === 0) {
+				is_loading_store.set(true);
 				await update_lessons();
 			}
 		} finally {
 			is_loading_store.set(false);
 		}
+		current_lesson = lesson_queue.shift();
 		current_lesson_state = 'in_progress';
 		current_input = '';
 		// if (current_lesson && current_lesson.subject_id !== 8761) {
@@ -56,14 +56,12 @@
 		// }
 	}
 
-	if (browser) {
-		update_lessons();
-	}
-
 	let current_lesson_state: 'in_progress' | 'wrong' | 'waiting_for_next' = 'in_progress';
 	let current_input = '';
 	let correct: boolean = false;
 	let question = '';
+
+	let level_change_promises: Promise<void>[] = [];
 
 	async function confirm() {
 		if (!current_lesson) {
@@ -72,16 +70,13 @@
 		if (current_lesson_state === 'in_progress') {
 			if (correct || current_lesson.skill_level === 0) {
 				current_lesson_state = 'waiting_for_next';
-				const change_level_promise = change_level(current_lesson.subject_id, 1);
-				if (lesson_queue.length === 0) {
-					await change_level_promise;
-				}
+				level_change_promises.push(change_level(current_lesson.subject_id, 1));
 				await next_lesson();
 				return true;
 			} else {
 				current_lesson_state = 'wrong';
 				if (current_lesson.skill_level > 1) {
-					await change_level(current_lesson.subject_id, -1);
+					level_change_promises.push(change_level(current_lesson.subject_id, -1));
 				}
 				return false;
 			}
@@ -92,6 +87,10 @@
 		} else {
 			return true;
 		}
+	}
+
+	if (browser) {
+		update_lessons();
 	}
 </script>
 

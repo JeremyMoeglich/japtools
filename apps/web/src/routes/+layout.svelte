@@ -38,6 +38,7 @@
 	</div>
 </div>
 
+{$is_loading_store}
 {#if $is_loading_store}
 	<div class="loading">
 		<div class="spinner">

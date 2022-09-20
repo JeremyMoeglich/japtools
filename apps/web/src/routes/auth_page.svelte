@@ -2,14 +2,16 @@
 	import PrettyObj from '$lib/components/pretty_obj.svelte';
 	import { login } from '$lib/scripts/frontend/auth/login';
 	import { register } from '$lib/scripts/frontend/auth/register';
+	import { is_loading_store } from '$lib/scripts/frontend/is_loading';
 	import { toast } from '@zerodevx/svelte-toast';
+	import { z } from 'zod';
 
 	let name = '';
 	let email = '';
 	let password = '';
 
-	let login_error: unknown = '';
-	let register_error: unknown = '';
+	let login_error: string = '';
+	let register_error: string = '';
 </script>
 
 <div class="side_alignment">
@@ -18,17 +20,27 @@
 		<p>Sign in to your account</p>
 		<form
 			on:submit|preventDefault={async () => {
+				is_loading_store.set(true);
 				const login_result = await login(email, password);
 				if (login_result !== undefined) {
-					login_error = login_result.message;
+					login_error = z.string().parse(login_result.message);
+					toast.push(login_error, {
+						duration: 2000,
+						theme: {
+							'--toastBackground': '#ff0000',
+							'--toastColor': '#ffffff'
+						}
+					});
+				} else {
+					toast.push('Logged in', {
+						duration: 2000,
+						theme: {
+							'--toastBackground': '#00ff00',
+							'--toastColor': '#ffffff'
+						}
+					});
 				}
-				toast.push('Logged in', {
-					duration: 2000,
-					theme: {
-						'--toastBackground': '#00ff00',
-						'--toastColor': '#ffffff'
-					}
-				});
+				is_loading_store.set(false);
 			}}
 			class="form-control gap-3"
 		>
@@ -49,17 +61,27 @@
 		<p>Sign up for a new account</p>
 		<form
 			on:submit|preventDefault={async () => {
+				is_loading_store.set(true);
 				const register_result = await register(name, email, password);
 				if (register_result !== undefined) {
-					register_error = register_result.message;
+					register_error = z.string().parse(register_result.message);
+					toast.push(register_error, {
+						duration: 2000,
+						theme: {
+							'--toastBackground': '#ff0000',
+							'--toastColor': '#ffffff'
+						}
+					});
+				} else {
+					toast.push('Account Created', {
+						duration: 2000,
+						theme: {
+							'--toastBackground': '#00ff00',
+							'--toastColor': '#ffffff'
+						}
+					});
 				}
-				toast.push('Account created', {
-					duration: 2000,
-					theme: {
-						'--toastBackground': '#00ff00',
-						'--toastColor': '#ffffff'
-					}
-				});
+				is_loading_store.set(false);
 			}}
 		>
 			<label for="name" class="input-group">

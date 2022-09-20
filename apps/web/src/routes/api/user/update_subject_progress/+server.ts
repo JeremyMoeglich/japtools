@@ -6,15 +6,16 @@ import { z } from 'zod';
 import { json } from '@sveltejs/kit';
 import { get_subject_by_id } from '$lib/scripts/backend/wanikani_data.server';
 
-function date_diff(a: Date, b: Date): string {
-	const diff = a.getTime() - b.getTime();
-	const hours = Math.floor(diff / 3600000);
-	const minutes = Math.floor((diff - hours * 3600000) / 60000);
-	const seconds = Math.floor((diff - hours * 3600000 - minutes * 60000) / 1000);
-	return `${hours}:${minutes}:${seconds}`;
-}
+// function date_diff(a: Date, b: Date): string {
+// 	const diff = a.getTime() - b.getTime();
+// 	const hours = Math.floor(diff / 3600000);
+// 	const minutes = Math.floor((diff - hours * 3600000) / 60000);
+// 	const seconds = Math.floor((diff - hours * 3600000 - minutes * 60000) / 1000);
+// 	return `${hours}:${minutes}:${seconds}`;
+// }
 
 function get_next_date(n: number): Date {
+	n--;
 	if (n < 0) {
 		n = 0;
 	}

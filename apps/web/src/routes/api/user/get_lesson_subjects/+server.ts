@@ -8,16 +8,21 @@ import type { RequestHandler } from './$types';
 import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
 import type { SubjectDataType } from '$lib/scripts/universal/datatypes';
+import { pass_back } from 'functional-utilities';
 
 //const daily_lesson_limit = 20; [TODO] implement this
 
 export const POST: RequestHandler = async ({ request }) => {
 	const user_data = await get_auth_user_data(request);
-	const { amount } = await get_request_body(
-		request,
-		z.object({
-			amount: z.number().min(1).max(100)
-		})
+	const { amount, previous } = pass_back(
+		await get_request_body(
+			request,
+			z.object({
+				amount: z.number().min(1).max(100),
+				previous: z.string().array().optional()
+			})
+		),
+		(body) => body.previous = body.previous ?? []
 	);
 	const current_date = new Date();
 	const lessons = await prisma_client.subjectProgress.findMany({
@@ -66,7 +71,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 		if (!(lessons.length >= amount) && lessons.length < amount) {
 			const amount_to_add = amount - lessons.length;
-			console.log('amount_to_add', amount_to_add);
+			//console.log('amount_to_add', amount_to_add);
 			const current_level = (
 				await prisma_client.progress.findUnique({
 					where: {
@@ -114,7 +119,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					return promise;
 				})
 			);
-			console.log(`Added ${added.length} subjects to lessons`);
+			//console.log(`Added ${added.length} subjects to lessons`);
 			for (const subject of added) {
 				lessons.push(subject);
 			}
@@ -141,7 +146,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}))
 	);
 
-	console.log(`Sending ${lessons.length} lessons to user ${user_data.name}`);
+	//console.log(`Sending ${lessons.length} lessons to user ${user_data.name}`);
 
 	return json({
 		lessons: lesson_subjects
