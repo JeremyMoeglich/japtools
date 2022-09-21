@@ -9,7 +9,9 @@
 	import type { MaybePromise } from '@sveltejs/kit/types/internal';
 	import LessonInput from './lesson_input.svelte';
 	import SubjectBrowser from './subject_browser.svelte';
-	import PrettyObj from '$lib/components/pretty_obj.svelte';
+	import { toWordUpperCase } from '$lib/scripts/universal/word_uppercase';
+	import { get } from 'svelte/store';
+	import { error } from 'functional-utilities';
 
 	export let lesson: Lesson | undefined;
 	export let response_type: 'ja' | 'en' | 'locked' | undefined;
@@ -17,12 +19,6 @@
 	export let question: string = '';
 	export let confirm: () => MaybePromise<boolean>;
 	export let show_correct: boolean;
-
-	function toWordUpperCase(str: string) {
-		return str.replace(/\w\S*/g, (txt) => {
-			return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
-		});
-	}
 
 	// Kanji = magenta
 	// Vocabulary = purple
@@ -62,6 +58,27 @@
 						'--toastColor': '#ffffff'
 					}
 				});
+				const subject_data =
+					get(subject_store).get(lesson.subject_id)?.subject ?? error('Subject not found');
+				lesson = {
+					lesson_type: 'new_subject',
+					skill_level: 0,
+					need_input: false,
+					preferred_tab: 'Readings',
+					subject_id: lesson.subject_id,
+					required_data:
+						'characters' in subject_data && subject_data.characters
+							? {
+									text: subject_data.characters
+							  }
+							: {
+									image_url:
+										'image_url' in subject_data
+											? subject_data.image_url ?? error('Image URL is undefined')
+											: error('Image URL not found')
+							  },
+					subject_type: lesson.subject_type
+				};
 			}}
 		>
 			Reset {lesson ? toWordUpperCase(lesson.subject_type) : 'Loading...'} Progress
@@ -77,9 +94,7 @@
 
 	<div class="text-center text-3xl text-white bg-slate-500 p-5 w-full">
 		<p class="col-start-1 row-start-1">
-			{lesson?.skill_level === 0
-				? `New ${toWordUpperCase(lesson.subject_type)} - ${subject?.characters}`
-				: question}
+			{question}
 		</p>
 	</div>
 

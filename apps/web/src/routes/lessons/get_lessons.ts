@@ -16,19 +16,34 @@ import { z } from 'zod';
 
 const required_level_table: Record<Lesson['lesson_type'], number> = {
 	//kanji_nan_kun_on_yomi: 1,
-	reading_and_meaning: 0,
-	text_and_meaning: 0,
-	vocabulary_kun_on_yomi: 1
+	reading_and_meaning: 1,
+	text_and_meaning: 1,
+	vocabulary_kun_on_yomi: 2,
+	new_subject: 0
 };
 
-export async function get_lessons() {
-	const subjects = await get_lesson_subjects();
+export async function get_lessons(previous: number[]) {
+	const subjects = await get_lesson_subjects(previous);
 	return sortBy(
 		(
 			await Promise.all(
 				subjects.map(async ({ skill_level, subject, subject_id }) => {
 					const new_lessons: Lesson[] = [];
 					if (is_kanji_data(subject)) {
+						if (skill_level === 0) {
+							const v: Lesson = {
+								lesson_type: 'new_subject',
+								need_input: false,
+								preferred_tab: 'Readings',
+								skill_level: 0,
+								required_data: {
+									text: subject.characters
+								},
+								subject_id,
+								subject_type: 'KANJI'
+							};
+							return [v];
+						}
 						// const symbol = subject.characters;
 						// new_lessons.push({
 						// 	lesson_type: 'kanji_nan_kun_on_yomi',
@@ -80,6 +95,21 @@ export async function get_lessons() {
 							});
 						}
 					} else if (is_vocabulary_data(subject)) {
+						if (skill_level === 0) {
+							const v: Lesson = {
+								lesson_type: 'new_subject',
+								need_input: false,
+								preferred_tab: 'Readings',
+								required_data: {
+									text: subject.characters
+								},
+								skill_level: 0,
+								subject_id,
+								subject_type: 'VOCABULARY'
+							};
+
+							return [v];
+						}
 						const txt = subject.characters;
 						{
 							const partial_required_data = {
@@ -236,6 +266,26 @@ export async function get_lessons() {
 							}
 						}
 					} else if (is_radical_data(subject)) {
+						if (skill_level === 0) {
+							const v: Lesson = {
+								lesson_type: 'new_subject',
+								required_data: subject.characters
+									? {
+											text: subject.characters
+									  }
+									: {
+											image_url:
+												subject.image_url ??
+												error(`Subject ${subject_id} has no image_url or characters`)
+									  },
+								subject_id,
+								skill_level: 0,
+								subject_type: 'RADICAL',
+								need_input: false,
+								preferred_tab: 'Readings'
+							};
+							return [v];
+						}
 						new_lessons.push({
 							lesson_type: 'text_and_meaning',
 							required_data: {

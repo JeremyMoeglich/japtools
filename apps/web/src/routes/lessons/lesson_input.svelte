@@ -45,6 +45,10 @@
 			on:keypress={(e) => {
 				if (e.key === 'Enter') {
 					submit();
+					e.preventDefault();
+				}
+				if (response_type === 'locked') {
+					e.preventDefault();
 				}
 			}}
 			type="text"

@@ -8,43 +8,48 @@ import type { RequestHandler } from './$types';
 import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
 import type { SubjectDataType } from '$lib/scripts/universal/datatypes';
-import { pass_back } from 'functional-utilities';
+import { pipe } from 'functional-utilities';
 
 //const daily_lesson_limit = 20; [TODO] implement this
 
 export const POST: RequestHandler = async ({ request }) => {
 	const user_data = await get_auth_user_data(request);
-	const { amount, previous } = pass_back(
+	const { amount, previous } = pipe(
 		await get_request_body(
 			request,
 			z.object({
 				amount: z.number().min(1).max(100),
-				previous: z.string().array().optional()
+				previous: z.number().array().optional()
 			})
 		),
-		(body) => body.previous = body.previous ?? []
+		(body) => ({
+			amount: body.amount,
+			previous: body.previous ?? []
+		})
 	);
 	const current_date = new Date();
-	const lessons = await prisma_client.subjectProgress.findMany({
-		where: {
-			progress_id: user_data.progress_id,
-			next_review: {
-				lte: current_date
-			}
-		},
-		orderBy: {
-			next_review: 'desc'
-		},
-		select: {
-			subject_id: true,
-			skill_level: true,
-			next_review: true
-		},
-		take: amount
-	});
+	const lessons = (
+		await prisma_client.subjectProgress.findMany({
+			where: {
+				progress_id: user_data.progress_id,
+				next_review: {
+					lte: current_date
+				}
+			},
+			orderBy: {
+				next_review: 'desc'
+			},
+			select: {
+				subject_id: true,
+				skill_level: true,
+				next_review: true
+			},
+			take: amount
+		})
+	).filter((lesson) => !previous.includes(lesson.subject_id));
 
 	if (lessons.length < amount) {
-		const next_day_lessons = await prisma_client.subjectProgress.findMany({
+		const next_day_lessons = (await prisma_client.subjectProgress.findMany({
 			where: {
 				progress_id: user_data.progress_id,
 				next_review: {
@@ -60,12 +65,12 @@ export const POST: RequestHandler = async ({ request }) => {
 				skill_level: true,
 				next_review: true
 			}
-		});
+		})).filter((lesson) => !previous.includes(lesson.subject_id));
 		for (const lesson of next_day_lessons) {
 			if (lessons.length >= amount) {
 				break;
 			}
-			if (lesson.skill_level > 5) {
+			if (lesson.skill_level > 6) {
 				lessons.push(lesson);
 			}
 		}
@@ -102,23 +107,17 @@ export const POST: RequestHandler = async ({ request }) => {
 					if (existing_level_subject_ids.includes(subject.id)) {
 						return false;
 					}
-					return true;
+					return !previous.includes(subject.id);
 				}
-			);
+			)
 			const subjects_to_add = possible_subjects.slice(0, amount_to_add);
-			const added = await Promise.all(
-				subjects_to_add.map(async (subject) => {
-					const promise = await prisma_client.subjectProgress.create({
-						data: {
-							progress_id: user_data.progress_id,
-							subject_id: subject.id,
-							next_review: current_date,
-							level: current_level
-						}
-					});
-					return promise;
-				})
-			);
+			const added = subjects_to_add.map((subject) => ({
+				progress_id: user_data.progress_id,
+				subject_id: subject.id,
+				next_review: current_date,
+				level: current_level,
+				skill_level: 0
+			}));
 			//console.log(`Added ${added.length} subjects to lessons`);
 			for (const subject of added) {
 				lessons.push(subject);

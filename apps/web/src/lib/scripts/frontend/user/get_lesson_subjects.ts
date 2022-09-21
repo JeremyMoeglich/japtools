@@ -8,7 +8,7 @@ import { get } from 'svelte/store';
 import { z } from 'zod';
 import { subject_store } from './subject_store';
 
-export async function get_lesson_subjects(): Promise<LessonSubjectDataType[]> {
+export async function get_lesson_subjects(previous: number[]): Promise<LessonSubjectDataType[]> {
 	const lessons_raw: unknown = await (
 		await fetch(`${domain}/api/user/get_lesson_subjects`, {
 			method: 'POST',
@@ -16,7 +16,8 @@ export async function get_lesson_subjects(): Promise<LessonSubjectDataType[]> {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				amount: 4
+				amount: 3,
+				previous
 			})
 		})
 	).json();

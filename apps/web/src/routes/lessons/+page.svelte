@@ -10,6 +10,9 @@
 	import { is_loading_store } from '$lib/scripts/frontend/is_loading';
 	import LessonUi from './lesson_ui.svelte';
 	import ReadingMeaning from './reading_meaning.svelte';
+	import { cloneDeep } from 'lodash-es';
+	import NewSubject from './new_subject.svelte';
+	import VocabKunOnNan from './vocab_kun_on_nan.svelte';
 
 	async function change_level(subject_id: number, n: number) {
 		await update_subject_progress(
@@ -22,17 +25,50 @@
 		);
 	}
 
-	let lesson_queue: Lesson[] = [];
+	const max_chunks = 3;
 
-	async function update_lessons() {
-		await Promise.all(level_change_promises);
-		level_change_promises = [];
-		lesson_queue = await get_lessons();
-		if (lesson_queue.length === 0) {
-			throw new Error('No lessons found');
+	let lesson_queue: Lesson[] = [];
+	let lesson_chunks: Lesson[][] = [];
+	let level_promises: Promise<void>[][] = [];
+	let chunk_load_active = false;
+
+	async function load_chunks(): Promise<void> {
+		if (lesson_queue.length !== 0 && lesson_chunks.length >= max_chunks) {
+			return;
 		}
-		if (current_lesson === undefined) {
-			current_lesson = lesson_queue.shift();
+		if (chunk_load_active) {
+			return;
+		}
+		debugger;
+		const preloaded_chunk_amount = lesson_chunks.length - 1;
+		const next_chunk_promise = (async () => {
+			chunk_load_active = true;
+			if (level_promises.length >= max_chunks) {
+				await Promise.all(level_promises.shift() ?? error('level_promises is empty'));
+			}
+			const previous_ids = lesson_chunks.flat().map((lesson) => lesson.subject_id);
+			const next_chunk = await get_lessons(previous_ids);
+
+			lesson_chunks.push(next_chunk);
+			//console.log('next_chunk', next_chunk);
+			chunk_load_active = false;
+		})();
+		if (preloaded_chunk_amount <= 0) {
+			await next_chunk_promise;
+		}
+		if (lesson_chunks.length > max_chunks) {
+			lesson_chunks.shift();
+		}
+		if (lesson_queue.length === 0) {
+			lesson_queue = cloneDeep(lesson_chunks[0] ?? error('lesson_chunks is empty'));
+			//console.log('lesson_queue', lesson_queue);
+			level_promises.push([]);
+		}
+		if (lesson_chunks.length < max_chunks) {
+			(async () => {
+				await next_chunk_promise;
+				await load_chunks();
+			})();
 		}
 	}
 
@@ -42,7 +78,7 @@
 		try {
 			if (lesson_queue.length === 0) {
 				is_loading_store.set(true);
-				await update_lessons();
+				await load_chunks();
 			}
 		} finally {
 			is_loading_store.set(false);
@@ -61,8 +97,6 @@
 	let correct: boolean = false;
 	let question = '';
 
-	let level_change_promises: Promise<void>[] = [];
-
 	async function confirm() {
 		if (!current_lesson) {
 			throw new Error('No lesson');
@@ -70,13 +104,13 @@
 		if (current_lesson_state === 'in_progress') {
 			if (correct || current_lesson.skill_level === 0) {
 				current_lesson_state = 'waiting_for_next';
-				level_change_promises.push(change_level(current_lesson.subject_id, 1));
+				level_promises[0].push(change_level(current_lesson.subject_id, 1));
 				await next_lesson();
 				return true;
 			} else {
 				current_lesson_state = 'wrong';
 				if (current_lesson.skill_level > 1) {
-					level_change_promises.push(change_level(current_lesson.subject_id, -1));
+					level_promises[0].push(change_level(current_lesson.subject_id, -1));
 				}
 				return false;
 			}
@@ -90,7 +124,7 @@
 	}
 
 	if (browser) {
-		update_lessons();
+		next_lesson();
 	}
 </script>
 
@@ -106,7 +140,7 @@
 		</p>
 	</div> -->
 	<LessonUi
-		lesson={current_lesson}
+		bind:lesson={current_lesson}
 		bind:response_value={current_input}
 		response_type={current_lesson_state === 'wrong'
 			? 'locked'
@@ -135,6 +169,15 @@
 						bind:question
 						show_correct={current_lesson_state === 'wrong'}
 					/>
+				{:else if current_lesson.lesson_type === 'vocabulary_kun_on_yomi'}
+					<VocabKunOnNan
+						lesson={current_lesson}
+						bind:correct
+						bind:question
+						show_correct={current_lesson_state === 'wrong'}
+					/>
+				{:else if current_lesson.lesson_type === 'new_subject'}
+					<NewSubject lesson={current_lesson} bind:question />
 				{:else}
 					<p>Unknown lesson type</p>
 				{/if}

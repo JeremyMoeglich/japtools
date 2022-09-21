@@ -3,17 +3,17 @@
 	import type { ReadingType } from '@prisma/client/edge';
 	import { typed_keys, zip, range } from 'functional-utilities';
 
-	export let current_lesson: VocabularyKunOnYomi<number>;
+	export let lesson: VocabularyKunOnYomi<number>;
 	export let correct: boolean;
 	export let question: string;
 	export let show_correct: boolean;
 
-	$: question = `Chose what kind of reading each kanji in ${current_lesson.required_data.vocabulary} has`;
+	$: question = `Chose what kind of reading each kanji in ${lesson.required_data.vocabulary} has`;
 
 	$: zipped = zip([
-		current_lesson.required_data.vocabulary.split(''),
-		current_lesson.required_data.string_map
-	]) as [string, typeof current_lesson.required_data.string_map[number]][];
+		lesson.required_data.vocabulary.split(''),
+		lesson.required_data.string_map
+	]) as [string, typeof lesson.required_data.string_map[number]][];
 
 	const reading_type_map: Record<ReadingType, string> = {
 		KUNYOMI: 'Kunyomi',

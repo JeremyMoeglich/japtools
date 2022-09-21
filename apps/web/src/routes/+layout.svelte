@@ -15,12 +15,6 @@
 	<div class="navbar pl-5 gap-5 border-b-2 border-accent">
 		<a class="text-3xl text-white" href="/">Japtools</a>
 		{#if $logged_in}
-			<a href="/">
-				<div class="flex flex-col items-center">
-					<Home size={24} />
-					Home
-				</div>
-			</a>
 			<a href="/lessons">
 				<div class="flex flex-col items-center">
 					<Book size={24} />
@@ -38,7 +32,6 @@
 	</div>
 </div>
 
-{$is_loading_store}
 {#if $is_loading_store}
 	<div class="loading">
 		<div class="spinner">

@@ -3,6 +3,7 @@
 	import { error } from 'functional-utilities';
 	import { compare } from '$lib/scripts/universal/compare';
 	import { onMount } from 'svelte';
+	import TextRender from './text_render.svelte';
 
 	function choice<T>(arr: T[]): T {
 		return arr[Math.floor(Math.random() * arr.length)];
@@ -68,13 +69,7 @@
 </script>
 
 <div class="relative">
-	<h2 class=" text-white text-5xl">
-		{#if shown.type === 'image'}
-			<img src={shown.value} class="w-16 h-16 invert" alt="symbol" />
-		{:else}
-			{shown.value}
-		{/if}
-	</h2>
+	<TextRender type={shown.type === 'text' ? 'text' : 'url'} value={shown.value} />
 	{#if show_correct}
 		<div
 			class="absolute top-20 w-max left-1/2 bg-red-500 text-white p-2 rounded-lg -translate-x-1/2 shadow-xl"

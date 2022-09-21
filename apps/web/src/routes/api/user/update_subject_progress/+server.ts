@@ -4,7 +4,6 @@ import type { RequestHandler } from './$types';
 import { range } from 'functional-utilities';
 import { z } from 'zod';
 import { json } from '@sveltejs/kit';
-import { get_subject_by_id } from '$lib/scripts/backend/wanikani_data.server';
 
 // function date_diff(a: Date, b: Date): string {
 // 	const diff = a.getTime() - b.getTime();
@@ -25,23 +24,17 @@ function get_next_date(n: number): Date {
 
 export const POST: RequestHandler = async ({ request }) => {
 	const user_data = await get_auth_user_data(request);
-	const { subject_id, skill_level } = await get_request_body(
+	const { subject_id, skill_level, level } = await get_request_body(
 		request,
 		z.object({
 			subject_id: z.number().min(0).int(),
-			skill_level: z.number().min(0).int()
+			skill_level: z.number().min(0).int(),
+			level: z.number().min(0).int()
 		})
 	);
 
-	const subject = await get_subject_by_id(subject_id);
-
 	const next_review = get_next_date(skill_level);
-	console.log(
-		'next_review',
-		next_review.toLocaleDateString(),
-		next_review.toLocaleTimeString(),
-		subject.characters
-	);
+	console.log('next_review', next_review.toLocaleDateString(), next_review.toLocaleTimeString());
 
 	//const now = new Date();
 	//console.log(
@@ -54,16 +47,23 @@ export const POST: RequestHandler = async ({ request }) => {
 	//		.join('\n')
 	//);
 
-	await prisma_client.subjectProgress.update({
+	await prisma_client.subjectProgress.upsert({
 		where: {
 			subject_id_progress_id: {
 				subject_id,
 				progress_id: user_data.progress_id
 			}
 		},
-		data: {
+		update: {
 			skill_level,
 			next_review
+		},
+		create: {
+			subject_id,
+			progress_id: user_data.progress_id,
+			skill_level,
+			next_review,
+			level
 		}
 	});
 	return json({});

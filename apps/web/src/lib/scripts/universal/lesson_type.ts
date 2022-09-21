@@ -105,8 +105,23 @@ export interface VocabularyKunOnYomi<ID extends number> extends LessonInterface<
 	preferred_tab: 'Readings';
 }
 
+export interface NewSubject<ID extends number> extends LessonInterface<ID> {
+	subject_type: 'VOCABULARY' | 'KANJI' | 'RADICAL';
+	required_data:
+		| {
+				text: string;
+		  }
+		| {
+				image_url: string;
+		  };
+	lesson_type: 'new_subject';
+	need_input: false;
+	preferred_tab: 'Readings';
+}
+
 export type Lesson<ID extends number = number> =
 	| ReadingAndMeaning<ID>
 	| TextAndMeaning<ID>
 	//| KanjiNanKunOnYomi<ID>
-	| VocabularyKunOnYomi<ID>;
+	| VocabularyKunOnYomi<ID>
+	| NewSubject<ID>;

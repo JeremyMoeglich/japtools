@@ -66,26 +66,28 @@
 								</div>
 							{:else if active_tab === 'Readings' && 'readings' in subject}
 								{#if 'reading_hint' in subject}
-									<h5>Onyomi:</h5>
-									<ul class="pl-4 list-disc">
-										{#each sortBy( subject.readings.filter((v) => v.reading_type === 'ONYOMI'), primary_sort ) as reading}
-											<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
-										{/each}
-									</ul>
-									<h5>Kunyomi:</h5>
-									<ul class="pl-4 list-disc">
-										{#each sortBy( subject.readings.filter((v) => v.reading_type === 'KUNYOMI'), primary_sort ) as reading}
-											<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
-										{/each}
-									</ul>
-									{#if subject.readings.find((v) => v.reading_type === 'NANORI')}
-										<h5>Nanori:</h5>
+									<div>
+										<h5>Onyomi:</h5>
 										<ul class="pl-4 list-disc">
-											{#each sortBy( subject.readings.filter((v) => v.reading_type === 'NANORI'), primary_sort ) as reading}
+											{#each sortBy( subject.readings.filter((v) => v.reading_type === 'ONYOMI'), primary_sort ) as reading}
 												<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
 											{/each}
 										</ul>
-									{/if}
+										<h5>Kunyomi:</h5>
+										<ul class="pl-4 list-disc">
+											{#each sortBy( subject.readings.filter((v) => v.reading_type === 'KUNYOMI'), primary_sort ) as reading}
+												<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
+											{/each}
+										</ul>
+										{#if subject.readings.find((v) => v.reading_type === 'NANORI')}
+											<h5>Nanori:</h5>
+											<ul class="pl-4 list-disc">
+												{#each sortBy( subject.readings.filter((v) => v.reading_type === 'NANORI'), primary_sort ) as reading}
+													<li class="w-max" class:font-bold={reading.primary}>{reading.reading}</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
 								{:else if 'context_sentences' in subject}
 									<div>
 										<h5>Readings:</h5>
