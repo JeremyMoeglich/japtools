@@ -25,7 +25,7 @@
 		);
 	}
 
-	const max_chunks = 3;
+	const max_chunks = 2;
 
 	let lesson_queue: Lesson[] = [];
 	let lesson_chunks: Lesson[][] = [];

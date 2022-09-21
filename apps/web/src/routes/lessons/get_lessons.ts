@@ -65,9 +65,13 @@ export async function get_lessons(previous: number[]) {
 						// 	need_input: false
 						// });
 						{
+							const primary_reading =
+								subject.readings.find((r) => r.primary) ?? error('no primary reading');
 							const partial_required_data = {
 								meanings: subject.meanings.map((m) => m.meaning),
-								readings: subject.readings.map((r) => r.reading)
+								readings: subject.readings
+									.filter((r) => r.reading_type === primary_reading.reading_type)
+									.map((r) => r.reading)
 							};
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
