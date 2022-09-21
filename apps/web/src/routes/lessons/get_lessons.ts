@@ -9,10 +9,11 @@ import {
 } from '$lib/scripts/universal/datatypes';
 import { domain } from '$lib/scripts/frontend/domain';
 import type { Lesson } from '$lib/scripts/universal/lesson_type';
-import { error } from 'functional-utilities';
+import { error, typed_from_entries } from 'functional-utilities';
 import { sortBy } from 'lodash-es';
 import { isKanji } from 'wanakana';
 import { z } from 'zod';
+import { get_by_reading } from '$lib/scripts/frontend/get_by_reading';
 
 const required_level_table: Record<Lesson['lesson_type'], number> = {
 	//kanji_nan_kun_on_yomi: 1,
@@ -73,11 +74,17 @@ export async function get_lessons(previous: number[]) {
 									.filter((r) => r.reading_type === primary_reading.reading_type)
 									.map((r) => r.reading)
 							};
+							const reading_map = typed_from_entries(
+								await Promise.all(
+									subject.readings.map(async (r) => [r.reading, await get_by_reading(r.reading)])
+								)
+							);
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
 								required_data: {
 									...partial_required_data,
-									to: 'meanings'
+									to: 'meanings',
+									reading_map
 								},
 								subject_id: subject_id,
 								subject_type: 'KANJI',
@@ -151,11 +158,17 @@ export async function get_lessons(previous: number[]) {
 								readings: subject.readings.map((r) => r.reading),
 								meanings: subject.meanings.map((m) => m.meaning)
 							};
+							const reading_map = typed_from_entries(
+								await Promise.all(
+									subject.readings.map(async (r) => [r.reading, await get_by_reading(r.reading)])
+								)
+							);
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
 								required_data: {
 									...partial_required_data,
-									to: 'meanings'
+									to: 'meanings',
+									reading_map
 								},
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',

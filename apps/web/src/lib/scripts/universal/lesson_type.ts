@@ -1,6 +1,6 @@
 import type { SubjectType } from '@prisma/client/edge';
 import type { JsonObject } from 'type-fest';
-import type { ReadingTypeType } from './datatypes';
+import type { ReadingTypeType, SubjectDataType } from './datatypes';
 
 interface LessonInterface<ID extends number> {
 	subject_type: SubjectType;
@@ -34,6 +34,7 @@ export type ReadingAndMeaning<ID extends number> = {
 				meanings: string[];
 				//excluded_subject_ids: number[];
 				to: 'meanings';
+				reading_map: Record<string, SubjectDataType[]>;
 			};
 			preferred_tab: 'Meanings';
 	  }
