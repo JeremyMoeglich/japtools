@@ -39,7 +39,6 @@
 		if (chunk_load_active) {
 			return;
 		}
-		debugger;
 		const preloaded_chunk_amount = lesson_chunks.length - 1;
 		const next_chunk_promise = (async () => {
 			chunk_load_active = true;
