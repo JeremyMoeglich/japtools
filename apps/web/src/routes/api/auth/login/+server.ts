@@ -46,9 +46,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		);
 	}
-	const user_id = (
-		await (prisma_client).user.findUnique({ where: { email }, select: { id: true } })
-	)?.id;
+	const user_id = (await prisma_client.user.findUnique({ where: { email }, select: { id: true } }))
+		?.id;
 
 	if (!user_id) {
 		return json(
@@ -61,9 +60,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 	}
 	const password_hash: string | undefined = (
-		await (
-			prisma_client
-		).user.findUnique({
+		await prisma_client.user.findUnique({
 			where: { id: user_id },
 			select: {
 				password_hash: true
@@ -92,9 +89,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		);
 	}
-	const current_token = await (
-		prisma_client
-	).loginToken.findUnique({
+	const current_token = await prisma_client.loginToken.findUnique({
 		where: { user_id: user_id },
 		select: { value: true, time: true }
 	});
@@ -105,12 +100,10 @@ export const POST: RequestHandler = async ({ request }) => {
 				token: current_token.value
 			});
 		} else {
-			await (prisma_client).loginToken.delete({ where: { user_id: user_id } });
+			await prisma_client.loginToken.delete({ where: { user_id: user_id } });
 		}
 	}
-	const new_token = await (
-		prisma_client
-	).loginToken.create({
+	const new_token = await prisma_client.loginToken.create({
 		data: {
 			user_id: user_id,
 			value: uuidv4()

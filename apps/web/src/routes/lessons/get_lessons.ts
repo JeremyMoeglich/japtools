@@ -25,13 +25,30 @@ const required_level_table: Record<Lesson['lesson_type'], number> = {
 	new_subject: 0
 };
 
+function has_duplicates<T>(array: T[]): boolean {
+	return new Set(array).size !== array.length;
+}
+
+function arr_identical(arr1: unknown[], arr2: unknown[]): boolean {
+	if (has_duplicates(arr1) || has_duplicates(arr2))
+		error('arr_identical: arrays must not have duplicates');
+	const set1 = new Set(arr1);
+	const set2 = new Set(arr2);
+	return set1.size === set2.size && [...set1].every((v) => set2.has(v));
+}
+
 async function get_unique_readings<R extends KanjiReadingType | VocabularyReadingType>(
 	readings: R[]
 ): Promise<R[]> {
 	const reading_map = typed_from_entries(
 		await Promise.all(readings.map(async (r) => [r.reading, await get_by_reading(r.reading)]))
 	);
-	return readings.filter((r) => reading_map[r.reading].length === 1);
+	return readings.filter((r) => {
+		const mapped = reading_map[r.reading];
+		if (mapped.length === 1) return true;
+		if (mapped.every((m) => arr_identical(m.readings, readings))) return true;
+		return false;
+	});
 }
 
 export async function get_lessons(previous: number[]) {
@@ -130,30 +147,30 @@ export async function get_lessons(previous: number[]) {
 
 							return [v];
 						}
-						const txt = subject.characters;
+
+						const unique_readings = await get_unique_readings(subject.readings);
 						{
-							const partial_required_data = {
-								text: txt,
-								meanings: subject.meanings.map((m) => m.meaning)
-							};
+							if (unique_readings.length > 0) {
+								new_lessons.push({
+									lesson_type: 'reading_and_meaning',
+									required_data: {
+										readings: unique_readings.map((r) => r.reading),
+										meanings: subject.meanings.map((m) => m.meaning),
+										to: 'meanings'
+									},
+									subject_id: subject_id,
+									subject_type: 'VOCABULARY',
+									skill_level: skill_level,
+									need_input: true,
+									preferred_tab: 'Meanings'
+								});
+							}
 							new_lessons.push({
-								lesson_type: 'text_and_meaning',
+								lesson_type: 'reading_and_meaning',
 								required_data: {
-									...partial_required_data,
-									to: 'meanings'
-								},
-								subject_id: subject_id,
-								subject_type: 'VOCABULARY',
-								skill_level: skill_level,
-								need_input: true,
-								preferred_tab: 'Meanings'
-							});
-							new_lessons.push({
-								lesson_type: 'text_and_meaning',
-								required_data: {
-									...partial_required_data,
-									to: 'symbol',
-									readings: subject.readings.map((r) => r.reading)
+									readings: subject.readings.map((r) => r.reading),
+									meanings: subject.meanings.map((m) => m.meaning),
+									to: 'readings'
 								},
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
@@ -162,27 +179,33 @@ export async function get_lessons(previous: number[]) {
 								preferred_tab: 'Readings'
 							});
 						}
+
+						const txt = subject.characters;
 						{
-							const unique_readings = await get_unique_readings(subject.readings);
+							const partial_required_data = {
+								text: txt,
+								meanings: subject.meanings.map((m) => m.meaning)
+							};
+							if (!unique_readings.map((r) => r.reading).includes(txt)) {
+								new_lessons.push({
+									lesson_type: 'text_and_meaning',
+									required_data: {
+										...partial_required_data,
+										to: 'meanings'
+									},
+									subject_id: subject_id,
+									subject_type: 'VOCABULARY',
+									skill_level: skill_level,
+									need_input: true,
+									preferred_tab: 'Meanings'
+								});
+							}
 							new_lessons.push({
-								lesson_type: 'reading_and_meaning',
+								lesson_type: 'text_and_meaning',
 								required_data: {
-									readings: unique_readings.map((r) => r.reading),
-									meanings: subject.meanings.map((m) => m.meaning),
-									to: 'meanings'
-								},
-								subject_id: subject_id,
-								subject_type: 'VOCABULARY',
-								skill_level: skill_level,
-								need_input: true,
-								preferred_tab: 'Meanings'
-							});
-							new_lessons.push({
-								lesson_type: 'reading_and_meaning',
-								required_data: {
-									readings: subject.readings.map((r) => r.reading),
-									meanings: subject.meanings.map((m) => m.meaning),
-									to: 'readings'
+									...partial_required_data,
+									to: 'symbol',
+									readings: subject.readings.map((r) => r.reading)
 								},
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',

@@ -47,24 +47,34 @@ export const POST: RequestHandler = async ({ request }) => {
 	//		.join('\n')
 	//);
 
-	await prisma_client.subjectProgress.upsert({
-		where: {
-			subject_id_progress_id: {
+	await Promise.all([
+		prisma_client.subjectProgress.upsert({
+			where: {
+				subject_id_progress_id: {
+					subject_id,
+					progress_id: user_data.progress_id
+				}
+			},
+			update: {
+				skill_level,
+				next_review
+			},
+			create: {
 				subject_id,
-				progress_id: user_data.progress_id
+				progress_id: user_data.progress_id,
+				skill_level,
+				next_review,
+				level
 			}
-		},
-		update: {
-			skill_level,
-			next_review
-		},
-		create: {
-			subject_id,
-			progress_id: user_data.progress_id,
-			skill_level,
-			next_review,
-			level
-		}
-	});
+		}),
+		prisma_client.user.update({
+			where: {
+				id: user_data.id
+			},
+			data: {
+				total_completed: user_data.total_completed + 1
+			}
+		})
+	])
 	return json({});
 };

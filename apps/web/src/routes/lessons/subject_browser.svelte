@@ -2,7 +2,7 @@
 	import { get_subject_type, type SubjectDataType } from '$lib/scripts/universal/datatypes';
 	import type { SubjectType } from '@prisma/client/edge';
 	import { sortBy } from 'lodash-es';
-	import TextRenderer from './text-renderer/text_renderer.svelte';
+	import TextRenderer from './text_renderer.svelte';
 
 	export let subject: SubjectDataType | undefined;
 	export let active_tab: string | undefined = undefined;

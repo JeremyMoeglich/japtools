@@ -49,23 +49,25 @@ export const POST: RequestHandler = async ({ request }) => {
 	).filter((lesson) => !previous.includes(lesson.subject_id));
 
 	if (lessons.length < amount) {
-		const next_day_lessons = (await prisma_client.subjectProgress.findMany({
-			where: {
-				progress_id: user_data.progress_id,
-				next_review: {
-					gte: current_date,
-					lt: new Date(current_date.getTime() + 86400000)
+		const next_day_lessons = (
+			await prisma_client.subjectProgress.findMany({
+				where: {
+					progress_id: user_data.progress_id,
+					next_review: {
+						gte: current_date,
+						lt: new Date(current_date.getTime() + 86400000)
+					}
+				},
+				orderBy: {
+					next_review: 'desc'
+				},
+				select: {
+					subject_id: true,
+					skill_level: true,
+					next_review: true
 				}
-			},
-			orderBy: {
-				next_review: 'desc'
-			},
-			select: {
-				subject_id: true,
-				skill_level: true,
-				next_review: true
-			}
-		})).filter((lesson) => !previous.includes(lesson.subject_id));
+			})
+		).filter((lesson) => !previous.includes(lesson.subject_id));
 		for (const lesson of next_day_lessons) {
 			if (lessons.length >= amount) {
 				break;
@@ -109,7 +111,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					}
 					return !previous.includes(subject.id);
 				}
-			)
+			);
 			const subjects_to_add = possible_subjects.slice(0, amount_to_add);
 			const added = subjects_to_add.map((subject) => ({
 				progress_id: user_data.progress_id,

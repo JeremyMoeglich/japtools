@@ -1,8 +1,15 @@
 import { domain } from './domain';
-import { SubjectDataSchema, type SubjectDataType } from '../universal/datatypes';
+import {
+	KanjiDataSchema,
+	VocabularyDataSchema,
+	type KanjiDataType,
+	type VocabularyDataType
+} from '../universal/datatypes';
 import { z } from 'zod';
 
-export async function get_by_reading(reading: string): Promise<SubjectDataType[]> {
+export async function get_by_reading(
+	reading: string
+): Promise<(KanjiDataType | VocabularyDataType)[]> {
 	const response = await fetch(`${domain}/api/get_by_reading`, {
 		method: 'POST',
 		headers: {
@@ -14,7 +21,7 @@ export async function get_by_reading(reading: string): Promise<SubjectDataType[]
 	});
 	const data = z
 		.object({
-			subjects: SubjectDataSchema.array()
+			subjects: z.array(z.union([KanjiDataSchema, VocabularyDataSchema]))
 		})
 		.parse(await response.json());
 	return data.subjects;

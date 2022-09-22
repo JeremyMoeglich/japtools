@@ -13,16 +13,21 @@
 	import NewSubject from './new_subject.svelte';
 	import VocabKunOnNan from './vocab_kun_on_nan.svelte';
 	import { browser } from '$app/environment';
+	import TitleRender from './title_render.svelte';
+	import PrettyObj from '$lib/components/pretty_obj.svelte';
+
+	let level_change_map: Record<number, number> = {};
 
 	async function change_level(subject_id: number, n: number) {
-		await update_subject_progress(
-			subject_id,
-			Math.max(
-				0,
-				(get(subject_store).get(subject_id) ?? error(`Data for Subject ${subject_id} not in store`))
-					.skill_level + n
-			)
-		);
+		const current_level = (
+			get(subject_store).get(subject_id) ?? error(`Data for Subject ${subject_id} not in store`)
+		).skill_level;
+		const new_level = Math.max(0, current_level + n);
+		const current_change = level_change_map[subject_id] ?? 0;
+		if (current_change === 0 || (n < 0 && current_change >= -1)) {
+			level_change_map[subject_id] = current_change + n;
+			await update_subject_progress(subject_id, Math.max(1, new_level));
+		}
 	}
 
 	const max_chunks = 2;
@@ -48,7 +53,9 @@
 						if (level_promises.length >= max_chunks) {
 							await Promise.all(level_promises.shift() ?? error('level_promises is empty'));
 						}
-						const previous_ids = lesson_chunks.flat().map((lesson) => lesson.subject_id);
+						const previous_ids = [
+							...new Set(lesson_chunks.flat().map((lesson) => lesson.subject_id))
+						];
 						const next_chunk = await get_lessons(previous_ids);
 
 						lesson_chunks.push(next_chunk);
@@ -58,11 +65,8 @@
 		if (preloaded_chunk_amount <= 0) {
 			await next_chunk_promise;
 		}
-		if (lesson_chunks.length > max_chunks) {
-			lesson_chunks.shift();
-		}
 		if (lesson_queue.length === 0) {
-			lesson_queue = cloneDeep(lesson_chunks[0] ?? error('lesson_chunks is empty'));
+			lesson_queue = cloneDeep(lesson_chunks.shift() ?? error('lesson_chunks is empty'));
 			//console.log('lesson_queue', lesson_queue);
 			level_promises.push([]);
 		}
@@ -125,11 +129,17 @@
 		}
 	}
 
-
 	$: current_lesson === undefined && browser ? next_lesson() : undefined;
 </script>
 
 <div class="outer">
+	<!-- <div>
+		{#each lesson_queue as lesson, i}
+			<div>
+				{lesson.subject_id} - {lesson.skill_level} - {lesson.lesson_type}
+			</div>
+		{/each}
+	</div> -->
 	<!-- <div class="left">
 		<p>
 			CURRENT:
@@ -182,6 +192,8 @@
 				{:else}
 					<p>Unknown lesson type</p>
 				{/if}
+			{:else}
+				<TitleRender type={'text'} value={' '}></TitleRender>
 			{/if}
 		</div>
 	</LessonUi>

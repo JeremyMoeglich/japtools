@@ -17,9 +17,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		})
 	);
 	const { email, password, name } = body;
-	const user_exists = await (
-		prisma_client
-	).user.findUnique({
+	const user_exists = await prisma_client.user.findUnique({
 		where: { email: email },
 		select: { id: true }
 	});
@@ -28,9 +26,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 	const password_hash = await hash(password, 10);
 	const progress_uuid = uuidv4();
-	const user = await (
-		prisma_client
-	).user.create({
+	const user = await prisma_client.user.create({
 		data: {
 			email: email,
 			password_hash: password_hash,
@@ -38,9 +34,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			progress: { create: { id: progress_uuid } }
 		}
 	});
-	const token = await (
-		prisma_client
-	).loginToken.create({
+	const token = await prisma_client.loginToken.create({
 		data: {
 			user_id: user.id,
 			value: uuidv4()

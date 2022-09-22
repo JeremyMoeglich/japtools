@@ -135,7 +135,8 @@ export const user_data_type_schema = z.object({
 	name: z.string().min(4).max(100),
 	email: z.string().email(),
 	created_at: z.date(),
-	progress_id: z.string()
+	progress_id: z.string(),
+	total_completed: z.number().int()
 });
 
 export type user_data_type = z.infer<typeof user_data_type_schema>;

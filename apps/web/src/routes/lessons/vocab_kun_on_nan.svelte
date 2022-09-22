@@ -10,10 +10,10 @@
 
 	$: question = `Chose what kind of reading each kanji in ${lesson.required_data.vocabulary} has`;
 
-	$: zipped = zip([
-		lesson.required_data.vocabulary.split(''),
-		lesson.required_data.string_map
-	]) as [string, typeof lesson.required_data.string_map[number]][];
+	$: zipped = zip([lesson.required_data.vocabulary.split(''), lesson.required_data.string_map]) as [
+		string,
+		typeof lesson.required_data.string_map[number]
+	][];
 
 	const reading_type_map: Record<ReadingType, string> = {
 		KUNYOMI: 'Kunyomi',

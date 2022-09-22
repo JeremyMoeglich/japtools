@@ -14,7 +14,6 @@
 	$: user_data_store.set(data.user_data ?? get(user_data_store));
 </script>
 
-
 <div class="flex flex-col h-screen">
 	<div class="navbar pl-5 gap-5 border-b-2 border-accent">
 		<a class="text-3xl text-white" href="/">Japtools</a>

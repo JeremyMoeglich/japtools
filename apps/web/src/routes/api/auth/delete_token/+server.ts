@@ -12,9 +12,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		})
 	);
 	const { token } = body;
-	await (
-		prisma_client
-	).loginToken.delete({
+	await prisma_client.loginToken.delete({
 		where: { value: token }
 	});
 	return json({});

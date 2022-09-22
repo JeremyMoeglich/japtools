@@ -1,7 +1,7 @@
 {
 	"scripts": {
 		"build:app": "tauri build",
-        "dev:app": "tauri dev"
+		"dev:app": "tauri dev"
 	},
 	"dependencies": {
 		"@japtools/web": "workspace:*",

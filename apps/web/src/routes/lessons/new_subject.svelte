@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NewSubject } from '$lib/scripts/universal/lesson_type';
 	import { toWordUpperCase } from '$lib/scripts/universal/word_uppercase';
-	import TextRender from './text_render.svelte';
+	import TitleRender from './title_render.svelte';
 
 	export let lesson: NewSubject<number>;
 	export let question: string;
@@ -12,7 +12,7 @@
 			: `New ${toWordUpperCase(lesson.subject_type)}`;
 </script>
 
-<TextRender
+<TitleRender
 	type={'text' in lesson.required_data ? 'text' : 'url'}
 	value={'text' in lesson.required_data
 		? lesson.required_data.text

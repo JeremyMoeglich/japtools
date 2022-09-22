@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  name          String
-  email         String   @unique
-  password_hash String
-  created_at    DateTime @default(now())
-  progress      Progress @relation(fields: [progress_id], references: [id])
-  progress_id   String
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  password_hash   String
+  created_at      DateTime @default(now())
+  progress        Progress @relation(fields: [progress_id], references: [id])
+  progress_id     String
+  total_completed Int      @default(0)
 }
 
 model LoginToken {

@@ -75,7 +75,8 @@ export async function safe_get_auth_user_data(
 			id: true,
 			email: true,
 			created_at: true,
-			progress_id: true
+			progress_id: true,
+			total_completed: true
 		}
 	});
 

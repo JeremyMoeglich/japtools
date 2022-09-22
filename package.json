@@ -20,7 +20,8 @@
 		"generate": "dotenv -e .env.serverless -- prisma generate --data-proxy",
 		"generate:node": "prisma-merge -e ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && prisma generate --schema ./prisma/rsschema.prisma",
 		"migrate:dev": "dotenv -e .env.node -- prisma migrate dev --name",
-		"studio": "dotenv -e .env.node -- prisma studio"
+		"studio": "dotenv -e .env.node -- prisma studio",
+		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
 	},
 	"keywords": [],
 	"author": "",
