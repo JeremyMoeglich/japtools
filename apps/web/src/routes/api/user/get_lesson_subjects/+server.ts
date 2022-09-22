@@ -11,6 +11,7 @@ import type { SubjectDataType } from '$lib/scripts/universal/datatypes';
 import { pipe } from 'functional-utilities';
 
 //const daily_lesson_limit = 20; [TODO] implement this
+const max_add = 2;
 
 export const POST: RequestHandler = async ({ request }) => {
 	const user_data = await get_auth_user_data(request);
@@ -18,12 +19,12 @@ export const POST: RequestHandler = async ({ request }) => {
 		await get_request_body(
 			request,
 			z.object({
-				amount: z.number().min(1).max(100),
+				max_amount: z.number().min(1).max(100),
 				previous: z.number().array().optional()
 			})
 		),
 		(body) => ({
-			amount: body.amount,
+			amount: body.max_amount,
 			previous: body.previous ?? []
 		})
 	);
@@ -112,7 +113,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					return !previous.includes(subject.id);
 				}
 			);
-			const subjects_to_add = possible_subjects.slice(0, amount_to_add);
+			const subjects_to_add = possible_subjects.slice(0, Math.min(amount_to_add, max_add));
 			const added = subjects_to_add.map((subject) => ({
 				progress_id: user_data.progress_id,
 				subject_id: subject.id,

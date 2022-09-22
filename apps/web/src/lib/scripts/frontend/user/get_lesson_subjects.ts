@@ -16,7 +16,7 @@ export async function get_lesson_subjects(previous: number[]): Promise<LessonSub
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				amount: 3,
+				max_amount: 12,
 				previous
 			})
 		})
