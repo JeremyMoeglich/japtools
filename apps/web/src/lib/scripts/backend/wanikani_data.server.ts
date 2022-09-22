@@ -1,9 +1,10 @@
 import { prisma_client } from '$lib/scripts/backend/prisma_client.server';
-import type {
-	KanjiDataType,
-	RadicalDataType,
-	SubjectDataType,
-	VocabularyDataType
+import {
+	type KanjiDataType,
+	type RadicalDataType,
+	type SubjectDataType,
+	type VocabularyDataType,
+	is_radical_data
 } from '../universal/datatypes';
 import { error } from '@sveltejs/kit';
 import type {
@@ -13,9 +14,11 @@ import type {
 	KanjiSubject,
 	RadicalSubject,
 	SubjectMeaning,
+	SubjectType,
 	VocabularyReading,
 	VocabularySubject
 } from '@prisma/client/edge';
+import { typed_from_entries } from 'functional-utilities';
 
 function convert_vocabulary(
 	data: VocabularySubject & {
@@ -92,65 +95,67 @@ function convert_kanji(
 	};
 }
 
-export async function get_subject_by_id(id: number): Promise<SubjectDataType> {
-	const subject_index = await prisma_client.subjectIndex.findUnique({
-		where: {
-			subjectId: id
-		}
-	});
-	if (subject_index) {
-		if (subject_index.subject_type === 'KANJI') {
-			return convert_kanji(
-				(await prisma_client.kanjiSubject.findUnique({
-					where: {
-						id: subject_index.subjectId
-					},
-					include: {
-						auxiliary_meanings: true,
-						meanings: true,
-						readings: true
-					}
-				})) ??
-					(() => {
-						throw error(500, 'Subject not found');
-					})()
-			);
-		} else if (subject_index.subject_type === 'VOCABULARY') {
-			return convert_vocabulary(
-				(await prisma_client.vocabularySubject.findUnique({
-					where: {
-						id: subject_index.subjectId
-					},
-					include: {
-						auxiliary_meanings: true,
-						context_sentences: true,
-						meanings: true,
-						readings: true
-					}
-				})) ??
-					(() => {
-						throw error(500, 'Subject not found');
-					})()
-			);
-		} else if (subject_index.subject_type === 'RADICAL') {
-			const radical = convert_radical(
-				(await prisma_client.radicalSubject.findUnique({
-					where: {
-						id: subject_index.subjectId
-					},
-					include: {
-						auxiliary_meanings: true,
-						meanings: true
-					}
-				})) ??
-					(() => {
-						throw error(500, 'Subject not found');
-					})()
-			);
-			return radical;
-		} else {
-			throw error(500, 'Internal Error, unknown subject type');
-		}
+export async function get_subject_by_id(id: number, type?: SubjectType): Promise<SubjectDataType> {
+	const subject_type =
+		type ??
+		(
+			await prisma_client.subjectIndex.findUnique({
+				where: {
+					subjectId: id
+				}
+			})
+		)?.subject_type ??
+		error(500, 'Subject not found');
+
+	if (subject_type === 'KANJI') {
+		return convert_kanji(
+			(await prisma_client.kanjiSubject.findUnique({
+				where: {
+					id
+				},
+				include: {
+					auxiliary_meanings: true,
+					meanings: true,
+					readings: true
+				}
+			})) ??
+				(() => {
+					throw error(500, 'Subject not found');
+				})()
+		);
+	} else if (subject_type === 'VOCABULARY') {
+		return convert_vocabulary(
+			(await prisma_client.vocabularySubject.findUnique({
+				where: {
+					id
+				},
+				include: {
+					auxiliary_meanings: true,
+					context_sentences: true,
+					meanings: true,
+					readings: true
+				}
+			})) ??
+				(() => {
+					throw error(500, 'Subject not found');
+				})()
+		);
+	} else if (subject_type === 'RADICAL') {
+		const radical = convert_radical(
+			(await prisma_client.radicalSubject.findUnique({
+				where: {
+					id
+				},
+				include: {
+					auxiliary_meanings: true,
+					meanings: true
+				}
+			})) ??
+				(() => {
+					throw error(500, 'Subject not found');
+				})()
+		);
+		return radical;
 	}
 	throw new Error('Subject not found');
 }
@@ -163,57 +168,7 @@ export async function get_subjects_by_level(level: number): Promise<SubjectDataT
 	});
 	return await Promise.all(
 		subject_index.map(async (subject) => {
-			if (subject.subject_type === 'KANJI') {
-				return convert_kanji(
-					(await prisma_client.kanjiSubject.findUnique({
-						where: {
-							id: subject.subjectId
-						},
-						include: {
-							auxiliary_meanings: true,
-							meanings: true,
-							readings: true
-						}
-					})) ??
-						(() => {
-							throw error(500, 'Subject not found');
-						})()
-				);
-			} else if (subject.subject_type === 'VOCABULARY') {
-				return convert_vocabulary(
-					(await prisma_client.vocabularySubject.findUnique({
-						where: {
-							id: subject.subjectId
-						},
-						include: {
-							auxiliary_meanings: true,
-							context_sentences: true,
-							meanings: true,
-							readings: true
-						}
-					})) ??
-						(() => {
-							throw error(500, 'Subject not found');
-						})()
-				);
-			} else if (subject.subject_type === 'RADICAL') {
-				return convert_radical(
-					(await prisma_client.radicalSubject.findUnique({
-						where: {
-							id: subject.subjectId
-						},
-						include: {
-							auxiliary_meanings: true,
-							meanings: true
-						}
-					})) ??
-						(() => {
-							throw error(500, 'Subject not found');
-						})()
-				);
-			} else {
-				throw error(500, 'Internal Error, unknown subject type');
-			}
+			return await get_subject_by_id(subject.subjectId, subject.subject_type);
 		})
 	);
 }
@@ -228,44 +183,31 @@ export async function get_subjects_by_reading(reading: string): Promise<SubjectD
 	});
 	return await Promise.all(
 		subject_index.map(async (subject) => {
-			if (subject.subject_type === 'KANJI') {
-				return convert_kanji(
-					(await prisma_client.kanjiSubject.findUnique({
-						where: {
-							id: subject.subjectId
-						},
-						include: {
-							auxiliary_meanings: true,
-							meanings: true,
-							readings: true
-						}
-					})) ??
-						(() => {
-							throw error(500, 'Subject not found');
-						})()
-				);
-			} else if (subject.subject_type === 'VOCABULARY') {
-				return convert_vocabulary(
-					(await prisma_client.vocabularySubject.findUnique({
-						where: {
-							id: subject.subjectId
-						},
-						include: {
-							auxiliary_meanings: true,
-							context_sentences: true,
-							meanings: true,
-							readings: true
-						}
-					})) ??
-						(() => {
-							throw error(500, 'Subject not found');
-						})()
-				);
-			} else if (subject.subject_type === 'RADICAL') {
-				throw error(500, 'Internal Error, radicals do not have readings');
-			} else {
-				throw error(500, 'Internal Error, unknown subject type');
+			return await get_subject_by_id(subject.subjectId, subject.subject_type);
+		})
+	);
+}
+
+export async function get_subjects_by_readings(
+	readings: string[]
+): Promise<Record<string, (KanjiDataType | VocabularyDataType)[]>> {
+	const unique_readings = Array.from(new Set(readings));
+	const unique_subjects_map = typed_from_entries(
+		(
+			await Promise.all(
+				unique_readings.map(async (reading) => {
+					return [reading, await get_subjects_by_reading(reading)];
+				})
+			)
+		).map(([reading, subjects]) => [reading, subjects] as [string, SubjectDataType[]])
+	);
+	return typed_from_entries(
+		readings.map((reading) => {
+			const subject_map = unique_subjects_map[reading];
+			if (subject_map.some((subject) => is_radical_data(subject))) {
+				throw error(500, "Internal error Radicals don't have readings");
 			}
+			return [reading, subject_map as (KanjiDataType | VocabularyDataType)[]];
 		})
 	);
 }

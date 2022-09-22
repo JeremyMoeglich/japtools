@@ -5,17 +5,19 @@ import {
 	is_radical_data,
 	is_vocabulary_data,
 	KanjiDataSchema,
+	type KanjiDataType,
 	type KanjiReadingType,
 	type ReadingTypeType,
+	type VocabularyDataType,
 	type VocabularyReadingType
 } from '$lib/scripts/universal/datatypes';
 import { domain } from '$lib/scripts/frontend/domain';
 import type { Lesson } from '$lib/scripts/universal/lesson_type';
-import { error, typed_from_entries } from 'functional-utilities';
+import { error } from 'functional-utilities';
 import { sortBy } from 'lodash-es';
 import { isKanji } from 'wanakana';
 import { z } from 'zod';
-import { get_by_reading } from '$lib/scripts/frontend/get_by_reading';
+import { get_by_readings } from '$lib/scripts/frontend/get_by_readings';
 
 const required_level_table: Record<Lesson['lesson_type'], number> = {
 	//kanji_nan_kun_on_yomi: 1,
@@ -37,14 +39,12 @@ function arr_identical(arr1: unknown[], arr2: unknown[]): boolean {
 	return set1.size === set2.size && [...set1].every((v) => set2.has(v));
 }
 
-async function get_unique_readings<R extends KanjiReadingType | VocabularyReadingType>(
-	readings: R[]
-): Promise<R[]> {
-	const reading_map = typed_from_entries(
-		await Promise.all(readings.map(async (r) => [r.reading, await get_by_reading(r.reading)]))
-	);
+function get_unique_readings<R extends KanjiReadingType | VocabularyReadingType>(
+	readings: R[],
+	readings_map: Awaited<ReturnType<typeof get_by_readings>>
+): R[] {
 	return readings.filter((r) => {
-		const mapped = reading_map[r.reading];
+		const mapped = readings_map[r.reading];
 		if (mapped.length === 1) return true;
 		if (mapped.every((m) => arr_identical(m.readings, readings))) return true;
 		return false;
@@ -53,6 +53,12 @@ async function get_unique_readings<R extends KanjiReadingType | VocabularyReadin
 
 export async function get_lessons(previous: number[]) {
 	const subjects = await get_lesson_subjects(previous);
+	const readings_map = await get_by_readings(
+		subjects
+			.map((v) => v.subject)
+			.filter((s) => !is_radical_data(s))
+			.flatMap((s) => (s as KanjiDataType | VocabularyDataType).readings.map((r) => r.reading))
+	);
 	return sortBy(
 		(
 			await Promise.all(
@@ -96,7 +102,7 @@ export async function get_lessons(previous: number[]) {
 						{
 							const primary_reading =
 								subject.readings.find((r) => r.primary) ?? error('no primary reading');
-							const unique_readings = await get_unique_readings(subject.readings);
+							const unique_readings = await get_unique_readings(subject.readings, readings_map);
 							const valid_readings = unique_readings.filter(
 								(r) => r.reading_type === primary_reading.reading_type
 							);
@@ -148,7 +154,7 @@ export async function get_lessons(previous: number[]) {
 							return [v];
 						}
 
-						const unique_readings = await get_unique_readings(subject.readings);
+						const unique_readings = await get_unique_readings(subject.readings, readings_map);
 						{
 							if (unique_readings.length > 0) {
 								new_lessons.push({
@@ -354,7 +360,7 @@ export async function get_lessons(previous: number[]) {
 				})
 			)
 		).flat(),
-		(lesson: Lesson<number>) => lesson.skill_level + Math.random() * 0.4
+		() => Math.random()
 	).filter(
 		(lesson: Lesson<number>) => required_level_table[lesson.lesson_type] <= lesson.skill_level
 	);

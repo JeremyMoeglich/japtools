@@ -194,7 +194,7 @@
 					<p>Unknown lesson type</p>
 				{/if}
 			{:else}
-				<TitleRender type={'text'} value={' '}></TitleRender>
+				<TitleRender type={'text'} value={' '} />
 			{/if}
 		</div>
 	</LessonUi>

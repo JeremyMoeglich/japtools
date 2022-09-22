@@ -75,6 +75,6 @@ export const POST: RequestHandler = async ({ request }) => {
 				total_completed: user_data.total_completed + 1
 			}
 		})
-	])
+	]);
 	return json({});
 };

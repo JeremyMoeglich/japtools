@@ -14,7 +14,7 @@ if (browser) {
 		if (token) {
 			Cookies.set('login_token', token, {
 				expires: 365,
-				secure: true,
+				secure: true
 			});
 		} else {
 			Cookies.remove('login_token');
