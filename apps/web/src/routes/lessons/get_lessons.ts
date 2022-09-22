@@ -102,7 +102,7 @@ export async function get_lessons(previous: number[]) {
 						{
 							const primary_reading =
 								subject.readings.find((r) => r.primary) ?? error('no primary reading');
-							const unique_readings = await get_unique_readings(subject.readings, readings_map);
+							const unique_readings = get_unique_readings(subject.readings, readings_map);
 							const valid_readings = unique_readings.filter(
 								(r) => r.reading_type === primary_reading.reading_type
 							);
@@ -154,7 +154,7 @@ export async function get_lessons(previous: number[]) {
 							return [v];
 						}
 
-						const unique_readings = await get_unique_readings(subject.readings, readings_map);
+						const unique_readings = get_unique_readings(subject.readings, readings_map);
 						{
 							if (unique_readings.length > 0) {
 								new_lessons.push({

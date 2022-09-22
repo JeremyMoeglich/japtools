@@ -14,7 +14,7 @@
 	import VocabKunOnNan from './vocab_kun_on_nan.svelte';
 	import { browser } from '$app/environment';
 	import TitleRender from './title_render.svelte';
-	import PrettyObj from '$lib/components/pretty_obj.svelte';
+	//import PrettyObj from '$lib/components/pretty_obj.svelte';
 	import { user_data_store } from '$lib/scripts/frontend/auth/user_data';
 
 	let level_change_map: Record<number, number> = {};

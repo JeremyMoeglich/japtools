@@ -12,7 +12,30 @@ use crate::{
 
 pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box<dyn Error>> {
     let client = Arc::new(db::new_client().await.expect("Failed to create client"));
+    println!("Deleting old data...");
+    client
+        .subject_index()
+        .delete_many(vec![db::subject_index::subject_id::gte(0)])
+        .exec()
+        .await?;
+    client
+        .kanji_subject()
+        .delete_many(vec![db::kanji_subject::id::gte(0)])
+        .exec()
+        .await?;
+    client
+        .radical_subject()
+        .delete_many(vec![db::radical_subject::id::gte(0)])
+        .exec()
+        .await?;
+    client
+        .vocabulary_subject()
+        .delete_many(vec![db::vocabulary_subject::id::gte(0)])
+        .exec()
+        .await?;
 
+    println!("Uploading new data...");
+    
     let mut tasks = stream::iter(map.clone().iter().map(|x| x.1.clone()).collect_vec())
         .map(|subject| {
             let client = client.clone();
@@ -90,19 +113,34 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                             SubjectData::Kanji(data) => data.level as i32,
                             SubjectData::Vocabulary(data) => data.level as i32,
                         },
-                        vec![db::subject_index::readings::set(match &subject.data {
-                            SubjectData::Radical(_) => vec![],
-                            SubjectData::Kanji(data) => data
-                                .readings
-                                .iter()
-                                .map(|x| x.reading.clone())
-                                .collect_vec(),
-                            SubjectData::Vocabulary(data) => data
-                                .readings
-                                .iter()
-                                .map(|x| x.reading.clone())
-                                .collect_vec(),
-                        })],
+                        vec![
+                            db::subject_index::readings::set(match &subject.data {
+                                SubjectData::Radical(_) => vec![],
+                                SubjectData::Kanji(data) => data
+                                    .readings
+                                    .iter()
+                                    .map(|x| x.reading.clone())
+                                    .collect_vec(),
+                                SubjectData::Vocabulary(data) => data
+                                    .readings
+                                    .iter()
+                                    .map(|x| x.reading.clone())
+                                    .collect_vec(),
+                            }),
+                            db::subject_index::meanings::set(match &subject.data {
+                                SubjectData::Radical(_) => vec![],
+                                SubjectData::Kanji(data) => data
+                                    .meanings
+                                    .iter()
+                                    .map(|x| x.meaning.clone())
+                                    .collect_vec(),
+                                SubjectData::Vocabulary(data) => data
+                                    .meanings
+                                    .iter()
+                                    .map(|x| x.meaning.clone())
+                                    .collect_vec(),
+                            }),
+                        ],
                     )
                     .exec()
                     .await
@@ -447,7 +485,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                 };
             })
         })
-        .buffer_unordered(50);
+        .buffer_unordered(300);
 
     let progress_bar = ProgressBar::new(map.len() as u64);
 

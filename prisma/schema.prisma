@@ -104,6 +104,7 @@ model SubjectIndex {
   subjectId       Int               @id
   SubjectProgress SubjectProgress[]
   readings        String[]
+  meanings        String[]
   level           Int
 }
 

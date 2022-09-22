@@ -1,10 +1,9 @@
 import { prisma_client } from '$lib/scripts/backend/prisma_client.server';
-import {
-	type KanjiDataType,
-	type RadicalDataType,
-	type SubjectDataType,
-	type VocabularyDataType,
-	is_radical_data
+import type {
+	KanjiDataType,
+	RadicalDataType,
+	SubjectDataType,
+	VocabularyDataType
 } from '../universal/datatypes';
 import { error } from '@sveltejs/kit';
 import type {
@@ -18,9 +17,8 @@ import type {
 	VocabularyReading,
 	VocabularySubject
 } from '@prisma/client/edge';
-import { typed_from_entries } from 'functional-utilities';
 
-function convert_vocabulary(
+export function convert_vocabulary(
 	data: VocabularySubject & {
 		auxiliary_meanings: AuxiliaryMeaning[];
 		context_sentences: ContextSentence[];
@@ -49,7 +47,7 @@ function convert_vocabulary(
 	};
 }
 
-function convert_radical(
+export function convert_radical(
 	data: RadicalSubject & {
 		auxiliary_meanings: AuxiliaryMeaning[];
 		meanings: SubjectMeaning[];
@@ -70,7 +68,7 @@ function convert_radical(
 	};
 }
 
-function convert_kanji(
+export function convert_kanji(
 	data: KanjiSubject & {
 		auxiliary_meanings: AuxiliaryMeaning[];
 		meanings: SubjectMeaning[];
@@ -184,30 +182,6 @@ export async function get_subjects_by_reading(reading: string): Promise<SubjectD
 	return await Promise.all(
 		subject_index.map(async (subject) => {
 			return await get_subject_by_id(subject.subjectId, subject.subject_type);
-		})
-	);
-}
-
-export async function get_subjects_by_readings(
-	readings: string[]
-): Promise<Record<string, (KanjiDataType | VocabularyDataType)[]>> {
-	const unique_readings = Array.from(new Set(readings));
-	const unique_subjects_map = typed_from_entries(
-		(
-			await Promise.all(
-				unique_readings.map(async (reading) => {
-					return [reading, await get_subjects_by_reading(reading)];
-				})
-			)
-		).map(([reading, subjects]) => [reading, subjects] as [string, SubjectDataType[]])
-	);
-	return typed_from_entries(
-		readings.map((reading) => {
-			const subject_map = unique_subjects_map[reading];
-			if (subject_map.some((subject) => is_radical_data(subject))) {
-				throw error(500, "Internal error Radicals don't have readings");
-			}
-			return [reading, subject_map as (KanjiDataType | VocabularyDataType)[]];
 		})
 	);
 }

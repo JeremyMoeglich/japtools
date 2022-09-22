@@ -1,9 +1,4 @@
 import { domain } from './domain';
-import {
-	KanjiReadingSchema,
-	SubjectMeaningSchema,
-	VocabularyReadingSchema
-} from '../universal/datatypes';
 import { z } from 'zod';
 
 export async function get_by_readings(readings: string[]) {
@@ -23,8 +18,8 @@ export async function get_by_readings(readings: string[]) {
 				z.array(
 					z.object({
 						id: z.number().int(),
-						readings: z.array(z.union([KanjiReadingSchema, VocabularyReadingSchema])),
-						meanings: z.array(SubjectMeaningSchema)
+						readings: z.array(z.string()),
+						meanings: z.array(z.string())
 					})
 				)
 			)
