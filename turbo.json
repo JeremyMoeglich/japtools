@@ -18,6 +18,9 @@
 		"dev:web": {
 			"dependsOn": ["^dev:web"],
 			"cache": false
+		},
+		"preview:web": {
+			"dependsOn": ["^preview:web"]
 		}
 	},
 	"globalDependencies": ["$DATABASE_URL"]

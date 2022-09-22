@@ -5,7 +5,6 @@
 	import { get_lessons } from './get_lessons';
 	import { get } from 'svelte/store';
 	import { subject_store } from '$lib/scripts/frontend/user/subject_store';
-	import { browser } from '$app/environment';
 	import TextMeaning from './text_meaning.svelte';
 	import { is_loading_store } from '$lib/scripts/frontend/is_loading';
 	import LessonUi from './lesson_ui.svelte';
@@ -13,6 +12,7 @@
 	import { cloneDeep } from 'lodash-es';
 	import NewSubject from './new_subject.svelte';
 	import VocabKunOnNan from './vocab_kun_on_nan.svelte';
+	import { browser } from '$app/environment';
 
 	async function change_level(subject_id: number, n: number) {
 		await update_subject_progress(
@@ -40,18 +40,21 @@
 			return;
 		}
 		const preloaded_chunk_amount = lesson_chunks.length - 1;
-		const next_chunk_promise = (async () => {
-			chunk_load_active = true;
-			if (level_promises.length >= max_chunks) {
-				await Promise.all(level_promises.shift() ?? error('level_promises is empty'));
-			}
-			const previous_ids = lesson_chunks.flat().map((lesson) => lesson.subject_id);
-			const next_chunk = await get_lessons(previous_ids);
+		const next_chunk_promise =
+			lesson_chunks.length > max_chunks
+				? undefined
+				: (async () => {
+						chunk_load_active = true;
+						if (level_promises.length >= max_chunks) {
+							await Promise.all(level_promises.shift() ?? error('level_promises is empty'));
+						}
+						const previous_ids = lesson_chunks.flat().map((lesson) => lesson.subject_id);
+						const next_chunk = await get_lessons(previous_ids);
 
-			lesson_chunks.push(next_chunk);
-			//console.log('next_chunk', next_chunk);
-			chunk_load_active = false;
-		})();
+						lesson_chunks.push(next_chunk);
+						//console.log('next_chunk', next_chunk);
+						chunk_load_active = false;
+				  })();
 		if (preloaded_chunk_amount <= 0) {
 			await next_chunk_promise;
 		}
@@ -122,9 +125,8 @@
 		}
 	}
 
-	if (browser) {
-		next_lesson();
-	}
+
+	$: current_lesson === undefined && browser ? next_lesson() : undefined;
 </script>
 
 <div class="outer">

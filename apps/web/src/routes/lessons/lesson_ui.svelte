@@ -12,6 +12,7 @@
 	import { toWordUpperCase } from '$lib/scripts/universal/word_uppercase';
 	import { get } from 'svelte/store';
 	import { error } from 'functional-utilities';
+	import PrettyObj from '$lib/components/pretty_obj.svelte';
 
 	export let lesson: Lesson | undefined;
 	export let response_type: 'ja' | 'en' | 'locked' | undefined;
@@ -45,7 +46,7 @@
 	</p>
 	{#if lesson && lesson.skill_level !== 0}
 		<button
-			class="absolute bottom-5 right-5 capitalize z-10"
+			class="absolute top-5 right-5 capitalize z-10 btn bg-gray-700 hover:bg-gray-500 btn-xs opacity-60 hover:opacity-100"
 			on:click={async () => {
 				if (!lesson) {
 					return;
@@ -81,7 +82,7 @@
 				};
 			}}
 		>
-			Reset {lesson ? toWordUpperCase(lesson.subject_type) : 'Loading...'} Progress
+			Reset Progress
 		</button>
 	{/if}
 	<div

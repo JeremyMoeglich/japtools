@@ -5,7 +5,9 @@ import {
 	is_radical_data,
 	is_vocabulary_data,
 	KanjiDataSchema,
-	type ReadingTypeType
+	type KanjiReadingType,
+	type ReadingTypeType,
+	type VocabularyReadingType
 } from '$lib/scripts/universal/datatypes';
 import { domain } from '$lib/scripts/frontend/domain';
 import type { Lesson } from '$lib/scripts/universal/lesson_type';
@@ -22,6 +24,15 @@ const required_level_table: Record<Lesson['lesson_type'], number> = {
 	vocabulary_kun_on_yomi: 2,
 	new_subject: 0
 };
+
+async function get_unique_readings<R extends KanjiReadingType | VocabularyReadingType>(
+	readings: R[]
+): Promise<R[]> {
+	const reading_map = typed_from_entries(
+		await Promise.all(readings.map(async (r) => [r.reading, await get_by_reading(r.reading)]))
+	);
+	return readings.filter((r) => reading_map[r.reading].length === 1);
+}
 
 export async function get_lessons(previous: number[]) {
 	const subjects = await get_lesson_subjects(previous);
@@ -68,34 +79,32 @@ export async function get_lessons(previous: number[]) {
 						{
 							const primary_reading =
 								subject.readings.find((r) => r.primary) ?? error('no primary reading');
-							const partial_required_data = {
-								meanings: subject.meanings.map((m) => m.meaning),
-								readings: subject.readings
-									.filter((r) => r.reading_type === primary_reading.reading_type)
-									.map((r) => r.reading)
-							};
-							const reading_map = typed_from_entries(
-								await Promise.all(
-									subject.readings.map(async (r) => [r.reading, await get_by_reading(r.reading)])
-								)
+							const unique_readings = await get_unique_readings(subject.readings);
+							const valid_readings = unique_readings.filter(
+								(r) => r.reading_type === primary_reading.reading_type
 							);
+							if (valid_readings.length > 0) {
+								new_lessons.push({
+									lesson_type: 'reading_and_meaning',
+									required_data: {
+										meanings: subject.meanings.map((m) => m.meaning),
+										readings: valid_readings.map((r) => r.reading),
+										to: 'meanings'
+									},
+									subject_id: subject_id,
+									subject_type: 'KANJI',
+									skill_level: skill_level,
+									need_input: true,
+									preferred_tab: 'Meanings'
+								});
+							}
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
 								required_data: {
-									...partial_required_data,
-									to: 'meanings',
-									reading_map
-								},
-								subject_id: subject_id,
-								subject_type: 'KANJI',
-								skill_level: skill_level,
-								need_input: true,
-								preferred_tab: 'Meanings'
-							});
-							new_lessons.push({
-								lesson_type: 'reading_and_meaning',
-								required_data: {
-									...partial_required_data,
+									meanings: subject.meanings.map((m) => m.meaning),
+									readings: subject.readings
+										.filter((r) => r.reading_type === primary_reading.reading_type)
+										.map((r) => r.reading),
 									to: 'readings'
 								},
 								subject_id: subject_id,
@@ -154,21 +163,13 @@ export async function get_lessons(previous: number[]) {
 							});
 						}
 						{
-							const partial_required_data = {
-								readings: subject.readings.map((r) => r.reading),
-								meanings: subject.meanings.map((m) => m.meaning)
-							};
-							const reading_map = typed_from_entries(
-								await Promise.all(
-									subject.readings.map(async (r) => [r.reading, await get_by_reading(r.reading)])
-								)
-							);
+							const unique_readings = await get_unique_readings(subject.readings);
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
 								required_data: {
-									...partial_required_data,
-									to: 'meanings',
-									reading_map
+									readings: unique_readings.map((r) => r.reading),
+									meanings: subject.meanings.map((m) => m.meaning),
+									to: 'meanings'
 								},
 								subject_id: subject_id,
 								subject_type: 'VOCABULARY',
@@ -179,7 +180,8 @@ export async function get_lessons(previous: number[]) {
 							new_lessons.push({
 								lesson_type: 'reading_and_meaning',
 								required_data: {
-									...partial_required_data,
+									readings: subject.readings.map((r) => r.reading),
+									meanings: subject.meanings.map((m) => m.meaning),
 									to: 'readings'
 								},
 								subject_id: subject_id,

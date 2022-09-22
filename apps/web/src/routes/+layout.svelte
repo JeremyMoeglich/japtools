@@ -2,19 +2,23 @@
 	import '../app.postcss';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import AuthPage from './auth_page.svelte';
-	import { logged_in } from '$lib/scripts/frontend/auth/auth_state';
-	import { check_token_and_login } from '$lib/scripts/frontend/auth/token_login';
-	import { Home, Book } from 'carbon-icons-svelte';
+	import { Book } from 'carbon-icons-svelte';
 	import { is_loading_store } from '$lib/scripts/frontend/is_loading';
 	import { Circle2 } from 'svelte-loading-spinners';
+	import type { user_data_type } from '$lib/scripts/universal/datatypes';
+	import { user_data_store } from '$lib/scripts/frontend/auth/user_data';
+	import { get } from 'svelte/store';
 
-	check_token_and_login();
+	export let data: { user_data: user_data_type | undefined };
+
+	$: user_data_store.set(data.user_data ?? get(user_data_store));
 </script>
+
 
 <div class="flex flex-col h-screen">
 	<div class="navbar pl-5 gap-5 border-b-2 border-accent">
 		<a class="text-3xl text-white" href="/">Japtools</a>
-		{#if $logged_in}
+		{#if $user_data_store}
 			<a href="/lessons">
 				<div class="flex flex-col items-center">
 					<Book size={24} />
@@ -24,7 +28,7 @@
 		{/if}
 	</div>
 	<div class="content h-full">
-		{#if $logged_in}
+		{#if $user_data_store}
 			<slot />
 		{:else}
 			<AuthPage />

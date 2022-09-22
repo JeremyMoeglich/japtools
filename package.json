@@ -15,6 +15,7 @@
 		"dev:app": "dotenv -e .env.serverless -- turbo run dev:app",
 		"test": "dotenv -e .env.serverless -- turbo run test",
 		"lint": "dotenv -e .env.serverless -- turbo run lint",
+		"preview:web": "dotenv -e .env.serverless -- turbo run preview:web",
 		"dbsetup": "npm run generate:node && dotenv -e .env.node -- cargo run --release --bin dbsetup && npm run generate",
 		"generate": "dotenv -e .env.serverless -- prisma generate --data-proxy",
 		"generate:node": "prisma-merge -e ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && prisma generate --schema ./prisma/rsschema.prisma",

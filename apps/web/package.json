@@ -5,7 +5,8 @@
 		"build:app": "cross-env ADAPTER=static cross-env VITE_STATIC_URL=1 vite build",
 		"build:web": "cross-env ADAPTER=vercel vite build",
 		"dev:web": "vite dev",
-		"check": "svelte-check --tsconfig ./tsconfig.json"
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"preview:web": "vite preview"
 	},
 	"devDependencies": {
 		"@digitak/esrun": "^3.2.11",

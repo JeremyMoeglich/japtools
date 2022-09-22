@@ -3,9 +3,8 @@ import { domain } from '$lib/scripts/frontend/domain';
 import { parse_to_date } from '$lib/scripts/universal/zod_util';
 import { get } from 'svelte/store';
 import { z } from 'zod';
-import { logged_in } from './auth_state';
 import { login_token_store } from './login_token';
-import { user_datas_store } from './user_data';
+import { user_data_store } from './user_data';
 
 export async function check_token_and_login() {
 	const token = get(login_token_store);
@@ -55,6 +54,5 @@ export async function token_login(token: string, validate = true) {
 		user_data_type_schema,
 		['created_at']
 	);
-	user_datas_store.set(parsed);
-	logged_in.set(true);
+	user_data_store.set(parsed);
 }

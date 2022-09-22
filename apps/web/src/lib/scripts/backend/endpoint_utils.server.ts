@@ -6,6 +6,10 @@ import type { z } from 'zod';
 import type { ZodObjectAny } from '../universal/zod_util';
 import { error } from '@sveltejs/kit';
 
+export interface UtilHttpError extends Error {
+	status: number;
+}
+
 export async function get_request_body<T extends ZodObjectAny>(
 	request: Request,
 	schema: T
@@ -33,10 +37,16 @@ export async function get_body(request: Request): Promise<JsonValue> {
 	}
 }
 
-export async function get_auth_user_data(request: Request): Promise<user_data_type> {
+export async function safe_get_auth_user_data(
+	request: Request
+): Promise<user_data_type | UtilHttpError> {
 	const cookies = parse(request.headers.get('cookie') ?? '');
 	if (!cookies?.login_token) {
-		throw error(401, 'Unauthorized, no login token');
+		return {
+			status: 401,
+			message: 'Not logged in (no login token)',
+			name: 'Not logged in'
+		};
 	}
 	const data = await prisma_client.loginToken.findUnique({
 		where: {
@@ -49,12 +59,14 @@ export async function get_auth_user_data(request: Request): Promise<user_data_ty
 	const user_id = data?.user_id;
 
 	if (!user_id) {
-		throw error(401, 'Invalid login token');
+		return {
+			status: 401,
+			message: 'Not logged in (invalid login token)',
+			name: 'Not logged in'
+		};
 	}
 
-	const user = await (
-		prisma_client
-	).user.findUnique({
+	const user = await prisma_client.user.findUnique({
 		where: {
 			id: user_id
 		},
@@ -68,14 +80,24 @@ export async function get_auth_user_data(request: Request): Promise<user_data_ty
 	});
 
 	if (!user) {
-		await (
-			prisma_client
-		).loginToken.delete({
+		await prisma_client.loginToken.delete({
 			where: {
 				value: cookies.login_token
 			}
 		});
-		throw error(401, "Login token doesn't match any user");
+		return {
+			status: 401,
+			message: 'Not logged in (invalid user)',
+			name: 'Not logged in'
+		};
 	}
 	return user;
+}
+
+export async function get_auth_user_data(request: Request): Promise<user_data_type> {
+	const user_data = await safe_get_auth_user_data(request);
+	if (user_data instanceof Error) {
+		throw error(user_data.status, user_data.message);
+	}
+	return user_data;
 }

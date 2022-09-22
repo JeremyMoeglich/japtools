@@ -46,6 +46,9 @@ export const VocabularyReadingSchema = z.object({
 	subject_id: z.number().int()
 });
 
+export type KanjiReadingType = z.infer<typeof KanjiReadingSchema>;
+export type VocabularyReadingType = z.infer<typeof VocabularyReadingSchema>;
+
 export const RadicalDataSchema = z
 	.object({
 		id: z.number().int(),

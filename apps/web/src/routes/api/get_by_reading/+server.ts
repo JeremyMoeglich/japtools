@@ -10,6 +10,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			reading: z.string()
 		})
 	);
-	const subjects = get_subjects_by_reading(reading);
-	return new Response(JSON.stringify(subjects));
+	const subjects = await get_subjects_by_reading(reading);
+	return new Response(JSON.stringify({ subjects }));
 };
