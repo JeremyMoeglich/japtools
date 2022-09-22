@@ -10,7 +10,8 @@ export const GET: RequestHandler = async ({ request }) => {
 			id: user_data.id,
 			email: user_data.email,
 			created_at: user_data.created_at.toISOString(),
-			progress_id: user_data.progress_id
+			progress_id: user_data.progress_id,
+			total_completed: user_data.total_completed
 		}
 	});
 };

@@ -8,6 +8,7 @@
 	import type { user_data_type } from '$lib/scripts/universal/datatypes';
 	import { user_data_store } from '$lib/scripts/frontend/auth/user_data';
 	import { get } from 'svelte/store';
+	import { logout } from '$lib/scripts/frontend/auth/logout';
 
 	export let data: { user_data: user_data_type | undefined };
 
@@ -24,6 +25,7 @@
 					Lessons
 				</div>
 			</a>
+			<button class="ml-auto" on:click={logout}> Logout </button>
 		{/if}
 	</div>
 	<div class="content h-full">

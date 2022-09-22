@@ -12,7 +12,10 @@ if (browser) {
 
 	login_token_store.subscribe((token) => {
 		if (token) {
-			Cookies.set('login_token', token);
+			Cookies.set('login_token', token, {
+				expires: 365,
+				secure: true,
+			});
 		} else {
 			Cookies.remove('login_token');
 		}
