@@ -10,3 +10,4 @@
 **/wanikani.json
 **/vite-profile.cpuprofile
 .turbo
+/docker-volume
