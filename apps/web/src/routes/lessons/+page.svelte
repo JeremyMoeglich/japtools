@@ -70,6 +70,7 @@
 			lesson_queue = cloneDeep(lesson_chunks.shift() ?? error('lesson_chunks is empty'));
 			//console.log('lesson_queue', lesson_queue);
 			level_promises.push([]);
+			level_change_map = {}
 		}
 		if (lesson_chunks.length < max_chunks) {
 			(async () => {

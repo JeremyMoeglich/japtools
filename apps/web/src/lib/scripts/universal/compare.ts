@@ -22,7 +22,7 @@ function similarity(str1: string, str2: string): number {
 }
 
 export function compare(str1: string, str2: string): boolean {
-	const similarity_normal = similarity(str1, str2);
+	const similarity_normal = similarity(str1.trim(), str2.trim());
 	const as_words = string_number_to_words(str2);
 	const similarity_as_words = similarity(str1, as_words);
 	return similarity_normal > 0.8 || similarity_as_words > 0.8;
