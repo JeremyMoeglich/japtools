@@ -26,7 +26,7 @@
 	const color_map: Record<SubjectType, string> = {
 		KANJI: '#ff00ff',
 		RADICAL: '#0000ff',
-		VOCABULARY: '#ba00ba'
+		VOCABULARY: 'rgb(12 157 78)'
 	};
 
 	let input_element: HTMLInputElement | undefined;
