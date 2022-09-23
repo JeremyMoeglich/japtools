@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { error } from 'functional-utilities';
+	import { error, pipe } from 'functional-utilities';
 	import { z } from 'zod';
 
 	export let html: string;
@@ -32,7 +32,7 @@
 				};
 			}
 			return {
-				type: tag_schema.parse(child.nodeName.toLowerCase()),
+				type: pipe(tag_schema.safeParse(child.nodeName.toLowerCase()), (r) => r.success ? r.data : error(`Invalid tag ${child.nodeName}`)),
 				content: child.textContent ?? ''
 			};
 		});

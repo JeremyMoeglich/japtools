@@ -21,13 +21,15 @@
 		NANORI: 'Nanori'
 	};
 
-	let selected_readings: (ReadingType | "NONE")[] = [];
+	let selected_readings: (ReadingType | 'NONE')[] = [];
 
 	$: selected_readings = selected_readings.concat(
-		(range(selected_readings.length, zipped.length) as number[]).map((i) => zipped[i][1] === "NONE" ? "NONE" : "KUNYOMI")
+		(range(selected_readings.length, zipped.length) as number[]).map((i) =>
+			(zipped[i]?.[1] ?? 'NONE') === 'NONE' ? 'NONE' : 'KUNYOMI'
+		)
 	);
 
-	$: correct = selected_readings.every((reading, index) => reading === zipped[index][1]);
+	$: correct = selected_readings.every((reading, index) => reading === (zipped[index]?.[1] ?? 'NONE'));
 </script>
 
 <div class="relative">
