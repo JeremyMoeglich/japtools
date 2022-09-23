@@ -63,7 +63,7 @@
 						//console.log('next_chunk', next_chunk);
 						chunk_load_active = false;
 				  })();
-		if (preloaded_chunk_amount <= 0) {
+		if (preloaded_chunk_amount <= 0 && lesson_queue.length === 0) {
 			await next_chunk_promise;
 		}
 		if (lesson_queue.length === 0) {
@@ -91,7 +91,7 @@
 		} finally {
 			is_loading_store.set(false);
 		}
-		current_lesson = lesson_queue.shift();
+		current_lesson = lesson_queue.shift() ?? error('lesson_queue is empty');
 		current_lesson_state = 'in_progress';
 		current_input = '';
 		// if (current_lesson && current_lesson.subject_id !== 8761) {

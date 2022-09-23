@@ -11,7 +11,7 @@ import type { SubjectDataType } from '$lib/scripts/universal/datatypes';
 import { pipe } from 'functional-utilities';
 
 //const daily_lesson_limit = 20; [TODO] implement this
-const max_add = 2;
+const max_add = 1;
 
 export const POST: RequestHandler = async ({ request }) => {
 	const user_data = await get_auth_user_data(request);

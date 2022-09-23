@@ -47,7 +47,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	//		.join('\n')
 	//);
 
-	await Promise.all([
+	await prisma_client.$transaction([
 		prisma_client.subjectProgress.upsert({
 			where: {
 				subject_id_progress_id: {

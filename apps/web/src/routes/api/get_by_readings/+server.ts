@@ -29,6 +29,9 @@ export const POST: RequestHandler = async ({ request }) => {
 	const subjects_map: Record<string, { readings: string[]; meanings: string[]; id: number }[]> =
 		typed_from_entries(unique_readings.map((v) => [v, []]));
 	for (const { id, readings, meanings } of query_result) {
+		if (!meanings) {
+			console.log('no meanings', id);
+		}
 		for (const reading of readings) {
 			if (!subjects_map[reading]) {
 				continue;
