@@ -29,7 +29,7 @@
 
 	$: correct = selected_readings.every((reading, index) => reading === zipped[index][1]);
 </script>
-{selected_readings}
+
 <div class="relative">
 	<h2 class=" text-white text-5xl flex">
 		{#each zipped as [char, type], i}
