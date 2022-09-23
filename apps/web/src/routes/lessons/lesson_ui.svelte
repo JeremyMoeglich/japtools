@@ -111,7 +111,7 @@
 		{:else if lesson?.skill_level === 0}
 			<button on:click={confirm} bind:this={next_button}>Next</button>
 		{/if}
-		<PrettyObj obj={lesson} />
+		<!-- <PrettyObj obj={lesson} /> -->
 	</div>
 
 	{#if lesson && (show_correct || lesson.skill_level === 0)}
