@@ -23,7 +23,7 @@
 		const current_level = (
 			get(subject_store).get(subject_id) ?? error(`Data for Subject ${subject_id} not in store`)
 		).skill_level;
-		const new_level = Math.max(0, current_level + n);
+		const new_level = Math.max(1, current_level + n);
 		const current_change = level_change_map[subject_id] ?? 0;
 		if (current_change === 0 || (n < 0 && current_change >= -1)) {
 			level_change_map[subject_id] = current_change + n;
@@ -93,6 +93,8 @@
 				is_loading_store.set(true);
 				await load_chunks();
 			}
+		} catch (e) {
+			console.error(e);
 		} finally {
 			is_loading_store.set(false);
 		}

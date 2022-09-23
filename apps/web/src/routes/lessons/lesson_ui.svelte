@@ -11,6 +11,7 @@
 	import SubjectBrowser from './subject_browser.svelte';
 	import { get } from 'svelte/store';
 	import { error } from 'functional-utilities';
+	import PrettyObj from '$lib/components/pretty_obj.svelte';
 
 	export let lesson: Lesson | undefined;
 	export let response_type: 'ja' | 'en' | 'locked' | undefined;
@@ -110,7 +111,7 @@
 		{:else if lesson?.skill_level === 0}
 			<button on:click={confirm} bind:this={next_button}>Next</button>
 		{/if}
-		<!-- <PrettyObj obj={subject} /> -->
+		<PrettyObj obj={lesson} />
 	</div>
 
 	{#if lesson && (show_correct || lesson.skill_level === 0)}
