@@ -55,7 +55,12 @@
 							await Promise.all(level_promises.shift() ?? error('level_promises is empty'));
 						}
 						const previous_ids = [
-							...new Set(lesson_chunks.flat().concat(lesson_queue).map((lesson) => lesson.subject_id))
+							...new Set(
+								lesson_chunks
+									.flat()
+									.concat(lesson_queue)
+									.map((lesson) => lesson.subject_id)
+							)
 						];
 						const next_chunk = await get_lessons(previous_ids);
 
@@ -70,7 +75,7 @@
 			lesson_queue = cloneDeep(lesson_chunks.shift() ?? error('lesson_chunks is empty'));
 			//console.log('lesson_queue', lesson_queue);
 			level_promises.push([]);
-			level_change_map = {}
+			level_change_map = {};
 		}
 		if (lesson_chunks.length < max_chunks) {
 			(async () => {

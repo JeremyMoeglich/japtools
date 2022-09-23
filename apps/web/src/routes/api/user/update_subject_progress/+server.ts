@@ -18,7 +18,7 @@ function get_next_date(n: number): Date {
 	if (n < 0) {
 		n = 0;
 	}
-	const hour_offset = range(n).reduce((acc) => acc + acc ** 1.1 + 1, 0);
+	const hour_offset = range(n).reduce((acc) => acc + acc ** 1.12 + 0.7, 0);
 	return new Date(Date.now() + hour_offset * 3600000);
 }
 

@@ -73,7 +73,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			if (lessons.length >= amount) {
 				break;
 			}
-			if (lesson.skill_level > 6) {
+			if (lesson.skill_level > 3) {
 				lessons.push(lesson);
 			}
 		}
