@@ -55,7 +55,7 @@
 							await Promise.all(level_promises.shift() ?? error('level_promises is empty'));
 						}
 						const previous_ids = [
-							...new Set(lesson_chunks.flat().map((lesson) => lesson.subject_id))
+							...new Set(lesson_chunks.flat().concat(lesson_queue).map((lesson) => lesson.subject_id))
 						];
 						const next_chunk = await get_lessons(previous_ids);
 
