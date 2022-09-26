@@ -10,7 +10,8 @@
 		z.literal('vocabulary'),
 		z.literal('kanji'),
 		z.literal('radical'),
-		z.literal('reading')
+		z.literal('reading'),
+		z.literal('i')
 	]);
 
 	type Tag = z.infer<typeof tag_schema>;
@@ -32,7 +33,9 @@
 				};
 			}
 			return {
-				type: pipe(tag_schema.safeParse(child.nodeName.toLowerCase()), (r) => r.success ? r.data : error(`Invalid tag ${child.nodeName}`)),
+				type: pipe(tag_schema.safeParse(child.nodeName.toLowerCase()), (r) =>
+					r.success ? r.data : error(`Invalid tag ${child.nodeName}`)
+				),
 				content: child.textContent ?? ''
 			};
 		});
@@ -55,6 +58,8 @@
 			<span class="radical">{section.content}</span>
 		{:else if section.type === 'reading'}
 			<span class="reading">{section.content}</span>
+		{:else if section.type === 'i'}
+			<span class="i">{section.content}</span>
 		{:else}
 			{error('Unreachable')}
 		{/if}
@@ -76,5 +81,8 @@
 	}
 	.radical {
 		color: rgb(210, 113, 255);
+	}
+	.i {
+		font-style: italic;
 	}
 </style>

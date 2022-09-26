@@ -99,22 +99,23 @@
 	</div>
 
 	<div class="mt-8 mb-8">
-		{#if response_type && lesson?.skill_level !== 0}
+		{#if response_type && lesson?.skill_level !== 0 && lesson?.need_input}
 			<LessonInput
 				{response_type}
 				bind:response_value
 				submit_callback={async () => {
+					input_element?.focus();
 					return await confirm();
 				}}
 				bind:input_element
 			/>
-		{:else if lesson?.skill_level === 0}
+		{:else if lesson && lesson?.skill_level === 0}
 			<button on:click={confirm} bind:this={next_button}>Next</button>
 		{/if}
 		<!-- <PrettyObj obj={lesson} /> -->
 	</div>
 
-	{#if lesson && (show_correct || lesson.skill_level === 0)}
+	{#if lesson && (show_correct || lesson.skill_level === 0 || !lesson.need_input)}
 		<div class="mt-auto">
 			<SubjectBrowser {subject} />
 		</div>
