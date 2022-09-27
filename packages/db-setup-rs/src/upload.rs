@@ -6,145 +6,137 @@ use indicatif::ProgressBar;
 use itertools::Itertools;
 
 use crate::{
-    db::{self},
+    db::{self, SubjectType},
     schema::{CharacterImageMetadata, ReadingType, SubjectData, SubjectDataOuter},
 };
 
+fn data_to_type(data: &SubjectData) -> SubjectType {
+    match data {
+        SubjectData::Kanji(_) => SubjectType::Kanji,
+        SubjectData::Radical(_) => SubjectType::Radical,
+        SubjectData::Vocabulary(_) => SubjectType::Vocabulary,
+    }
+}
+
 pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box<dyn Error>> {
     let client = Arc::new(db::new_client().await.expect("Failed to create client"));
-    println!("Deleting old data...");
-    client
-        .subject_index()
-        .delete_many(vec![db::subject_index::subject_id::gte(0)])
-        .exec()
-        .await?;
-    client
-        .kanji_subject()
-        .delete_many(vec![db::kanji_subject::id::gte(0)])
-        .exec()
-        .await?;
-    client
-        .radical_subject()
-        .delete_many(vec![db::radical_subject::id::gte(0)])
-        .exec()
-        .await?;
-    client
-        .vocabulary_subject()
-        .delete_many(vec![db::vocabulary_subject::id::gte(0)])
-        .exec()
-        .await?;
-
-    println!("Uploading new data...");
-    
     let mut tasks = stream::iter(map.clone().iter().map(|x| x.1.clone()).collect_vec())
         .map(|subject| {
             let client = client.clone();
             tokio::spawn(async move {
-                let index_exists = client
+                let subject_index = client
                     .subject_index()
                     .find_unique(db::subject_index::subject_id::equals(subject.id as i32))
                     .exec()
                     .await
                     .unwrap();
 
-                match &index_exists {
-                    Some(index) => match index.subject_type {
-                        db::SubjectType::Radical => {
-                            match client
-                                .radical_subject()
-                                .delete(db::radical_subject::id::equals(index.subject_id as i32))
-                                .exec()
-                                .await
-                            {
-                                Ok(_) => (),
-                                Err(e) => println!("Error deleting radical: {}", e),
-                            }
-                        }
-                        db::SubjectType::Kanji => {
-                            match client
-                                .kanji_subject()
-                                .delete(db::kanji_subject::id::equals(index.subject_id as i32))
-                                .exec()
-                                .await
-                            {
-                                Ok(_) => (),
-                                Err(e) => println!("Error deleting kanji: {}", e),
-                            }
-                        }
-                        db::SubjectType::Vocabulary => {
-                            match client
-                                .vocabulary_subject()
-                                .delete(db::vocabulary_subject::id::equals(index.subject_id as i32))
-                                .exec()
-                                .await
-                            {
-                                Ok(_) => (),
-                                Err(e) => println!("Error deleting vocabulary: {}", e),
-                            }
-                        }
-                    },
-                    None => (),
-                }
+                if let Some(subject_index) = subject_index {
+                    if subject_index.subject_type != data_to_type(&subject.data) {
+                        client
+                            .subject_index()
+                            .delete(db::subject_index::subject_id::equals(subject.id as i32))
+                            .exec()
+                            .await
+                            .unwrap();
 
-                if let Some(index) = index_exists {
-                    match client
-                        .subject_index()
-                        .delete(db::subject_index::subject_id::equals(
-                            index.subject_id as i32,
-                        ))
-                        .exec()
-                        .await
-                    {
-                        Ok(_) => (),
-                        Err(e) => println!("Error deleting index: {}", e),
+                        match subject_index.subject_type {
+                            db::SubjectType::Radical => {
+                                match client
+                                    .radical_subject()
+                                    .delete(db::radical_subject::id::equals(
+                                        subject_index.subject_id as i32,
+                                    ))
+                                    .exec()
+                                    .await
+                                {
+                                    Ok(_) => (),
+                                    Err(e) => println!("Error deleting radical: {}", e),
+                                }
+                            }
+                            db::SubjectType::Kanji => {
+                                match client
+                                    .kanji_subject()
+                                    .delete(db::kanji_subject::id::equals(
+                                        subject_index.subject_id as i32,
+                                    ))
+                                    .exec()
+                                    .await
+                                {
+                                    Ok(_) => (),
+                                    Err(e) => println!("Error deleting kanji: {}", e),
+                                }
+                            }
+                            db::SubjectType::Vocabulary => {
+                                match client
+                                    .vocabulary_subject()
+                                    .delete(db::vocabulary_subject::id::equals(
+                                        subject_index.subject_id as i32,
+                                    ))
+                                    .exec()
+                                    .await
+                                {
+                                    Ok(_) => (),
+                                    Err(e) => println!("Error deleting vocabulary: {}", e),
+                                }
+                            }
+                        }
                     }
                 }
-                client
-                    .subject_index()
-                    .create(
-                        match &subject.data {
-                            SubjectData::Radical(_) => db::SubjectType::Radical,
-                            SubjectData::Kanji(_) => db::SubjectType::Kanji,
-                            SubjectData::Vocabulary(_) => db::SubjectType::Vocabulary,
-                        },
-                        subject.id as i32,
-                        match &subject.data {
-                            SubjectData::Radical(data) => data.level as i32,
-                            SubjectData::Kanji(data) => data.level as i32,
-                            SubjectData::Vocabulary(data) => data.level as i32,
-                        },
-                        vec![
-                            db::subject_index::readings::set(match &subject.data {
-                                SubjectData::Radical(_) => vec![],
-                                SubjectData::Kanji(data) => data
-                                    .readings
-                                    .iter()
-                                    .map(|x| x.reading.clone())
-                                    .collect_vec(),
-                                SubjectData::Vocabulary(data) => data
-                                    .readings
-                                    .iter()
-                                    .map(|x| x.reading.clone())
-                                    .collect_vec(),
-                            }),
-                            db::subject_index::meanings::set(match &subject.data {
-                                SubjectData::Radical(_) => vec![],
-                                SubjectData::Kanji(data) => data
-                                    .meanings
-                                    .iter()
-                                    .map(|x| x.meaning.clone())
-                                    .collect_vec(),
-                                SubjectData::Vocabulary(data) => data
-                                    .meanings
-                                    .iter()
-                                    .map(|x| x.meaning.clone())
-                                    .collect_vec(),
-                            }),
-                        ],
-                    )
-                    .exec()
-                    .await
-                    .unwrap();
+
+                {
+                    let params = vec![
+                        db::subject_index::readings::set(match &subject.data {
+                            SubjectData::Radical(_) => vec![],
+                            SubjectData::Kanji(data) => data
+                                .readings
+                                .iter()
+                                .map(|x| x.reading.clone())
+                                .collect_vec(),
+                            SubjectData::Vocabulary(data) => data
+                                .readings
+                                .iter()
+                                .map(|x| x.reading.clone())
+                                .collect_vec(),
+                        }),
+                        db::subject_index::meanings::set(match &subject.data {
+                            SubjectData::Radical(_) => vec![],
+                            SubjectData::Kanji(data) => data
+                                .meanings
+                                .iter()
+                                .map(|x| x.meaning.clone())
+                                .collect_vec(),
+                            SubjectData::Vocabulary(data) => data
+                                .meanings
+                                .iter()
+                                .map(|x| x.meaning.clone())
+                                .collect_vec(),
+                        }),
+                    ];
+                    client
+                        .subject_index()
+                        .upsert(
+                            db::subject_index::subject_id::equals(subject.id as i32),
+                            (
+                                match &subject.data {
+                                    SubjectData::Radical(_) => db::SubjectType::Radical,
+                                    SubjectData::Kanji(_) => db::SubjectType::Kanji,
+                                    SubjectData::Vocabulary(_) => db::SubjectType::Vocabulary,
+                                },
+                                subject.id as i32,
+                                match &subject.data {
+                                    SubjectData::Radical(data) => data.level as i32,
+                                    SubjectData::Kanji(data) => data.level as i32,
+                                    SubjectData::Vocabulary(data) => data.level as i32,
+                                },
+                                params.clone(),
+                            ),
+                            params,
+                        )
+                        .exec()
+                        .await
+                        .unwrap()
+                };
                 match &subject.data {
                     SubjectData::Kanji(kanji_data) => {
                         client

@@ -99,7 +99,7 @@
 	</div>
 
 	<div class="mt-8 mb-8">
-		{#if response_type && lesson?.skill_level !== 0}
+		{#if response_type && lesson?.skill_level !== 0 && lesson?.need_input}
 			<LessonInput
 				{response_type}
 				bind:response_value
@@ -108,8 +108,10 @@
 				}}
 				bind:input_element
 			/>
-		{:else if lesson?.skill_level === 0}
-			<button on:click={confirm} bind:this={next_button}>Next</button>
+		{:else if lesson?.skill_level === 0 || !lesson?.need_input}
+			<button on:click={confirm} bind:this={next_button}
+				>{lesson?.need_input ? 'Next' : 'Confirm'}</button
+			>
 		{/if}
 		<!-- <PrettyObj obj={lesson} /> -->
 	</div>
