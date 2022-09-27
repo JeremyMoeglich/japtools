@@ -117,7 +117,7 @@
 		<!-- <PrettyObj obj={lesson} /> -->
 	</div>
 
-	{#if lesson && (show_correct || lesson.skill_level === 0 || !lesson.need_input)}
+	{#if lesson && (show_correct || lesson.skill_level === 0)}
 		<div class="mt-auto">
 			<SubjectBrowser {subject} />
 		</div>

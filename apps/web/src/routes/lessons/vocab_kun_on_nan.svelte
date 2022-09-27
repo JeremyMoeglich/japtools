@@ -41,23 +41,32 @@
 
 	$: lesson, element?.focus(), (selected_element = [0, 0]);
 
+	function column_active(index: number) {
+		return zipped[index]?.[1] !== 'NONE';
+	}
+
 	function keypress(event: KeyboardEvent) {
 		if (event.key === 'ArrowDown') {
 			selected_element[1] = Math.min(selected_element[1] + 1, 2);
 		} else if (event.key === 'ArrowUp') {
 			selected_element[1] = Math.max(selected_element[1] - 1, 0);
 		} else if (event.key === 'ArrowLeft') {
-			selected_element[0] = Math.max(selected_element[0] - 1, 0);
-		} else if (event.key === 'ArrowRight') {
-			selected_element[0] = Math.min(selected_element[0] + 1, zipped.length - 1);
-		} else if (event.key === 'Enter') {
-			if (selected_element[1] === 0) {
-				chosen_readings[selected_element[0]] = 'KUNYOMI';
-			} else if (selected_element[1] === 1) {
-				chosen_readings[selected_element[0]] = 'ONYOMI';
-			} else if (selected_element[1] === 2) {
-				chosen_readings[selected_element[0]] = 'NANORI';
+			for (let i = selected_element[0] - 1; i >= 0; i--) {
+				selected_element[0] = i;
+				if (column_active(i)) break;
 			}
+		} else if (event.key === 'ArrowRight') {
+			for (let i = selected_element[0] + 1; i < zipped.length; i++) {
+				selected_element[0] = i;
+				if (column_active(i)) break;
+			}
+		}
+		if (selected_element[1] === 0) {
+			chosen_readings[selected_element[0]] = 'KUNYOMI';
+		} else if (selected_element[1] === 1) {
+			chosen_readings[selected_element[0]] = 'ONYOMI';
+		} else if (selected_element[1] === 2) {
+			chosen_readings[selected_element[0]] = 'NANORI';
 		}
 	}
 
