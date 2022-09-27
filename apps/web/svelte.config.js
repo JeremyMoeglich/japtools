@@ -9,7 +9,7 @@ import { optimizeImports } from 'carbon-preprocess-svelte';
 
 const adapt = process.env.ADAPTER;
 
-// @ts-ignore
+// @ts-ignore: implicit any
 const getAdapters = (adapt) => {
 	switch (adapt) {
 		case 'node':

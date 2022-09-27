@@ -104,11 +104,12 @@
 				{response_type}
 				bind:response_value
 				submit_callback={async () => {
+					input_element?.focus();
 					return await confirm();
 				}}
 				bind:input_element
 			/>
-		{:else if lesson?.skill_level === 0 || !lesson?.need_input}
+		{:else if lesson && (lesson.skill_level === 0 || !lesson.need_input)}
 			<button on:click={confirm} bind:this={next_button}
 				>{lesson?.need_input ? 'Next' : 'Confirm'}</button
 			>
@@ -116,7 +117,7 @@
 		<!-- <PrettyObj obj={lesson} /> -->
 	</div>
 
-	{#if lesson && (show_correct || lesson.skill_level === 0)}
+	{#if lesson && (show_correct || lesson.skill_level === 0 || !lesson.need_input)}
 		<div class="mt-auto">
 			<SubjectBrowser {subject} />
 		</div>
