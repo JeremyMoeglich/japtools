@@ -11,7 +11,7 @@
 	import SubjectBrowser from './subject_browser.svelte';
 	import { get } from 'svelte/store';
 	import { error } from 'functional-utilities';
-	import PrettyObj from '$lib/components/pretty_obj.svelte';
+	//import PrettyObj from '$lib/components/pretty_obj.svelte';
 
 	export let lesson: Lesson | undefined;
 	export let response_type: 'ja' | 'en' | 'locked' | undefined;

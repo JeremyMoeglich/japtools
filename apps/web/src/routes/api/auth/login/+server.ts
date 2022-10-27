@@ -89,29 +89,31 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		);
 	}
-	const current_token = await prisma_client.loginToken.findUnique({
+	const current_tokens = await prisma_client.loginToken.findMany({
 		where: { user_id: user_id },
 		select: { value: true, time: true }
 	});
-	if (current_token) {
-		// check if token is newer than 1 week
-		if (current_token.time.getTime() > Date.now() - 1000 * 60 * 60 * 24 * 7) {
-			return json({
-				token: current_token.value
-			});
-		} else {
-			await prisma_client.loginToken.delete({ where: { user_id: user_id } });
-		}
-	}
-	const new_token = await prisma_client.loginToken.create({
-		data: {
-			user_id: user_id,
-			value: uuidv4()
-		}
-	});
+	const new_token_value = uuidv4();
+	await Promise.all([
+		Promise.all(
+			current_tokens.map(async (current_token) => {
+				// check if token is newer than 1 week
+				const days = 7;
+				if (current_token.time.getTime() < Date.now() - 1000 * 60 * 60 * 24 * days) {
+					await prisma_client.loginToken.delete({ where: { value: current_token.value } });
+				}
+			})
+		),
+		prisma_client.loginToken.create({
+			data: {
+				user_id: user_id,
+				value: new_token_value
+			}
+		})
+	]);
 	return json(
 		{
-			token: new_token.value
+			token: new_token_value
 		},
 		{
 			status: 201
