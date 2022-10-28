@@ -145,7 +145,8 @@ export const LessonSubjectDataSchema = z.object({
 	subject_id: z.number().int(),
 	skill_level: z.number().min(0),
 	next_review: z.date(),
-	subject: SubjectDataSchema
+	subject: SubjectDataSchema,
+	last_level_change: z.date().optional()
 });
 
 export type LessonSubjectDataType = z.infer<typeof LessonSubjectDataSchema>;

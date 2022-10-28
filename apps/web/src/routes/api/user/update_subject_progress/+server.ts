@@ -1,26 +1,9 @@
 import { prisma_client } from '$lib/scripts/backend/prisma_client.server';
 import { get_auth_user_data, get_request_body } from '$lib/scripts/backend/endpoint_utils.server';
 import type { RequestHandler } from './$types';
-import { range } from 'functional-utilities';
 import { z } from 'zod';
 import { json } from '@sveltejs/kit';
-
-// function date_diff(a: Date, b: Date): string {
-// 	const diff = a.getTime() - b.getTime();
-// 	const hours = Math.floor(diff / 3600000);
-// 	const minutes = Math.floor((diff - hours * 3600000) / 60000);
-// 	const seconds = Math.floor((diff - hours * 3600000 - minutes * 60000) / 1000);
-// 	return `${hours}:${minutes}:${seconds}`;
-// }
-
-function get_next_date(n: number): Date {
-	n--;
-	if (n < 0) {
-		n = 0;
-	}
-	const hour_offset = range(n).reduce((acc) => acc + acc ** 1.12 + 1.1, 0);
-	return new Date(Date.now() + hour_offset * 3600000);
-}
+import { get_next_date } from '$lib/scripts/universal/date_gen';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const user_data = await get_auth_user_data(request);
@@ -57,14 +40,16 @@ export const POST: RequestHandler = async ({ request }) => {
 			},
 			update: {
 				skill_level,
-				next_review
+				next_review,
+				last_level_change: new Date()
 			},
 			create: {
 				subject_id,
 				progress_id: user_data.progress_id,
 				skill_level,
 				next_review,
-				level
+				level,
+				last_level_change: new Date()
 			}
 		}),
 		prisma_client.user.update({

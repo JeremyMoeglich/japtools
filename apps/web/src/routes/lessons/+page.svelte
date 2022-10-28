@@ -16,14 +16,29 @@
 	import TitleRender from './title_render.svelte';
 	//import PrettyObj from '$lib/components/pretty_obj.svelte';
 	import { user_data_store } from '$lib/scripts/frontend/auth/user_data';
+	import { reverse_get_next_date } from '$lib/scripts/universal/date_gen';
+	import type { LessonSubjectDataType, SubjectDataType } from '$lib/scripts/universal/datatypes';
 
 	let level_change_map: Record<number, number> = {};
 
+	function get_max_level_increase(subject_lesson: LessonSubjectDataType): number {
+		const review_time = subject_lesson.last_level_change;
+		if (!review_time) {
+			return 1;
+		}
+		const now = new Date();
+		const hour_offset = (now.getTime() - review_time.getTime()) / 1000 / 60 / 60;
+		const time_offset_level = reverse_get_next_date(hour_offset);
+		const level_offset = time_offset_level - subject_lesson.skill_level;
+		return level_offset + 1;
+	}
+
 	async function change_level(subject_id: number, n: number) {
-		const current_level = (
-			get(subject_store).get(subject_id) ?? error(`Data for Subject ${subject_id} not in store`)
-		).skill_level;
-		const new_level = Math.max(1, current_level + n);
+		const current_subject =
+			get(subject_store).get(subject_id) ?? error(`Data for Subject ${subject_id} not in store`);
+		const current_level = current_subject.skill_level;
+		const max_level_increase = get_max_level_increase(current_subject);
+		const new_level = Math.max(max_level_increase, current_level + n);
 		const current_change = level_change_map[subject_id] ?? 0;
 		if (current_change === 0 || (n < 0 && current_change >= -1)) {
 			level_change_map[subject_id] = current_change + n;
@@ -139,6 +154,9 @@
 	}
 
 	$: get(user_data_store) && current_lesson === undefined && browser ? next_lesson() : undefined;
+	$: current_subject_lession = current_lesson
+		? get(subject_store).get(current_lesson.subject_id)
+		: undefined;
 </script>
 
 <div class="outer">
@@ -173,6 +191,7 @@
 	>
 		<div>
 			{#if current_lesson}
+				{get_max_level_increase(current_subject_lession ?? error())}
 				{#if current_lesson.lesson_type === 'text_and_meaning'}
 					<TextMeaning
 						lesson={current_lesson}
