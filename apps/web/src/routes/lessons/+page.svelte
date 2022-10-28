@@ -17,7 +17,7 @@
 	//import PrettyObj from '$lib/components/pretty_obj.svelte';
 	import { user_data_store } from '$lib/scripts/frontend/auth/user_data';
 	import { reverse_get_next_date } from '$lib/scripts/universal/date_gen';
-	import type { LessonSubjectDataType, SubjectDataType } from '$lib/scripts/universal/datatypes';
+	import type { LessonSubjectDataType } from '$lib/scripts/universal/datatypes';
 
 	let level_change_map: Record<number, number> = {};
 

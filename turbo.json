@@ -5,11 +5,10 @@
 			"dependsOn": ["^build:app"]
 		},
 		"build:web": {
-			"dependsOn": ["^build:web"],
-			"cache": false
+			"dependsOn": ["^build:web"]
 		},
 		"check": {
-			"dependsOn": ["^check"]
+			"dependsOn": ["build:web", "^check"]
 		},
 		"dev:app": {
 			"dependsOn": ["^dev:app"],

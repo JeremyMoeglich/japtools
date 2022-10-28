@@ -294,23 +294,23 @@ export async function get_lessons(previous: number[]) {
 								if (kanji_type === undefined) {
 									throw new Error("Internal error: kanji_type can't be undefined");
 								}
-								if (
-									!kanji_type.every((v) => v === undefined) &&
-									Object.entries(kanji_types).length === 1
-								) {
-									new_lessons.push({
-										lesson_type: 'vocabulary_kun_on_yomi',
-										required_data: {
-											vocabulary: txt,
-											string_map: kanji_type.map((v) => (v === undefined ? 'NONE' : v))
-										},
-										subject_id: subject_id,
-										skill_level: skill_level,
-										subject_type: 'VOCABULARY',
-										need_input: false,
-										preferred_tab: 'Readings'
-									});
-								}
+								// if (
+								// 	!kanji_type.every((v) => v === undefined) &&
+								// 	Object.entries(kanji_types).length === 1
+								// ) {
+								// 	new_lessons.push({
+								// 		lesson_type: 'vocabulary_kun_on_yomi',
+								// 		required_data: {
+								// 			vocabulary: txt,
+								// 			string_map: kanji_type.map((v) => (v === undefined ? 'NONE' : v))
+								// 		},
+								// 		subject_id: subject_id,
+								// 		skill_level: skill_level,
+								// 		subject_type: 'VOCABULARY',
+								// 		need_input: false,
+								// 		preferred_tab: 'Readings'
+								// 	});
+								// } TODO add a toggle for this
 							}
 						}
 					} else if (is_radical_data(subject)) {

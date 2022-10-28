@@ -20,7 +20,7 @@ model User {
 
 model LoginToken {
   id      String   @id @default(cuid())
-  user_id String   @unique
+  user_id String
   time    DateTime @default(now())
   value   String   @unique
 }
