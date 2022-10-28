@@ -191,7 +191,6 @@
 	>
 		<div>
 			{#if current_lesson}
-				{get_max_level_increase(current_subject_lession ?? error())}
 				{#if current_lesson.lesson_type === 'text_and_meaning'}
 					<TextMeaning
 						lesson={current_lesson}
