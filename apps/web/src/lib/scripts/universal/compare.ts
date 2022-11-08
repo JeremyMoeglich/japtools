@@ -21,9 +21,28 @@ function similarity(str1: string, str2: string): number {
 	);
 }
 
-export function compare(str1: string, str2: string): boolean {
-	const similarity_normal = similarity(str1.trim(), str2.trim());
-	const as_words = string_number_to_words(str2);
-	const similarity_as_words = similarity(str1, as_words);
-	return similarity_normal > 0.8 || similarity_as_words > 0.8;
+export function compare(entered: string, correct: string): boolean {
+	const try_words: [number, string][] = [[4, 'something']];
+	const texts = try_words
+		.filter(([min_length, text]) => text.length >= min_length)
+		.map(([_, text]) => entered + ' ' + text);
+	texts.push(entered);
+
+	let highest_similarity = 0;
+	for (const text of texts) {
+		const similarity_normal = similarity(entered.trim(), correct.trim());
+		const as_words = string_number_to_words(correct);
+		const similarity_as_words = similarity(entered, as_words);
+		if (similarity_normal > highest_similarity) {
+			highest_similarity = similarity_normal;
+		}
+		if (similarity_as_words > highest_similarity) {
+			highest_similarity = similarity_as_words;
+		}
+	}
+	if (highest_similarity > 0.8) {
+		return true;
+	} else {
+		return false;
+	}
 }

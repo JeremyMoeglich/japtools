@@ -51,13 +51,14 @@
 	let lesson_queue: Lesson[] = [];
 	let lesson_chunks: Lesson[][] = [];
 	let level_promises: Promise<void>[][] = [];
-	let chunk_load_active = false;
+	let active_load: undefined | Promise<void[]>;
 
 	async function load_chunks(): Promise<void> {
 		if (lesson_queue.length !== 0 && lesson_chunks.length >= max_chunks) {
 			return;
 		}
-		if (chunk_load_active) {
+		if (active_load) {
+			await active_load;
 			return;
 		}
 		const preloaded_chunk_amount = lesson_chunks.length - 1;
@@ -65,9 +66,9 @@
 			lesson_chunks.length > max_chunks
 				? undefined
 				: (async () => {
-						chunk_load_active = true;
 						if (level_promises.length >= max_chunks) {
-							await Promise.all(level_promises.shift() ?? error('level_promises is empty'));
+							active_load = Promise.all(level_promises.shift() ?? error('level_promises is empty'));
+							await active_load;
 						}
 						const previous_ids = [
 							...new Set(
@@ -81,7 +82,7 @@
 
 						lesson_chunks.push(next_chunk);
 						//console.log('next_chunk', next_chunk);
-						chunk_load_active = false;
+						active_load = undefined;
 				  })();
 		if (preloaded_chunk_amount <= 0 && lesson_queue.length === 0) {
 			await next_chunk_promise;
