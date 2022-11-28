@@ -155,9 +155,9 @@
 	}
 
 	$: get(user_data_store) && current_lesson === undefined && browser ? next_lesson() : undefined;
-	$: current_subject_lession = current_lesson
-		? get(subject_store).get(current_lesson.subject_id)
-		: undefined;
+	// $: current_subject_lession = current_lesson
+	// 	? get(subject_store).get(current_lesson.subject_id)
+	// 	: undefined;
 </script>
 
 <div class="outer">

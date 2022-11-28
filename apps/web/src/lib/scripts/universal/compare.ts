@@ -30,7 +30,7 @@ export function compare(entered: string, correct: string): boolean {
 
 	let highest_similarity = 0;
 	for (const text of texts) {
-		const similarity_normal = similarity(entered.trim(), correct.trim());
+		const similarity_normal = similarity(text.trim(), correct.trim());
 		const as_words = string_number_to_words(correct);
 		const similarity_as_words = similarity(entered, as_words);
 		if (similarity_normal > highest_similarity) {
