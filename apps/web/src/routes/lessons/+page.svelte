@@ -54,7 +54,11 @@
 	let active_load: undefined | Promise<void[]>;
 
 	async function load_chunks(): Promise<void> {
-		if (lesson_queue.length !== 0 && lesson_chunks.length >= max_chunks) {
+		if (lesson_queue.length !== 0) {
+			return;
+		}
+		if (lesson_chunks.length >= max_chunks) {
+			lesson_queue = cloneDeep(lesson_chunks.shift() ?? error('lesson_chunks is empty'));
 			return;
 		}
 		if (active_load) {
