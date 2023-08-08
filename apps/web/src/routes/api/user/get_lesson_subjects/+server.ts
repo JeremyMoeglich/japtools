@@ -91,6 +91,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			if (current_level === undefined) {
 				throw error(500, 'User has no current level');
 			}
+			const start_level = current_level;
 			let amount_added = 0;
 			while (current_level < 60 && lessons.length < amount) {
 				const amount_to_add = amount - lessons.length;
@@ -133,6 +134,19 @@ export const POST: RequestHandler = async ({ request }) => {
 				if (lessons.length < amount && amount_added < max_add) {
 					current_level++;
 				}
+			}
+			if (current_level === 60) {
+				console.log('User has reached max level');
+			}
+			if (current_level !== start_level) {
+				await prisma_client.progress.update({
+					where: {
+						id: user_data.progress_id
+					},
+					data: {
+						current_level
+					}
+				});
 			}
 		}
 	}
