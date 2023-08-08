@@ -133,20 +133,20 @@ export const POST: RequestHandler = async ({ request }) => {
 
 				if (lessons.length < amount && amount_added < max_add) {
 					current_level++;
+					if (amount_added === 0 && current_level - start_level !== 0) {
+						await prisma_client.progress.update({
+							where: {
+								id: user_data.progress_id
+							},
+							data: {
+								current_level
+							}
+						});
+					}
 				}
 			}
 			if (current_level === 60) {
 				console.log('User has reached max level');
-			}
-			if (current_level !== start_level) {
-				await prisma_client.progress.update({
-					where: {
-						id: user_data.progress_id
-					},
-					data: {
-						current_level
-					}
-				});
 			}
 		}
 	}
