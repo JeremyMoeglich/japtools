@@ -54,12 +54,8 @@
 	let active_load: undefined | Promise<void[]>;
 
 	async function load_chunks(): Promise<void> {
-		if (lesson_queue.length !== 0) {
-			return;
-		}
-		if (lesson_chunks.length >= max_chunks) {
+		if (lesson_chunks.length > 0 && lesson_queue.length === 0) {
 			lesson_queue = cloneDeep(lesson_chunks.shift() ?? error('lesson_chunks is empty'));
-			return;
 		}
 		if (active_load) {
 			await active_load;
@@ -67,7 +63,7 @@
 		}
 		const preloaded_chunk_amount = lesson_chunks.length - 1;
 		const next_chunk_promise =
-			lesson_chunks.length > max_chunks
+			lesson_chunks.length >= max_chunks
 				? undefined
 				: (async () => {
 						if (level_promises.length >= max_chunks) {
@@ -83,9 +79,11 @@
 							)
 						];
 						const next_chunk = await get_lessons(previous_ids);
+						if (next_chunk.length === 0) {
+							throw new Error('get_lessons returned empty array');
+						}
 
 						lesson_chunks.push(next_chunk);
-						//console.log('next_chunk', next_chunk);
 						active_load = undefined;
 				  })();
 		if (preloaded_chunk_amount <= 0 && lesson_queue.length === 0) {
@@ -93,8 +91,8 @@
 		}
 		if (lesson_queue.length === 0) {
 			lesson_queue = cloneDeep(lesson_chunks.shift() ?? error('lesson_chunks is empty'));
-			//console.log('lesson_queue', lesson_queue);
 			level_promises.push([]);
+			// Assuming level_change_map is accessible here
 			level_change_map = {};
 		}
 		if (lesson_chunks.length < max_chunks) {
@@ -110,21 +108,22 @@
 	async function next_lesson() {
 		try {
 			if (lesson_queue.length === 0) {
+				// Assuming is_loading_store is accessible here
 				is_loading_store.set(true);
 				await load_chunks();
 			}
+
+			current_lesson = lesson_queue.shift() ?? error('lesson_queue is empty');
+			// Assuming current_lesson_state is accessible here
+			current_lesson_state = 'in_progress';
+			// Assuming current_input is accessible here
+			current_input = '';
 		} catch (e) {
 			console.error(e);
 		} finally {
+			// Assuming is_loading_store is accessible here
 			is_loading_store.set(false);
 		}
-		current_lesson = lesson_queue.shift() ?? error('lesson_queue is empty');
-		current_lesson_state = 'in_progress';
-		current_input = '';
-		// if (current_lesson && current_lesson.subject_id !== 8761) {
-		// 	await change_level(current_lesson.subject_id, 1);
-		// 	await next_lesson();
-		// }
 	}
 
 	let current_lesson_state: 'in_progress' | 'wrong' | 'waiting_for_next' = 'in_progress';

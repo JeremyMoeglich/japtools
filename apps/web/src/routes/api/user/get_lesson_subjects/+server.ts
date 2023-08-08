@@ -77,10 +77,8 @@ export const POST: RequestHandler = async ({ request }) => {
 				lessons.push(lesson);
 			}
 		}
-		if (!(lessons.length >= amount) && lessons.length < amount) {
-			const amount_to_add = amount - lessons.length;
-			//console.log('amount_to_add', amount_to_add);
-			const current_level = (
+		if (lessons.length < amount) {
+			let current_level = (
 				await prisma_client.progress.findUnique({
 					where: {
 						id: user_data.progress_id
@@ -93,37 +91,48 @@ export const POST: RequestHandler = async ({ request }) => {
 			if (current_level === undefined) {
 				throw error(500, 'User has no current level');
 			}
-			const existing_level_subject_ids = (
-				await prisma_client.subjectProgress.findMany({
-					where: {
-						level: current_level,
-						progress_id: user_data.progress_id
-					},
-					select: {
-						subject_id: true
-					}
-				})
-			).map((subject) => subject.subject_id);
+			let amount_added = 0;
+			while (current_level < 60 && lessons.length < amount) {
+				const amount_to_add = amount - lessons.length;
+				console.log('Adding new words: n =', amount_to_add);
+				const existing_level_subject_ids = (
+					await prisma_client.subjectProgress.findMany({
+						where: {
+							level: current_level,
+							progress_id: user_data.progress_id
+						},
+						select: {
+							subject_id: true
+						}
+					})
+				).map((subject) => subject.subject_id);
 
-			const possible_subjects = (await get_subjects_by_level(current_level)).filter(
-				(subject: SubjectDataType) => {
-					if (existing_level_subject_ids.includes(subject.id)) {
-						return false;
+				const possible_subjects = (await get_subjects_by_level(current_level)).filter(
+					(subject: SubjectDataType) => {
+						if (existing_level_subject_ids.includes(subject.id)) {
+							return false;
+						}
+						return !previous.includes(subject.id);
 					}
-					return !previous.includes(subject.id);
+				);
+				const subjects_to_add = possible_subjects.slice(0, Math.min(amount_to_add, max_add));
+				const added = subjects_to_add.map((subject) => ({
+					progress_id: user_data.progress_id,
+					subject_id: subject.id,
+					next_review: current_date,
+					level: current_level,
+					skill_level: 0
+				}));
+				//console.log(`Added ${added.length} subjects to lessons`);
+				for (const subject of added) {
+					lessons.push(subject);
 				}
-			);
-			const subjects_to_add = possible_subjects.slice(0, Math.min(amount_to_add, max_add));
-			const added = subjects_to_add.map((subject) => ({
-				progress_id: user_data.progress_id,
-				subject_id: subject.id,
-				next_review: current_date,
-				level: current_level,
-				skill_level: 0
-			}));
-			//console.log(`Added ${added.length} subjects to lessons`);
-			for (const subject of added) {
-				lessons.push(subject);
+
+				amount_added += added.length;
+
+				if (lessons.length < amount && amount_added < max_add) {
+					current_level++;
+				}
 			}
 		}
 	}
