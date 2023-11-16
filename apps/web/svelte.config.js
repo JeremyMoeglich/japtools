@@ -21,7 +21,7 @@ const getAdapters = (adapt) => {
 			});
 		case 'vercel':
 			return vercelAdapter({
-				edge: true,
+				runtime: "edge",
 				split: true
 			});
 		default:

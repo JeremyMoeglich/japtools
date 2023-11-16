@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Deserialize, Debug, Serialize, Clone)]
 pub struct CharacterImageMetadataSvg {
@@ -156,6 +157,7 @@ pub enum SubjectData {
     Radical(RadicalData),
     Kanji(KanjiData),
     Vocabulary(VocabularyData),
+    Kana_Vocabulary(Value),
 }
 
 #[derive(Deserialize, Debug, Serialize, Clone)]

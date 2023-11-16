@@ -39,7 +39,7 @@
 					<div class="tabs">
 						{#each tabs[subject_type ?? 'NONE'] as tab}
 							<button
-								class="tab tab-bordered clear "
+								class="tab tab-bordered clear"
 								class:tab-active={active_tab === tab}
 								on:click={() => {
 									active_tab = tab;

@@ -6,11 +6,11 @@
 	import type { Lesson } from '$lib/scripts/universal/lesson_type';
 
 	import type { SubjectType } from '@prisma/client/edge';
-	import type { MaybePromise } from '@sveltejs/kit/types/internal';
 	import LessonInput from './lesson_input.svelte';
 	import SubjectBrowser from './subject_browser.svelte';
 	import { get } from 'svelte/store';
-	import { error } from 'functional-utilities';
+	import { panic } from 'functional-utilities';
+	import type { MaybePromise } from '@sveltejs/kit';
 	//import PrettyObj from '$lib/components/pretty_obj.svelte';
 
 	export let lesson: Lesson | undefined;
@@ -59,7 +59,7 @@
 					}
 				});
 				const subject_data =
-					get(subject_store).get(lesson.subject_id)?.subject ?? error('Subject not found');
+					get(subject_store).get(lesson.subject_id)?.subject ?? panic('Subject not found');
 				lesson = {
 					lesson_type: 'new_subject',
 					skill_level: 0,
@@ -74,8 +74,8 @@
 							: {
 									image_url:
 										'image_url' in subject_data
-											? subject_data.image_url ?? error('Image URL is undefined')
-											: error('Image URL not found')
+											? subject_data.image_url ?? panic('Image URL is undefined')
+											: panic('Image URL not found')
 							  },
 					subject_type: lesson.subject_type
 				};

@@ -1,36 +1,36 @@
 {
-	"name": "japtools",
-	"version": "0.1.0",
-	"description": "",
-	"type": "module",
-	"workspaces": [
-		"packages/*",
-		"apps/*"
-	],
-	"scripts": {
-		"build:web": "dotenv -e .env.serverless -- turbo run build:web",
-		"build:app": "dotenv -e .env.serverless -- turbo run build:app",
-		"check": "dotenv -e .env.serverless -- turbo run check",
-		"dev:web": "dotenv -e .env.serverless -- turbo run dev:web",
-		"dev:app": "dotenv -e .env.serverless -- turbo run dev:app",
-		"test": "dotenv -e .env.serverless -- turbo run test",
-		"lint": "dotenv -e .env.serverless -- turbo run lint",
-		"preview:web": "dotenv -e .env.serverless -- turbo run preview:web",
-		"dbsetup": "npm run generate:node && dotenv -e .env.node -- cargo run --release --bin dbsetup && npm run generate",
-		"generate": "dotenv -e .env.serverless -- prisma generate --data-proxy",
-		"generate:node": "prisma-merge -b ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && prisma generate --schema ./prisma/rsschema.prisma",
-		"migrate:dev": "dotenv -e .env.node -- prisma migrate dev --name",
-		"studio": "dotenv -e .env.node -- prisma studio",
-		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
-	},
-	"keywords": [],
-	"author": "",
-	"devDependencies": {
-		"@prisma/client": "^4.3.1",
-		"dotenv-cli": "^6.0.0",
-		"prisma": "^4.3.1",
-		"prisma-merge": "^0.2.0",
-		"turbo": "^1.4.7",
-		"cross-env": "^7.0.3"
-	}
+  "name": "japtools",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:web": "dotenv -e .env.serverless -- turbo run build:web",
+    "build:app": "dotenv -e .env.serverless -- turbo run build:app",
+    "check": "dotenv -e .env.serverless -- turbo run check",
+    "dev:web": "dotenv -e .env.serverless -- turbo run dev:web",
+    "dev:app": "dotenv -e .env.serverless -- turbo run dev:app",
+    "test": "dotenv -e .env.serverless -- turbo run test",
+    "lint": "dotenv -e .env.serverless -- turbo run lint",
+    "preview:web": "dotenv -e .env.serverless -- turbo run preview:web",
+    "dbsetup": "npm run generate:node && dotenv -e .env.node -- cargo run --release --bin dbsetup && npm run generate",
+    "generate": "dotenv -e .env.serverless -- bunx prisma generate --data-proxy",
+    "generate:node": "prisma-merge -b ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && bunx prisma generate --schema ./prisma/rsschema.prisma",
+    "migrate:dev": "dotenv -e .env.node -- prisma migrate dev --name",
+    "studio": "dotenv -e .env.node -- prisma studio",
+    "format": "prettier --write  --plugin prettier-plugin-svelte ."
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {
+    "@prisma/client": "^5.5.2",
+    "cross-env": "^7.0.3",
+    "dotenv-cli": "^7.3.0",
+    "prisma": "^5.5.2",
+    "prisma-merge": "^0.2.0",
+    "turbo": "^1.10.16"
+  }
 }

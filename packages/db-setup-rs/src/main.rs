@@ -10,7 +10,7 @@ mod upload;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let map = load_wanikani_data().await?;
-    upload_to_db(map).await?;
+    //upload_to_db(map).await?;
 
     Ok(())
 }

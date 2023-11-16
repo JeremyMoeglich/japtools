@@ -14,7 +14,7 @@
 
 	$: zipped = zip([lesson.required_data.vocabulary.split(''), lesson.required_data.string_map]) as [
 		string,
-		typeof lesson.required_data.string_map[number]
+		(typeof lesson.required_data.string_map)[number]
 	][];
 
 	const reading_type_map: Record<ReadingType, string> = {

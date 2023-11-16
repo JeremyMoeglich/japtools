@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { error, pipe } from 'functional-utilities';
+	import { panic, pipe } from 'functional-utilities';
 	import { z } from 'zod';
 
 	export let html: string;
@@ -11,7 +11,8 @@
 		z.literal('kanji'),
 		z.literal('radical'),
 		z.literal('reading'),
-		z.literal('i')
+		z.literal('i'),
+		z.literal('a')
 	]);
 
 	type Tag = z.infer<typeof tag_schema>;
@@ -34,7 +35,7 @@
 			}
 			return {
 				type: pipe(tag_schema.safeParse(child.nodeName.toLowerCase()), (r) =>
-					r.success ? r.data : error(`Invalid tag ${child.nodeName}`)
+					r.success ? r.data : panic(`Invalid tag ${child.nodeName}`)
 				),
 				content: child.textContent ?? ''
 			};
@@ -60,8 +61,10 @@
 			<span class="reading">{section.content}</span>
 		{:else if section.type === 'i'}
 			<span class="i">{section.content}</span>
+		{:else if section.type === 'a'}
+			<span class="a">{section.content}</span>
 		{:else}
-			{error('Unreachable')}
+			{panic('Unreachable')}
 		{/if}
 	{/each}
 </div>
@@ -84,5 +87,9 @@
 	}
 	.i {
 		font-style: italic;
+	}
+
+	.a {
+		color: yellow;
 	}
 </style>

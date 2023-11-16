@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TextAndMeaning } from '$lib/scripts/universal/lesson_type';
-	import { error } from 'functional-utilities';
+	import { panic } from 'functional-utilities';
 	import { compare } from '$lib/scripts/universal/compare';
 	import { onMount } from 'svelte';
 	import TitleRender from './title_render.svelte';
@@ -42,7 +42,7 @@
 			? `Type the kanji that means ||`
 			: lesson.subject_type === 'VOCABULARY'
 			? `Type || in Japanese`
-			: error('Lessons going from meanings to radicals are not supported');
+			: panic('Lessons going from meanings to radicals are not supported');
 	$: question =
 		shown.type === 'text' ? internal_question.replace('||', shown.value) : internal_question;
 	$: correct_answer =

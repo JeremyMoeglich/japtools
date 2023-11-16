@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { TypingStateMachine } from '@keyfox/pochi';
-	import type { MaybePromise } from '@sveltejs/kit/types/private';
+	import type { MaybePromise } from '@sveltejs/kit';
 
 	export let response_type: 'ja' | 'en' | 'locked';
 	export let response_value: string;

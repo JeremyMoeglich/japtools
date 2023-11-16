@@ -14,10 +14,13 @@ export function parse_to_date<S extends ZodObjectAny, K extends string>(
 		Object.assign(
 			{},
 			raw_data,
-			keys.reduce((acc, key) => {
-				acc[key] = new Date(raw_data[key]);
-				return acc;
-			}, {} as Record<K, Date>)
+			keys.reduce(
+				(acc, key) => {
+					acc[key] = new Date(raw_data[key]);
+					return acc;
+				},
+				{} as Record<K, Date>
+			)
 		)
 	);
 }

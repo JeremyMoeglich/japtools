@@ -15,11 +15,17 @@ fn data_to_type(data: &SubjectData) -> SubjectType {
         SubjectData::Kanji(_) => SubjectType::Kanji,
         SubjectData::Radical(_) => SubjectType::Radical,
         SubjectData::Vocabulary(_) => SubjectType::Vocabulary,
+        _ => panic!()
     }
 }
 
 pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box<dyn Error>> {
-    let client = Arc::new(db::new_client().await.expect("Failed to create client"));
+    let client = Arc::new(
+        db::PrismaClient::_builder()
+            .build()
+            .await
+            .expect("Failed to create client"),
+    );
     let mut tasks = stream::iter(map.clone().iter().map(|x| x.1.clone()).collect_vec())
         .map(|subject| {
             let client = client.clone();
@@ -98,6 +104,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                 .iter()
                                 .map(|x| x.reading.clone())
                                 .collect_vec(),
+                            SubjectData::Kana_Vocabulary(_) => vec![],
                         }),
                         db::subject_index::meanings::set(match &subject.data {
                             SubjectData::Radical(_) => vec![],
@@ -111,23 +118,26 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                 .iter()
                                 .map(|x| x.meaning.clone())
                                 .collect_vec(),
+                            SubjectData::Kana_Vocabulary(_) => vec![],
                         }),
                     ];
                     client
                         .subject_index()
                         .upsert(
                             db::subject_index::subject_id::equals(subject.id as i32),
-                            (
+                            db::subject_index::create(
                                 match &subject.data {
                                     SubjectData::Radical(_) => db::SubjectType::Radical,
                                     SubjectData::Kanji(_) => db::SubjectType::Kanji,
                                     SubjectData::Vocabulary(_) => db::SubjectType::Vocabulary,
+                                    _ => panic!(),
                                 },
                                 subject.id as i32,
                                 match &subject.data {
                                     SubjectData::Radical(data) => data.level as i32,
                                     SubjectData::Kanji(data) => data.level as i32,
                                     SubjectData::Vocabulary(data) => data.level as i32,
+                                    _ => panic!(),
                                 },
                                 params.clone(),
                             ),
@@ -138,6 +148,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                         .unwrap()
                 };
                 match &subject.data {
+                    _ => panic!(),
                     SubjectData::Kanji(kanji_data) => {
                         client
                             .kanji_subject()
@@ -186,7 +197,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .readings
                                     .iter()
                                     .map(|reading| {
-                                        db::kanji_reading::create(
+                                        db::kanji_reading::create_unchecked(
                                             reading.reading.clone(),
                                             match reading.reading_type {
                                                 ReadingType::Onyomi => db::ReadingType::Onyomi,
@@ -212,7 +223,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .meanings
                                     .iter()
                                     .map(|meaning| {
-                                        db::subject_meaning::create(
+                                        db::subject_meaning::create_unchecked(
                                             meaning.accepted_answer,
                                             meaning.meaning.clone(),
                                             meaning.primary,
@@ -234,7 +245,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .auxiliary_meanings
                                     .iter()
                                     .map(|auxiliary_meaning| {
-                                        db::auxiliary_meaning::create(
+                                        db::auxiliary_meaning::create_unchecked(
                                             auxiliary_meaning.meaning.clone(),
                                             auxiliary_meaning.meaning_type.clone(),
                                             vec![db::auxiliary_meaning::kanji_subject_id::set(
@@ -255,7 +266,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .auxiliary_meanings
                                     .iter()
                                     .map(|auxiliary_meaning| {
-                                        db::auxiliary_meaning::create(
+                                        db::auxiliary_meaning::create_unchecked(
                                             auxiliary_meaning.meaning.clone(),
                                             auxiliary_meaning.meaning_type.clone(),
                                             vec![db::auxiliary_meaning::kanji_subject_id::set(
@@ -331,7 +342,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .auxiliary_meanings
                                     .iter()
                                     .map(|auxiliary_meaning| {
-                                        db::auxiliary_meaning::create(
+                                        db::auxiliary_meaning::create_unchecked(
                                             auxiliary_meaning.meaning.clone(),
                                             auxiliary_meaning.meaning_type.clone(),
                                             vec![db::auxiliary_meaning::radical_subject_id::set(
@@ -351,7 +362,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .meanings
                                     .iter()
                                     .map(|meaning| {
-                                        db::subject_meaning::create(
+                                        db::subject_meaning::create_unchecked(
                                             meaning.accepted_answer,
                                             meaning.meaning.clone(),
                                             meaning.primary,
@@ -394,7 +405,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .auxiliary_meanings
                                     .iter()
                                     .map(|auxiliary_meaning| {
-                                        db::auxiliary_meaning::create(
+                                        db::auxiliary_meaning::create_unchecked(
                                             auxiliary_meaning.meaning.clone(),
                                             auxiliary_meaning.meaning_type.clone(),
                                             vec![
@@ -416,7 +427,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .context_sentences
                                     .iter()
                                     .map(|context_sentence| {
-                                        db::context_sentence::create(
+                                        db::context_sentence::create_unchecked(
                                             context_sentence.en.clone(),
                                             context_sentence.ja.clone(),
                                             vec![db::context_sentence::vocabulary_subject_id::set(
@@ -436,7 +447,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .meanings
                                     .iter()
                                     .map(|meaning| {
-                                        db::subject_meaning::create(
+                                        db::subject_meaning::create_unchecked(
                                             meaning.accepted_answer,
                                             meaning.meaning.clone(),
                                             meaning.primary,
@@ -457,7 +468,7 @@ pub async fn upload_to_db(map: HashMap<u32, SubjectDataOuter>) -> Result<(), Box
                                     .readings
                                     .iter()
                                     .map(|reading| {
-                                        db::vocabulary_reading::create(
+                                        db::vocabulary_reading::create_unchecked(
                                             reading.reading.clone(),
                                             reading.accepted_answer,
                                             reading.primary,

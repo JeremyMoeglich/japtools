@@ -22,5 +22,5 @@
 			"dependsOn": ["^preview:web"]
 		}
 	},
-	"globalDependencies": ["$DATABASE_URL"]
+	"globalEnv": ["DATABASE_URL"]
 }

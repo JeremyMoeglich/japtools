@@ -13,7 +13,7 @@ import {
 } from '$lib/scripts/universal/datatypes';
 import { domain } from '$lib/scripts/frontend/domain';
 import type { Lesson } from '$lib/scripts/universal/lesson_type';
-import { error } from 'functional-utilities';
+import { panic } from 'functional-utilities';
 import { sample, sortBy } from 'lodash-es';
 import { isKanji } from 'wanakana';
 import { z } from 'zod';
@@ -33,7 +33,7 @@ function has_duplicates<T>(array: T[]): boolean {
 
 function arr_identical(arr1: unknown[], arr2: unknown[]): boolean {
 	if (has_duplicates(arr1) || has_duplicates(arr2))
-		error('arr_identical: arrays must not have duplicates');
+		panic('arr_identical: arrays must not have duplicates');
 	const set1 = new Set(arr1);
 	const set2 = new Set(arr2);
 	return set1.size === set2.size && [...set1].every((v) => set2.has(v));
@@ -100,7 +100,7 @@ export async function get_lessons(previous: number[]) {
 					// });
 					{
 						const primary_reading =
-							subject.readings.find((r) => r.primary) ?? error('no primary reading');
+							subject.readings.find((r) => r.primary) ?? panic('no primary reading');
 						const unique_readings = get_unique_readings(subject.readings, readings_map);
 						const valid_readings = unique_readings.filter(
 							(r) => r.reading_type === primary_reading.reading_type
@@ -323,7 +323,7 @@ export async function get_lessons(previous: number[]) {
 								: {
 										image_url:
 											subject.image_url ??
-											error(`Subject ${subject_id} has no image_url or characters`)
+											panic(`Subject ${subject_id} has no image_url or characters`)
 								  },
 							subject_id,
 							skill_level: 0,
@@ -341,7 +341,7 @@ export async function get_lessons(previous: number[]) {
 										text: subject.characters
 								  }
 								: {
-										image_url: subject.image_url ?? error('image_url is undefined')
+										image_url: subject.image_url ?? panic('image_url is undefined')
 								  }),
 							meanings: subject.meanings.map((meaning) => meaning.meaning),
 							to: 'meanings'
@@ -355,7 +355,7 @@ export async function get_lessons(previous: number[]) {
 				} else {
 					throw new Error(`Unsupported subject type ${get_subject_type(subject)}`);
 				}
-				const returned_lesson = sample(new_lessons) ?? error('No lessons found');
+				const returned_lesson = sample(new_lessons) ?? panic('No lessons found');
 				return returned_lesson;
 			})
 		)

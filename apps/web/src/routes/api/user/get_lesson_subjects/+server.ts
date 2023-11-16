@@ -95,7 +95,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			let amount_added = 0;
 			while (current_level < 60 && lessons.length < amount) {
 				const amount_to_add = amount - lessons.length;
-				console.log('Adding new words: n =', amount_to_add);
 				const existing_level_subject_ids = (
 					await prisma_client.subjectProgress.findMany({
 						where: {
@@ -116,7 +115,9 @@ export const POST: RequestHandler = async ({ request }) => {
 						return !previous.includes(subject.id);
 					}
 				);
-				const subjects_to_add = possible_subjects.slice(0, Math.min(amount_to_add, max_add));
+				const subjects_to_add = possible_subjects
+					.filter((subject) => !previous.includes(subject.id))
+					.slice(0, Math.min(amount_to_add, max_add));
 				const added = subjects_to_add.map((subject) => ({
 					progress_id: user_data.progress_id,
 					subject_id: subject.id,
@@ -158,7 +159,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		if (found_index === index) {
 			return true;
 		} else {
-			console.log('Duplicate lesson found');
 			return false;
 		}
 	});

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { update_subject_progress } from '$lib/scripts/frontend/user/update_subject_progress';
 	import type { Lesson } from '$lib/scripts/universal/lesson_type';
-	import { error } from 'functional-utilities';
+	import { panic } from 'functional-utilities';
 	import { get_lessons } from './get_lessons';
 	import { get } from 'svelte/store';
 	import { subject_store } from '$lib/scripts/frontend/user/subject_store';
@@ -35,7 +35,7 @@
 
 	async function change_level(subject_id: number, n: number) {
 		const current_subject =
-			get(subject_store).get(subject_id) ?? error(`Data for Subject ${subject_id} not in store`);
+			get(subject_store).get(subject_id) ?? panic(`Data for Subject ${subject_id} not in store`);
 		const current_level = current_subject.skill_level;
 		const max_level_increase = get_max_level_increase(current_subject);
 		const new_level = Math.max(max_level_increase, current_level + n);
@@ -55,7 +55,7 @@
 
 	async function load_chunks(): Promise<void> {
 		if (lesson_chunks.length > 0 && lesson_queue.length === 0) {
-			lesson_queue = cloneDeep(lesson_chunks.shift() ?? error('lesson_chunks is empty'));
+			lesson_queue = cloneDeep(lesson_chunks.shift() ?? panic('lesson_chunks is empty'));
 		}
 		if (active_load) {
 			await active_load;
@@ -67,7 +67,7 @@
 				? undefined
 				: (async () => {
 						if (level_promises.length >= max_chunks) {
-							active_load = Promise.all(level_promises.shift() ?? error('level_promises is empty'));
+							active_load = Promise.all(level_promises.shift() ?? panic('level_promises is empty'));
 							await active_load;
 						}
 						const previous_ids = [
@@ -90,7 +90,7 @@
 			await next_chunk_promise;
 		}
 		if (lesson_queue.length === 0) {
-			lesson_queue = cloneDeep(lesson_chunks.shift() ?? error('lesson_chunks is empty'));
+			lesson_queue = cloneDeep(lesson_chunks.shift() ?? panic('lesson_chunks is empty'));
 			level_promises.push([]);
 			// Assuming level_change_map is accessible here
 			level_change_map = {};
@@ -113,7 +113,7 @@
 				await load_chunks();
 			}
 
-			current_lesson = lesson_queue.shift() ?? error('lesson_queue is empty');
+			current_lesson = lesson_queue.shift() ?? panic('lesson_queue is empty');
 			// Assuming current_lesson_state is accessible here
 			current_lesson_state = 'in_progress';
 			// Assuming current_input is accessible here

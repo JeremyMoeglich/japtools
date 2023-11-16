@@ -5,7 +5,7 @@ import type {
 	SubjectDataType,
 	VocabularyDataType
 } from '../universal/datatypes';
-import { error } from '@sveltejs/kit';
+import { error as skerror } from '@sveltejs/kit';
 import type {
 	AuxiliaryMeaning,
 	ContextSentence,
@@ -17,6 +17,10 @@ import type {
 	VocabularyReading,
 	VocabularySubject
 } from '@prisma/client/edge';
+
+const error = (status: number, message: string) => {
+	throw skerror(status, message);
+}
 
 export function convert_vocabulary(
 	data: VocabularySubject & {
