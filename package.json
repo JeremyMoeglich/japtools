@@ -17,7 +17,7 @@
     "lint": "dotenv -e .env.serverless -- turbo run lint",
     "preview:web": "dotenv -e .env.serverless -- turbo run preview:web",
     "dbsetup": "npm run generate:node && dotenv -e .env.node -- cargo run --release --bin dbsetup && npm run generate",
-    "generate": "dotenv -e .env.serverless -- prisma generate --data-proxy",
+    "generate": "dotenv -e .env.serverless -- prisma generate --no-engine",
     "generate:node": "prisma-merge -b ./prisma/schema.prisma -s ./prisma/rsclient.prisma -o ./prisma/rsschema.prisma && prisma generate --schema ./prisma/rsschema.prisma",
     "migrate:dev": "dotenv -e .env.node -- prisma migrate dev --name",
     "studio": "dotenv -e .env.node -- prisma studio",
@@ -32,5 +32,8 @@
     "prisma": "^5.5.2",
     "prisma-merge": "^0.2.0",
     "turbo": "^1.10.16"
+  },
+  "dependencies": {
+    "@prisma/extension-accelerate": "^0.6.2"
   }
 }
